@@ -200,7 +200,7 @@ The remux ships its own identity on top of Omarchy. What lands where:
 | `SUPER+Shift+F` | File manager |
 | `SUPER+K` | Keybinding list (fuzzel) |
 | `SUPER+Q` | Close window |
-| `SUPER+Shift+Q` | Power menu |
+| `SUPER+Escape` | Power menu |
 | `SUPER+O` | Overview |
 | `SUPER+F` | Maximize column |
 | `SUPER+Ctrl+F` | Fullscreen window |

@@ -290,7 +290,7 @@ binds {
     Mod+O { toggle-overview; }
 
     // ── Power menu ──
-    Mod+Shift+Q { spawn "noctarchy-power"; }
+    Mod+Escape { spawn "noctarchy-power"; }
 
     // ── Noctalia-specific ──
     Mod+N { spawn "noctalia" "msg" "panel-toggle" "notifications"; }
