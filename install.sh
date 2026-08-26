@@ -584,6 +584,14 @@ else
 fi
 
 # ──────────────────────────────────────────────
+# State file — single source of truth for repo path
+# ──────────────────────────────────────────────
+
+STATE_DIR="$HOME/.local/state/noctarchy"
+mkdir -p "$STATE_DIR"
+echo "$REPO_DIR" > "$STATE_DIR/repo-path"
+
+# ──────────────────────────────────────────────
 # Summary
 # ──────────────────────────────────────────────
 
