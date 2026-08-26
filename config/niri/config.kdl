@@ -186,7 +186,7 @@ binds {
     // ── Apps (matches Omarchy conventions) ──
     Mod+Shift+T { spawn "xdg-terminal-exec"; }
     Mod+Shift+B { spawn "xdg-open" "https://"; }
-    Mod+Shift+E { spawn "xdg-terminal-exec" "-e" "nvim"; }
+    Mod+Shift+E { spawn-sh "xdg-terminal-exec -e \${EDITOR:-nvim}"; }
     Mod+Shift+F { spawn "nautilus"; }
 
     // ── Close & quit ──
