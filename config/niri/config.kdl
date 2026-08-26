@@ -169,7 +169,6 @@ workspace "media"
 // ──────────────────────────────────────────────
 // Keybindings
 // Niri has NO default binds — you must define ALL of them.
-// Mirrors Omarchy conventions where possible (SUPER = Mod).
 // ──────────────────────────────────────────────
 
 binds {
@@ -182,7 +181,7 @@ binds {
     // ── Terminal ──
     Mod+Return { spawn "xdg-terminal-exec"; }
 
-    // ── Apps (matches Omarchy conventions) ──
+    // ── Apps ──
     Mod+Shift+B { spawn "xdg-open" "https://"; }
     Mod+Shift+E { spawn "xdg-terminal-exec" "-e" "nvim"; }
     Mod+Shift+F { spawn "nautilus"; }
