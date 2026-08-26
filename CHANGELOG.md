@@ -19,3 +19,11 @@
 - Branding: screensaver.txt + about.txt ASCII art, fastfetch branded in sync.sh
 - Website: noctarchy.dirty.pizza landing page (CNAME ready)
 - Install/sync/uninstall: full lifecycle with dry-run, backup, 3-way KDL merge, state tracking
+
+## Fixes (post-release)
+
+- Fixed `noctarchy-fuzzel`: fuzzel 1.14 uses `--background-color`/`--text-color`/etc, not `--color` — wrapper was passing an invalid option and crashing all menus
+- Fixed Niri config KDL parse error: `@DEFAULT_AUDIO_SINK@` inside `spawn` strings broke the KDL parser; switched media key binds to `spawn-sh`
+- Fixed `install.sh` + `sync.sh` fastfetch branding: logo replacement regex `[^}]*` stopped at the first `}` inside nested padding objects — replaced with brace-counting parser
+- Fixed Niri keybind conflicts: `SUPER+Shift+F` was bound three times (fullscreen, focus-tiling, file manager) — re-separated to `SUPER+Ctrl+F`/`SUPER+Shift+P`/`SUPER+Shift+F`
+- Fixed universal copy/paste: `SUPER+C/V/X` now use `wtype -M ctrl` to simulate Ctrl+C/V/X since Niri lacks Hyprland's `send-shortcut`
