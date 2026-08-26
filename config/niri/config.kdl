@@ -174,7 +174,8 @@ workspace "media"
 
 binds {
     // ── Launcher & menus ──
-    Mod+Space { spawn "noctalia" "msg" "panel-toggle" "launcher"; }
+    Mod+Space { spawn "noctarchy-fuzzel"; }
+    Mod+D { spawn "noctalia" "msg" "panel-toggle" "launcher"; }
     Mod+Alt+Space { spawn "noctarchy-menu"; }
     Mod+K { spawn "noctarchy-keybinds"; }
     Mod+Shift+slash { show-hotkey-overlay; }
