@@ -12,14 +12,14 @@ choice=$(printf '%s\n' \
     "Suspend" \
     "Hibernate" \
     "Reboot" \
-    "Shutdown" | "$SCRIPT_DIR/noctarchy-fuzzel" --dmenu --prompt="Power: ")
+    "Shutdown" | "$SCRIPT_DIR/noctarchy-fuzzel" --dmenu --prompt='Power: ' --width=28 --lines=7)
 
 [[ -z "$choice" ]] && exit 0
 
 confirm() {
     local action="$1"
     local result
-    result=$(printf '%s\n' Confirm Cancel | "$SCRIPT_DIR/noctarchy-fuzzel" --dmenu --prompt="$action: ")
+    result=$(printf '%s\n' Confirm Cancel | "$SCRIPT_DIR/noctarchy-fuzzel" --dmenu --prompt="$action: " --width=16 --lines=2)
     [[ "$result" == "Confirm" ]]
 }
 

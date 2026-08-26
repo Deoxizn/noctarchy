@@ -30,7 +30,7 @@ else
     options="Play\nNext\nPrevious\nStop"
 fi
 
-choice=$(echo -e "$options" | "$SCRIPT_DIR/noctarchy-fuzzel" --dmenu --prompt="$header: ")
+choice=$(echo -e "$options" | "$SCRIPT_DIR/noctarchy-fuzzel" --dmenu --prompt="$header: " --width=40 --lines=4)
 
 [[ -z "$choice" ]] && exit 0
 

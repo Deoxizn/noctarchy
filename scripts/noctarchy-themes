@@ -34,7 +34,7 @@ if [[ ${#THEMES[@]} -eq 0 ]]; then
     exit 1
 fi
 
-selected=$(printf '%s\n' "${THEMES[@]}" | "$SCRIPT_DIR/noctarchy-fuzzel" --dmenu --prompt="Theme: ")
+selected=$(printf '%s\n' "${THEMES[@]}" | "$SCRIPT_DIR/noctarchy-fuzzel" --dmenu --prompt='Theme: ' --width=30 --lines=${#THEMES[@]})
 
 [[ -z "$selected" ]] && exit 0
 

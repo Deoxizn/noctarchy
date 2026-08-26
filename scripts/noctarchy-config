@@ -10,7 +10,7 @@ NOCTALIA_CONFIG="${XDG_CONFIG_HOME:-$HOME/.config}/noctalia/config.toml"
 
 choice=$(printf '%s\n' \
     "Niri config (config.kdl)" \
-    "Noctalia config (config.toml)" | "$SCRIPT_DIR/noctarchy-fuzzel" --dmenu --prompt="Config: ")
+    "Noctalia config (config.toml)" | "$SCRIPT_DIR/noctarchy-fuzzel" --dmenu --prompt='Config: ' --width=32 --lines=2)
 
 [[ -z "$choice" ]] && exit 0
 
