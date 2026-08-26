@@ -377,6 +377,12 @@ if ! $DRY_RUN; then
         run_sudo sed -i 's/^RememberLastSession=true/RememberLastSession=false/' "$f"
       fi
     done
+    # Patch autologin.conf to default to niri
+    AUTOLOGIN="/etc/sddm.conf.d/autologin.conf"
+    if [[ -f "$AUTOLOGIN" ]] && grep -q 'Session=omarchy' "$AUTOLOGIN" 2>/dev/null; then
+      run_sudo sed -i 's/Session=.*/Session=niri.desktop/' "$AUTOLOGIN"
+      ok "autologin.conf patched → niri.desktop"
+    fi
     ok "SDDM greeter: noctarchy theme active"
   else
     warn "  Omarchy SDDM theme not found — skipping (greeter stays stock)"

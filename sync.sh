@@ -267,6 +267,13 @@ if [[ -d $OMARCHY_SDDM ]]; then
         changed=$((changed+1))
       fi
     done
+    # Patch autologin.conf to default to niri
+    AUTOLOGIN="/etc/sddm.conf.d/autologin.conf"
+    if [[ -f "$AUTOLOGIN" ]] && grep -q 'Session=omarchy' "$AUTOLOGIN" 2>/dev/null; then
+      sudo sed -i 's/Session=.*/Session=niri.desktop/' "$AUTOLOGIN"
+      ok "  patched autologin.conf → niri.desktop"
+      changed=$((changed+1))
+    fi
     # Set Niri as default session via Autologin section
     SDDM_SESSION="/etc/sddm.conf.d/10-session.conf"
     SDDM_SESSION_SRC="$REPO_DIR/branding/sddm/10-session.conf"
