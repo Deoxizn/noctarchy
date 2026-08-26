@@ -354,6 +354,12 @@ if ! $DRY_RUN; then
     if [[ -f $SDDM_CONF ]] && grep -q '^Current=omarchy' "$SDDM_CONF"; then
       run_sudo sed -i 's/^Current=.*/Current=noctarchy/' "$SDDM_CONF"
     fi
+    # Also patch the omarchy login override if present
+    for f in /etc/sddm.conf.d/99-omarchy-login.conf /etc/sddm.conf.d/omarchy.conf; do
+      if [[ -f "$f" ]] && grep -q '^Current=omarchy' "$f" 2>/dev/null; then
+        run_sudo sed -i 's/^Current=.*/Current=noctarchy/' "$f"
+      fi
+    done
     ok "SDDM greeter: noctarchy theme active"
   else
     warn "  Omarchy SDDM theme not found — skipping (greeter stays stock)"

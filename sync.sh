@@ -238,6 +238,14 @@ if [[ -d $OMARCHY_SDDM ]]; then
       ok "  switched SDDM Current= to noctarchy"
       changed=$((changed+1))
     fi
+    # Also patch the omarchy login override if present
+    for f in /etc/sddm.conf.d/99-omarchy-login.conf /etc/sddm.conf.d/omarchy.conf; do
+      if [[ -f "$f" ]] && grep -q '^Current=omarchy' "$f" 2>/dev/null; then
+        sudo sed -i 's/^Current=.*/Current=noctarchy/' "$f"
+        ok "  patched $(basename "$f")"
+        changed=$((changed+1))
+      fi
+    done
     # Set Niri as default session
     SDDM_SESSION="/etc/sddm.conf.d/10-session.conf"
     if [[ ! -f "$SDDM_SESSION" ]] || ! grep -q 'niri.desktop' "$SDDM_SESSION" 2>/dev/null; then
