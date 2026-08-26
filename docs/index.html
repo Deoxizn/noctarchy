@@ -155,11 +155,9 @@
 <header class="wrap">
   <img src="branding/noctarchy.png" alt="Noctarchy logo" class="logo">
   <h1>Noctarchy</h1>
-  <p class="tagline"><b>Omarchy × Niri</b> · <b>Noctalia</b></p>
+  <p class="tagline"><b>Omarchy × Niri × Noctalia</b></p>
   <nav class="cta-row">
     <a class="btn btn-pink" href="#install">Install the remux</a>
-    <a class="btn btn-ghost" href="https://github.com/deoxizn/noctarchy/blob/master/CHANGELOG.md" target="_blank" rel="noopener">Changelog</a>
-    <a class="btn btn-ghost" href="https://github.com/deoxizn/noctarchy/blob/master/HiddenCommands.md" target="_blank" rel="noopener">Hidden Commands</a>
     <a class="btn btn-ghost" href="https://github.com/deoxizn/noctarchy" target="_blank" rel="noopener">GitHub</a>
   </nav>
 </header>
@@ -229,28 +227,6 @@
     <tr><td>Window management, workspaces, app binds</td><td><b>Changed</b></td><td>Niri scrollable tiling replaces dwindle/master</td></tr>
   </table>
   <p class="muted" style="margin-top:0.9rem;">Anything not listed here that shells out to <code>omarchy-shell</code> in your own scripts will also be dead — grep for it.</p>
-</section>
-
-<section class="wrap" id="changelog">
-  <h2>Changelog</h2>
-
-  <div class="cl-entry">
-    <div class="cl-date">2026-08-26</div>
-    <ul>
-      <li>Initial release — Niri + Noctalia shell replacement for Omarchy</li>
-      <li>Niri config: scrollable tiling, spring animations, focus ring, workspace binds, window/layer rules, xwayland-satellite</li>
-      <li>Noctalia config: top bar, workspaces/clock/network/battery/volume/brightness/tray/media widgets, swaylock, wallpaper-driven theming</li>
-      <li>Theme bridge hook: maps Omarchy colors.toml → Noctalia palette + wallpaper sync on every theme change</li>
-      <li>Auto-sync hook: pulls repo and re-runs sync.sh after omarchy-update</li>
-      <li>Menu suite: 13 scripts — fuzzel, menu, power, keybinds, restart, config, themes, media, version, update, terminal, splash, kernel</li>
-      <li>Plymouth boot splash + SDDM greeter theme matching the Noctarchy identity</li>
-      <li>Kernel submenu: CachyOS variants (default, BORE, EEVDF, LTS, RT-BORE) via chaotic-aur</li>
-      <li>Plymouth splash + SDDM greeter theme matching the Noctarchy identity</li>
-      <li>Install/sync/uninstall: full lifecycle with dry-run, backup, 3-way KDL merge, state tracking</li>
-    </ul>
-  </div>
-
-  <p class="muted" style="margin-top:1rem;">Full changelog on <a href="https://github.com/deoxizn/noctarchy/blob/master/CHANGELOG.md" target="_blank" rel="noopener">GitHub</a>.</p>
 </section>
 
 <footer>

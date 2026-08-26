@@ -411,6 +411,34 @@ else
 fi
 
 # ──────────────────────────────────────────────
+# Branding (screensaver.txt / about.txt)
+# ──────────────────────────────────────────────
+
+info "Installing branding art..."
+
+BRANDING_DIR="$HOME/.config/omarchy/branding"
+if ! $DRY_RUN; then
+  mkdir -p "$BRANDING_DIR"
+  for f in screensaver.txt about.txt; do
+    src="$REPO_DIR/branding/$f"
+    dst="$BRANDING_DIR/$f"
+    if [[ -f "$src" ]]; then
+      if [[ ! -f "$dst" ]]; then
+        cp "$src" "$dst"
+        ok "  $f installed"
+      elif grep -q 'ponshys\|Stellarchy\|omarchy × caelestia' "$dst" 2>/dev/null; then
+        cp "$src" "$dst"
+        ok "  $f rebranded (was stock/other)"
+      else
+        ok "  $f customized — left untouched"
+      fi
+    fi
+  done
+else
+  info "[dry-run] would install branding art"
+fi
+
+# ──────────────────────────────────────────────
 # Summary
 # ──────────────────────────────────────────────
 
