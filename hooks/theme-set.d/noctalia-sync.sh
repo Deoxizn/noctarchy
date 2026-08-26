@@ -162,15 +162,23 @@ if os.environ.get("NOCTALIA_SYNC_NO_WALLPAPER") != "1":
             imgs[0] if imgs else None,
         )
         if pick:
+            target = pick.resolve()
+            # Copy to noctalia wallpaper dir so it persists
             state_dir = Path.home() / ".local" / "state" / "noctalia" / "wallpaper"
             state_dir.mkdir(parents=True, exist_ok=True)
-            target = pick.resolve()
-            (state_dir / "path.txt").write_text(str(target) + "\n")
+            dest = state_dir / target.name
+            if not dest.exists() or dest.read_bytes() != target.read_bytes():
+                import shutil
+                shutil.copy2(str(target), str(dest))
+            (state_dir / "path.txt").write_text(str(dest) + "\n")
             cur = state_dir / "current"
             if cur.is_symlink() or cur.exists():
                 cur.unlink()
-            cur.symlink_to(target)
-            print(f"noctalia-sync: wallpaper → {target}")
+            cur.symlink_to(dest)
+            # Tell Noctalia to apply the wallpaper
+            import subprocess
+            subprocess.run(["noctalia", "msg", "wallpaper-set", str(dest)], check=False)
+            print(f"noctalia-sync: wallpaper → {dest}")
 
 print(f"noctalia-sync: synced theme '{theme_name}'")
 PYEOF
