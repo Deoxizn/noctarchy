@@ -515,9 +515,9 @@ if ! $DRY_RUN; then
   # Detect terminal for image protocol
   FF_TERMINAL_TYPE="small"
   if command -v ghostty &>/dev/null; then
-    FF_TERMINAL_TYPE="kitty"
+    FF_TERMINAL_TYPE="auto"
   elif command -v kitty &>/dev/null; then
-    FF_TERMINAL_TYPE="kitty"
+    FF_TERMINAL_TYPE="auto"
   elif command -v foot &>/dev/null; then
     FF_TERMINAL_TYPE="sixel"
   fi
@@ -545,7 +545,7 @@ if start >= 0:
             old_logo = text[start:i+1]
             break
 
-    if logo_type in ("sixel", "kitty"):
+    if logo_type in ("sixel", "auto"):
         new_logo = ('"logo": {\n'
                     f'    "type": "{logo_type}",\n'
                     '    "source": "~/.config/omarchy/branding/noctarchy.png",\n'

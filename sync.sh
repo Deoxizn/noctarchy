@@ -384,15 +384,15 @@ FF_STOCK="/etc/fastfetch/config.jsonc"
 info "Fastfetch branding:"
 FF_LOGO_SRC="$REPO_DIR/branding/noctarchy.png"
 
-# Detect terminal for image protocol
-FF_TERMINAL_TYPE="small"
-if command -v ghostty &>/dev/null; then
-  FF_TERMINAL_TYPE="kitty"
-elif command -v kitty &>/dev/null; then
-  FF_TERMINAL_TYPE="kitty"
-elif command -v foot &>/dev/null; then
-  FF_TERMINAL_TYPE="sixel"
-fi
+  # Detect terminal for image protocol
+  FF_TERMINAL_TYPE="small"
+  if command -v ghostty &>/dev/null; then
+    FF_TERMINAL_TYPE="auto"
+  elif command -v kitty &>/dev/null; then
+    FF_TERMINAL_TYPE="auto"
+  elif command -v foot &>/dev/null; then
+    FF_TERMINAL_TYPE="sixel"
+  fi
 
 if [[ -f $FF_DIR/config.jsonc ]] && [[ -f $FF_STOCK ]]; then
   if ! $DRY_RUN; then
@@ -425,7 +425,7 @@ if start >= 0:
             old_logo = text[start:i+1]
             break
 
-    if logo_type in ("sixel", "kitty"):
+    if logo_type in ("sixel", "auto"):
         new_logo = ('"logo": {\n'
                     f'    "type": "{logo_type}",\n'
                     '    "source": "~/.config/omarchy/branding/noctarchy.png",\n'
