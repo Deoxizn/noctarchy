@@ -1,0 +1,68 @@
+#!/bin/bash
+# noctarchy:themes-list=theme-browser
+# noctarchy:summary=Switch Omarchy themes via a themed fuzzel menu with preview images
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+state_dir="${XDG_STATE_HOME:-$HOME/.local/state}"
+cache_dir="${XDG_CACHE_HOME:-$HOME/.cache}/omarchy/theme-selector/previews"
+mkdir -p "$cache_dir"
+
+export OMARCHY_PATH="${OMARCHY_PATH:-/usr/share/omarchy}"
+
+current=$(cat "$state_dir/omarchy/current/theme.name" 2>/dev/null |
+  sed -E 's/(^|-)([a-z])/\1\u\2/g; s/-/ /g')
+
+find_preview() {
+  local name=$1 dir ext src base theme_path
+
+  dir=$(printf '%s' "$name" | tr '[:upper:]' '[:lower:]' | tr ' ' '-')
+
+  for ext in png jpg jpeg webp gif bmp; do
+    [[ -e $cache_dir/$dir.$ext ]] && { printf '%s\n' "$cache_dir/$dir.$ext"; return; }
+  done
+
+  theme_path=""
+  for base in "$HOME/.config/omarchy/themes" "$OMARCHY_PATH/themes"; do
+    [[ -d $base/$dir ]] && { theme_path=$base/$dir; break; }
+  done
+  [[ -n $theme_path ]] || return 0
+
+  src=""
+  for ext in png jpg jpeg webp gif bmp; do
+    [[ -f $theme_path/preview.$ext ]] && { src=$theme_path/preview.$ext; break; }
+  done
+
+  if [[ -z $src && -d $theme_path/backgrounds ]]; then
+    src=$(find -L "$theme_path/backgrounds" -maxdepth 1 -type f \
+      \( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' -o -iname '*.gif' -o -iname '*.bmp' -o -iname '*.webp' \) |
+      sort | head -n 1)
+  fi
+  [[ -n $src ]] || return 0
+
+  ext=${src##*.}
+  ln -s "$src" "$cache_dir/$dir.${ext,,}" 2>/dev/null
+  printf '%s\n' "$cache_dir/$dir.${ext,,}"
+}
+
+choice=$(
+  omarchy theme list | while read -r name; do
+    marker=""
+    [[ $name == "$current" ]] && marker="▶ "
+    if preview=$(find_preview "$name") && [[ -n $preview ]]; then
+      printf '%s%s\0icon\x1f%s\n' "$marker" "$name" "$preview"
+    else
+      printf '%s%s\n' "$marker" "$name"
+    fi
+  done |
+    "$SCRIPT_DIR/noctarchy-fuzzel" --dmenu --width=44 --lines=5 \
+      --line-height=150 --horizontal-pad=12 --vertical-pad=6 \
+      --hide-prompt
+) || exec "$SCRIPT_DIR/noctarchy-themes"
+
+theme=$(printf '%s' "$choice" | sed -E 's/icon\x1f.*//')
+theme=${theme#▶ }
+[[ -n $theme ]] || exit 0
+
+nohup omarchy-theme-set "$theme" >/dev/null 2>&1 &

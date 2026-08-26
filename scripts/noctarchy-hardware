@@ -25,7 +25,7 @@ add 'Hybrid GPU'     omarchy-hw-hybrid-gpu    "$SCRIPT_DIR/noctarchy-terminal" o
 choice=$(
   printf '%s' "$menu" |
     "$SCRIPT_DIR/noctarchy-fuzzel" --dmenu --prompt='Hardware: ' --width=26 --lines=${#cmd_for[@]}
-) || exit 0
+) || exec "$SCRIPT_DIR/noctarchy-setup"
 
 cmd=${cmd_for[$choice]:-}
 [[ -n $cmd ]] && eval exec "$cmd"

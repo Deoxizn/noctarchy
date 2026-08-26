@@ -11,7 +11,7 @@ entries=('DNS >')
 choice=$(
   printf '%s\n' "${entries[@]}" |
     "$SCRIPT_DIR/noctarchy-fuzzel" --dmenu --prompt='Network: ' --width=26 --lines=${#entries[@]}
-) || exit 0
+) || exec "$SCRIPT_DIR/noctarchy-setup"
 choice=${choice%' >'}
 
 case "$choice" in
@@ -26,7 +26,7 @@ pick=$(
   printf '%s\n' DHCP Cloudflare Google Custom |
     awk -v cur="$current" '$0 == cur { print "✓ " $0; next } { print }' |
     "$SCRIPT_DIR/noctarchy-fuzzel" --dmenu --prompt='DNS: ' --width=22 --lines=4
-) || exit 0
+) || exec "$SCRIPT_DIR/noctarchy-network"
 
 provider=${pick#✓ }
 [[ -n $provider ]] || exit 0

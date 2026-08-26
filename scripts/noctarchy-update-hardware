@@ -12,7 +12,7 @@ choice=$(
     'Bluetooth' \
     'Trackpad' |
     "$SCRIPT_DIR/noctarchy-fuzzel" --dmenu --prompt='Restart: ' --width=26 --lines=4
-) || exit 0
+) || exec "$SCRIPT_DIR/noctarchy-update"
 
 case "$choice" in
   Audio)     exec "$SCRIPT_DIR/noctarchy-terminal" omarchy-restart-audio ;;

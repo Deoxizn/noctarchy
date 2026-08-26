@@ -12,7 +12,7 @@ choice=$(
     'Terminal' \
     'Agent' |
     "$SCRIPT_DIR/noctarchy-fuzzel" --dmenu --prompt='Defaults: ' --width=24 --lines=4
-) || exit 0
+) || exec "$SCRIPT_DIR/noctarchy-setup"
 
 case "$choice" in
   Browser)  type="browser" ;;
@@ -79,7 +79,7 @@ max_lines=$(( ${#entries[@]} < 9 ? ${#entries[@]} : 9 ))
 pick_choice=$(
   printf '%s' "$menu" |
     "$SCRIPT_DIR/noctarchy-fuzzel" --dmenu --prompt="${type^}: " --width=26 --lines=$max_lines
-) || exit 0
+) || exec "$SCRIPT_DIR/noctarchy-defaults"
 
 [[ -n $pick_choice ]] || exit 0
 pick=${pick_choice#✓ }

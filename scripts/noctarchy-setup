@@ -12,7 +12,7 @@ choice=$(
     'Network >' \
     'Security >' |
     "$SCRIPT_DIR/noctarchy-fuzzel" --dmenu --prompt='Setup: ' --width=26 --lines=4
-) || exit 0
+) || exec "$SCRIPT_DIR/noctarchy-menu"
 choice=${choice%' >'}
 
 case "$choice" in

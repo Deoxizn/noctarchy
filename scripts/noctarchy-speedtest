@@ -11,7 +11,7 @@ choice=$(
     'Network upload' \
     'Disk' |
     "$SCRIPT_DIR/noctarchy-fuzzel" --dmenu --prompt='Speed test: ' --width=26 --lines=3
-) || exit 0
+) || exec "$SCRIPT_DIR/noctarchy-menu"
 
 case "$choice" in
   "Network download") exec "$SCRIPT_DIR/noctarchy-terminal" omarchy-network-speedtest down ;;

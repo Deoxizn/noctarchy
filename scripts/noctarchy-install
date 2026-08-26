@@ -11,7 +11,7 @@ choice=$(
     'AUR' \
     'Web App' |
     "$SCRIPT_DIR/noctarchy-fuzzel" --dmenu --prompt='Install: ' --width=26 --lines=3
-) || exit 0
+) || exec "$SCRIPT_DIR/noctarchy-packages"
 
 case "$choice" in
   Package)   exec omarchy-launch-or-focus-tui --app-id=TUI.float omarchy-pkg-install ;;

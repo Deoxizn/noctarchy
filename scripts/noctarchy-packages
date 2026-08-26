@@ -10,7 +10,7 @@ choice=$(
     'Install >' \
     'Remove >' |
     "$SCRIPT_DIR/noctarchy-fuzzel" --dmenu --prompt='Packages: ' --width=26 --lines=2
-) || exit 0
+) || exec "$SCRIPT_DIR/noctarchy-menu"
 choice=${choice%' >'}
 
 case "$choice" in

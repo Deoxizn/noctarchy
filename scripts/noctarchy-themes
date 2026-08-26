@@ -1,74 +1,18 @@
 #!/bin/bash
-# noctarchy:themes=theme-switcher
-# noctarchy:summary=Switch themes and toggle bar color source
+# noctarchy:themes=theme-submenu
+# noctarchy:summary=Themes submenu: browse the theme list or install a new theme
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-NOCTALIA_CFG="$HOME/.config/noctalia/config.toml"
-
-STATE_DIR="${XDG_STATE_HOME:-$HOME/.local/state}/omarchy/themes"
-SYSTEM_DIR="/usr/share/omarchy/themes"
-
-declare -a THEMES=()
-
-if [[ -d "$STATE_DIR" ]]; then
-    while IFS= read -r dir; do
-        THEMES+=("$(basename "$dir")")
-    done < <(find "$STATE_DIR" -maxdepth 1 -mindepth 1 -type d 2>/dev/null | sort)
-fi
-
-if [[ -d "$SYSTEM_DIR" ]]; then
-    while IFS= read -r dir; do
-        local_name=$(basename "$dir")
-        already=false
-        for t in "${THEMES[@]}"; do
-            [[ "$t" == "$local_name" ]] && already=true && break
-        done
-        if ! $already; then
-            THEMES+=("$local_name")
-        fi
-    done < <(find "$SYSTEM_DIR" -maxdepth 1 -mindepth 1 -type d 2>/dev/null | sort)
-fi
-
-if [[ ${#THEMES[@]} -eq 0 ]]; then
-    notify-send "Noctarchy" "No themes found"
-    exit 1
-fi
-
-# Read current bar source
-current_source="custom"
-if [[ -f "$NOCTALIA_CFG" ]]; then
-    current_source=$(grep -oP 'source\s*=\s*"\K[^"]*' "$NOCTALIA_CFG" 2>/dev/null || echo "custom")
-fi
 
 choice=$(
   printf '%s\n' \
-    'Themes >' \
-    "Bar source: $current_source" |
-    "$SCRIPT_DIR/noctarchy-fuzzel" --dmenu --prompt='Theme: ' --width=32 --lines=2
-) || exit 0
+    'Theme list' \
+    'Install theme' |
+    "$SCRIPT_DIR/noctarchy-fuzzel" --dmenu --prompt='Themes: ' --width=26 --lines=2
+) || exec "$SCRIPT_DIR/noctarchy-menu"
 
 case "$choice" in
-    "Themes >")
-        selected=$(printf '%s\n' "${THEMES[@]}" | "$SCRIPT_DIR/noctarchy-fuzzel" --dmenu --prompt='Theme: ' --width=30 --lines=${#THEMES[@]})
-        [[ -z "$selected" ]] && exit 0
-        if command -v omarchy-theme-set &>/dev/null; then
-            omarchy-theme-set "$selected" && notify-send "Noctarchy" "Theme set to $selected" \
-                || notify-send "Noctarchy" "Failed to set theme"
-        else
-            notify-send "Noctarchy" "omarchy-theme-set not found"
-        fi
-        ;;
-    "Bar source: "*)
-        new_source="custom"
-        if [[ "$current_source" == "custom" ]]; then
-            new_source="wallpaper"
-        fi
-        if [[ -f "$NOCTALIA_CFG" ]]; then
-            sed -i "s/^source = \".*\"/source = \"$new_source\"/" "$NOCTALIA_CFG"
-        fi
-        systemctl --user restart noctalia 2>/dev/null && \
-            notify-send "Noctarchy" "Bar source: $new_source" || \
-            notify-send "Noctarchy" "Changed to $new_source — restart Noctalia to apply"
-        ;;
+  "Theme list")    exec "$SCRIPT_DIR/noctarchy-themes-list" ;;
+  "Install theme") exec omarchy-launch-or-focus-tui --app-id=TUI.float omarchy-theme-install ;;
 esac

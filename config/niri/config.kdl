@@ -178,7 +178,7 @@ binds {
     Mod+Space { spawn "noctalia" "ipc" "launcher" "toggle"; }
     Mod+Alt+Space { spawn "noctarchy-menu"; }
     Mod+K { spawn "noctarchy-keybinds"; }
-    Mod+Escape { spawn "noctarchy-power"; }
+    Mod+Shift+? { show-hotkey-overlay; }
 
     // ── Terminal ──
     Mod+T { spawn "xdg-terminal-exec"; }
