@@ -1,0 +1,7 @@
+[Desktop Entry]
+Name=Niri (uwsm-managed)
+Comment=A scrollable-tiling Wayland compositor managed by uwsm
+Exec=uwsm start -e -D Niri niri.desktop
+TryExec=uwsm
+Type=Application
+DesktopNames=Niri
