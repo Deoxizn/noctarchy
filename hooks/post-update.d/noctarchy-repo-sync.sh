@@ -9,7 +9,7 @@ STATE_FILE="$STATE_DIR/repo-dir"
 BAKED_DIR="@REPO_DIR@"
 XDG_DEFAULT="$HOME/.local/opt/noctarchy"
 LOG="$STATE_DIR/repo-sync.log"
-BRANCH="main"
+BRANCH="master"
 
 # Legacy clone locations to check for auto-migration (newest first)
 LEGACY_PATHS=(
