@@ -352,7 +352,14 @@ if ! $DRY_RUN; then
         run_sudo cp "$SDDM_SRC/$f" "$SDDM_DST/$f"
       fi
     done
-    for f in Main.qml bullet.png entry.png entry-failed.png lock.png lock-failed.png; do
+    # Main.qml from repo (has logo size cap); stock assets from omarchy
+    for f in Main.qml; do
+      src="$SDDM_SRC/$f"
+      if [[ -f "$src" ]] && ! cmp -s "$src" "$SDDM_DST/$f"; then
+        run_sudo cp "$src" "$SDDM_DST/$f"
+      fi
+    done
+    for f in bullet.png entry.png entry-failed.png lock.png lock-failed.png; do
       if [[ -f $OMARCHY_SDDM/$f ]] && ! cmp -s "$OMARCHY_SDDM/$f" "$SDDM_DST/$f"; then
         run_sudo cp "$OMARCHY_SDDM/$f" "$SDDM_DST/$f"
       fi
