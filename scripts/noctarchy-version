@@ -1,0 +1,38 @@
+#!/bin/bash
+# noctarchy:version=revision-printer
+# noctarchy:summary=Prints noctarchy revision as r<count>.<sha> for fastfetch OS line
+set -euo pipefail
+
+resolve_repo() {
+    # 1. State file
+    local state="${XDG_STATE_HOME:-$HOME/.local/state}/noctarchy/repo-path"
+    if [[ -f "$state" ]]; then
+        local path
+        path=$(<"$state")
+        [[ -d "$path/.git" ]] && echo "$path" && return
+    fi
+
+    # 2. Baked path (set at build time)
+    local baked="__NIGHTARCHY_REPO__"
+    [[ "$baked" != "__*__" && -d "$baked/.git" ]] && echo "$baked" && return
+
+    # 3. XDG default
+    local xdg="${XDG_DATA_HOME:-$HOME/.local/share}/noctarchy"
+    [[ -d "$xdg/.git" ]] && echo "$xdg" && return
+
+    # 4. Sibling of this script
+    local here
+    here="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    local parent
+    parent="$(dirname "$here")"
+    [[ -d "$parent/.git" ]] && echo "$parent" && return
+
+    return 1
+}
+
+repo=$(resolve_repo) || { echo "unknown"; exit 0; }
+
+count=$(git -C "$repo" rev-list --count HEAD 2>/dev/null || echo 0)
+sha=$(git -C "$repo" rev-parse --short HEAD 2>/dev/null || echo "unknown")
+
+echo "r${count}.${sha}"

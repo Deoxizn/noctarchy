@@ -1,0 +1,12 @@
+[Trigger]
+Operation = Install
+Operation = Upgrade
+Type = Package
+Target = omarchy-dev
+Target = omarchy
+Target = omarchy-settings-dev
+
+[Action]
+Description = noctarchy: re-apply Noctalia guard to omarchy-restart-shell
+When = PostTransaction
+Exec = /usr/local/bin/noctarchy-guard-restart-shell.sh

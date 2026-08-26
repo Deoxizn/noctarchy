@@ -284,11 +284,10 @@ info "Installing theme bridge hook..."
 HOOK_DIR="$HOME/.config/omarchy/hooks/theme-set.d"
 if ! $DRY_RUN; then
   mkdir -p "$HOOK_DIR"
-  # TODO: create noctalia-sync.sh bridge script
-  # cp "$REPO_DIR/hooks/theme-set.d/noctalia-sync.sh" "$HOOK_DIR/noctalia-sync.sh"
-  # chmod +x "$HOOK_DIR/noctalia-sync.sh"
+  cp "$REPO_DIR/hooks/theme-set.d/noctalia-sync.sh" "$HOOK_DIR/noctalia-sync.sh"
+  chmod +x "$HOOK_DIR/noctalia-sync.sh"
 fi
-ok "Theme bridge hook (placeholder — needs noctalia-sync.sh)"
+ok "Theme bridge hook installed"
 
 # ──────────────────────────────────────────────
 # Install auto-sync hook
@@ -296,14 +295,14 @@ ok "Theme bridge hook (placeholder — needs noctalia-sync.sh)"
 
 info "Installing omarchy-update auto-sync hook..."
 
+HOOK_DIR="$HOME/.config/omarchy/hooks/post-update.d"
 if ! $DRY_RUN; then
-  mkdir -p "$HOME/.config/omarchy/hooks/post-update.d"
-  # TODO: create noctarchy-repo-sync.sh
-  # sed "s|@REPO_DIR@|$REPO_DIR|" "$REPO_DIR/hooks/post-update.d/noctarchy-repo-sync.sh" \
-  #   > "$HOME/.config/omarchy/hooks/post-update.d/noctarchy-repo-sync.sh"
-  # chmod +x "$HOME/.config/omarchy/hooks/post-update.d/noctarchy-repo-sync.sh"
+  mkdir -p "$HOOK_DIR"
+  sed "s|@REPO_DIR@|$REPO_DIR|" "$REPO_DIR/hooks/post-update.d/noctarchy-repo-sync.sh" \
+    > "$HOOK_DIR/noctarchy-repo-sync.sh"
+  chmod +x "$HOOK_DIR/noctarchy-repo-sync.sh"
 fi
-ok "Auto-sync hook (placeholder — needs hook script)"
+ok "Auto-sync hook installed"
 
 # ──────────────────────────────────────────────
 # Write state file
@@ -335,8 +334,12 @@ ok "noctarchy menus installed"
 
 info "Syncing current theme to Noctalia..."
 
-# TODO: implement theme sync
-ok "Theme sync (placeholder — needs noctalia-sync.sh)"
+if ! $DRY_RUN && [[ -x "$HOME/.config/omarchy/hooks/theme-set.d/noctalia-sync.sh" ]]; then
+  "$HOME/.config/omarchy/hooks/theme-set.d/noctalia-sync.sh"
+  ok "Theme synced to Noctalia"
+else
+  ok "Theme sync (noctalia-sync.sh not installed yet — run sync.sh after)"
+fi
 
 # ──────────────────────────────────────────────
 # Summary

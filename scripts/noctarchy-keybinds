@@ -1,0 +1,55 @@
+#!/bin/bash
+# noctarchy:keybinds=searchable-list
+# noctarchy:summary=Searchable keybinding reference from niri config
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+NIRI_CONFIG="${XDG_CONFIG_HOME:-$HOME/.config}/niri/config.kdl"
+
+# Fallback hardcoded main binds
+declare -A BINDS=(
+    ["Super+Return"]="Open terminal"
+    ["Super+D"]="Open launcher"
+    ["Super+Q"]="Close window"
+    ["Super+Arrow keys"]="Move focus"
+    ["Super+Shift+Arrow keys"]="Move window"
+    ["Super+1-9"]="Switch to workspace"
+    ["Super+Shift+1-9"]="Move window to workspace"
+    ["Super+F"]="Fullscreen"
+    ["Super+Shift+F"]="Floating toggle"
+    ["Super+E"]="File manager"
+    ["Super+P"]="Power menu"
+    ["Super+R"]="Resize mode"
+    ["Super+Escape"]="Session menu"
+)
+
+parse_kdl_binds() {
+    local line
+    local key
+    local desc
+    local binds_found=0
+
+    while IFS= read -r line; do
+        # Match lines like: Mod+Key { action; }
+        if [[ "$line" =~ ^[[:space:]]*(Mod|Super)\+[^\{]+\{ ]]; then
+            key=$(echo "$line" | sed 's/[[:space:]]*Mod+/Super+/' | sed 's/[[:space:]]*\{.*//' | xargs)
+            desc=$(echo "$line" | grep -oP '(?<=//)[^\n]+' | head -1 | xargs)
+            [[ -n "$desc" ]] && BINDS["$key"]="$desc"
+            ((binds_found++)) || true
+        fi
+    done < "$NIRI_CONFIG"
+
+    return $binds_found
+}
+
+if [[ -f "$NIRI_CONFIG" ]]; then
+    parse_kdl_binds || true
+fi
+
+output=""
+for key in $(echo "${!BINDS[@]}" | tr ' ' '\n' | sort); do
+    output+="${key} — ${BINDS[$key]}"$'\n'
+done
+
+echo -n "$output" | "$SCRIPT_DIR/noctarchy-fuzzel" --dmenu --prompt="Keybinds: " --width=48

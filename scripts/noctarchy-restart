@@ -1,0 +1,28 @@
+#!/bin/bash
+# noctarchy:restart=session-restart-menu
+# noctarchy:summary=Restart menu — reload niri, restart noctalia, refresh theme
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+choice=$(printf '%s\n' \
+    "Reload Niri" \
+    "Restart Noctalia" \
+    "Refresh theme" | "$SCRIPT_DIR/noctarchy-fuzzel" --dmenu --prompt="Restart: ")
+
+[[ -z "$choice" ]] && exit 0
+
+case "$choice" in
+    "Reload Niri")
+        niri msg action load-config-file 2>/dev/null && notify-send "Noctarchy" "Niri config reloaded" \
+            || notify-send "Noctarchy" "Failed to reload Niri config"
+        ;;
+    "Restart Noctalia")
+        systemctl --user restart noctalia 2>/dev/null && notify-send "Noctarchy" "Noctalia restarted" \
+            || notify-send "Noctarchy" "Failed to restart Noctalia"
+        ;;
+    "Refresh theme")
+        omarchy-theme-refresh 2>/dev/null && notify-send "Noctarchy" "Theme refreshed" \
+            || notify-send "Noctarchy" "Failed to refresh theme"
+        ;;
+esac

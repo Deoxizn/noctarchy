@@ -1,0 +1,34 @@
+#!/bin/bash
+# noctarchy:config=editor-launcher
+# noctarchy:summary=Open Noctarchy/Niri config in default editor
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+NIRI_CONFIG="${XDG_CONFIG_HOME:-$HOME/.config}/niri/config.kdl"
+NOCTALIA_CONFIG="${XDG_CONFIG_HOME:-$HOME/.config}/noctalia/config.toml"
+
+choice=$(printf '%s\n' \
+    "Niri config (config.kdl)" \
+    "Noctalia config (config.toml)" | "$SCRIPT_DIR/noctarchy-fuzzel" --dmenu --prompt="Config: ")
+
+[[ -z "$choice" ]] && exit 0
+
+EDITOR="${EDITOR:-}"
+if [[ -z "$EDITOR" ]]; then
+    for cmd in code nano vim; do
+        if command -v "$cmd" &>/dev/null; then
+            EDITOR="$cmd"
+            break
+        fi
+    done
+fi
+
+case "$choice" in
+    "Niri config (config.kdl)")
+        exec "$EDITOR" "$NIRI_CONFIG"
+        ;;
+    "Noctalia config (config.toml)")
+        exec "$EDITOR" "$NOCTALIA_CONFIG"
+        ;;
+esac

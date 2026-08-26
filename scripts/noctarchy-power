@@ -1,0 +1,38 @@
+#!/bin/bash
+# noctarchy:power=session-power-menu
+# noctarchy:summary=Power menu — lock, logout, suspend, hibernate, reboot, shutdown
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+choice=$(printf '%s\n' \
+    "Screensaver" \
+    "Lock" \
+    "Logout" \
+    "Suspend" \
+    "Hibernate" \
+    "Reboot" \
+    "Shutdown" | "$SCRIPT_DIR/noctarchy-fuzzel" --dmenu --prompt="Power: ")
+
+[[ -z "$choice" ]] && exit 0
+
+confirm() {
+    local action="$1"
+    local result
+    result=$(printf '%s\n' Confirm Cancel | "$SCRIPT_DIR/noctarchy-fuzzel" --dmenu --prompt="$action: ")
+    [[ "$result" == "Confirm" ]]
+}
+
+do_action() {
+    case "$choice" in
+        Screensaver)  hyprctl dispatch dpms off 2>/dev/null || true ;;
+        Lock)         niri msg action lock 2>/dev/null || loginctl lock-session ;;
+        Logout)       omarchy-system-logout ;;
+        Suspend)      systemctl suspend ;;
+        Hibernate)    systemctl hibernate ;;
+        Reboot)       confirm "Reboot" && omarchy-system-reboot ;;
+        Shutdown)     confirm "Shutdown" && omarchy-system-shutdown ;;
+    esac
+}
+
+do_action

@@ -1,0 +1,46 @@
+#!/bin/bash
+# noctarchy:themes=theme-switcher
+# noctarchy:summary=Switch themes via omarchy-theme-set with fuzzel selector
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+STATE_DIR="${XDG_STATE_HOME:-$HOME/.local/state}/omarchy/themes"
+SYSTEM_DIR="/usr/share/omarchy/themes"
+
+declare -a THEMES=()
+
+if [[ -d "$STATE_DIR" ]]; then
+    while IFS= read -r dir; do
+        THEMES+=("$(basename "$dir")")
+    done < <(find "$STATE_DIR" -maxdepth 1 -mindepth 1 -type d 2>/dev/null | sort)
+fi
+
+if [[ -d "$SYSTEM_DIR" ]]; then
+    while IFS= read -r dir; do
+        local_name=$(basename "$dir")
+        already=false
+        for t in "${THEMES[@]}"; do
+            [[ "$t" == "$local_name" ]] && already=true && break
+        done
+        if ! $already; then
+            THEMES+=("$local_name")
+        fi
+    done < <(find "$SYSTEM_DIR" -maxdepth 1 -mindepth 1 -type d 2>/dev/null | sort)
+fi
+
+if [[ ${#THEMES[@]} -eq 0 ]]; then
+    notify-send "Noctarchy" "No themes found"
+    exit 1
+fi
+
+selected=$(printf '%s\n' "${THEMES[@]}" | "$SCRIPT_DIR/noctarchy-fuzzel" --dmenu --prompt="Theme: ")
+
+[[ -z "$selected" ]] && exit 0
+
+if command -v omarchy-theme-set &>/dev/null; then
+    omarchy-theme-set "$selected" && notify-send "Noctarchy" "Theme set to $selected" \
+        || notify-send "Noctarchy" "Failed to set theme"
+else
+    notify-send "Noctarchy" "omarchy-theme-set not found"
+fi

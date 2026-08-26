@@ -1,0 +1,32 @@
+#!/bin/bash
+# noctarchy:terminal=floating-runner
+# noctarchy:summary=Run a command in a floating terminal with uniform app-id
+set -euo pipefail
+
+APP_ID="noctarchy-terminal"
+TERM_CMD=""
+
+for cmd in alacritty foot kitty ghostty; do
+    if command -v "$cmd" &>/dev/null; then
+        TERM_CMD="$cmd"
+        break
+    fi
+done
+
+if [[ -z "$TERM_CMD" ]]; then
+    notify-send "Noctarchy" "No supported terminal found"
+    exit 1
+fi
+
+if [[ $# -gt 0 ]]; then
+    exec "$TERM_CMD" --app-id "$APP_ID" "$@"
+fi
+
+# No args: open interactive shell
+case "$TERM_CMD" in
+    alacritty) exec alacritty --app-id "$APP_ID" -e "$SHELL" ;;
+    foot)      exec foot --app-id "$APP_ID" "$SHELL" ;;
+    kitty)     exec kitty --app-id "$APP_ID" "$SHELL" ;;
+    ghostty)   exec ghostty --app-id="$APP_ID" ;;
+    *)         exec "$TERM_CMD" ;;
+esac

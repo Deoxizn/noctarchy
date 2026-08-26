@@ -1,0 +1,38 @@
+#!/bin/bash
+# noctarchy:update=system-updater
+# noctarchy:summary=System update — omarchy-update + noctarchy repo check
+set -euo pipefail
+
+notify() {
+    notify-send "Noctarchy Update" "$1"
+}
+
+notify "Starting system update..."
+
+# Run omarchy-update if available
+if command -v omarchy-update &>/dev/null; then
+    omarchy-update || notify "omarchy-update encountered errors"
+fi
+
+# Check noctarchy repo for updates
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_DIR="$(dirname "$SCRIPT_DIR")"
+
+if [[ -d "$REPO_DIR/.git" ]]; then
+    git -C "$REPO_DIR" fetch --quiet 2>/dev/null || true
+    LOCAL=$(git -C "$REPO_DIR" rev-parse HEAD)
+    REMOTE=$(git -C "$REPO_DIR" rev-parse '@{u}' 2>/dev/null || echo "$LOCAL")
+
+    if [[ "$LOCAL" != "$REMOTE" ]]; then
+        result=$(printf '%s\n' "Pull now" "Later" | "$(dirname "$SCRIPT_DIR")/scripts/noctarchy-fuzzel" \
+            --dmenu --prompt="Noctarchy update available: ")
+        if [[ "$result" == "Pull now" ]]; then
+            git -C "$REPO_DIR" pull --rebase && notify "Noctarchy updated" \
+                || notify "Failed to pull Noctarchy update"
+        fi
+    else
+        notify "Noctarchy is up to date"
+    fi
+fi
+
+notify "Update complete"

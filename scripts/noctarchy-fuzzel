@@ -1,0 +1,54 @@
+#!/bin/bash
+# noctarchy:fuzzel=wrapper:shared-theming
+# noctarchy:summary=Shared fuzzel wrapper with Noctalia theme colors
+# noctarchy:internal=true
+set -euo pipefail
+
+CONFIG="$HOME/.config/noctalia/config.toml"
+
+# Defaults — dark palette matching Noctalia's typical night aesthetic
+bg_color="1a1b26cc"
+text_color="c0caf5ff"
+match_color="7aa2f7ff"
+sel_bg_color="33467cdd"
+sel_text_color="c0caf5ff"
+border_color="7aa2f7ff"
+
+# Parse Noctalia config.toml for override colors
+if [[ -f "$CONFIG" ]]; then
+    while IFS='=' read -r key value; do
+        key=$(echo "$key" | xargs)
+        value=$(echo "$value" | tr -d '"' | xargs)
+        case "$key" in
+            bg_color)       bg_color="${value}cc" ;;
+            text_color)     text_color="${value}ff" ;;
+            accent_color)   match_color="${value}ff"; sel_bg_color="${value}dd" ;;
+            border_color)   border_color="${value}ff" ;;
+        esac
+    done < <(grep -E '^\s*(bg_color|text_color|accent_color|border_color)\s*=' "$CONFIG")
+fi
+
+# Parse optional hex to rgba if needed (simple #RRGGBB → add alpha)
+add_alpha() {
+    local color="$1" alpha="$2"
+    if [[ "$color" == \#* ]]; then
+        echo "${color}${alpha}"
+    else
+        echo "$color"
+    fi
+}
+
+bg_color=$(add_alpha "$bg_color" "cc")
+text_color=$(add_alpha "$text_color" "ff")
+match_color=$(add_alpha "$match_color" "ff")
+sel_bg_color=$(add_alpha "$sel_bg_color" "dd")
+sel_text_color=$(add_alpha "$sel_text_color" "ff")
+border_color=$(add_alpha "$border_color" "ff")
+
+exec fuzzel \
+    --font="JetBrainsMono Nerd Font:size=11" \
+    --color="${bg_color},${text_color},${match_color},${sel_bg_color},${sel_text_color}" \
+    --border-color="${border_color}" \
+    --border-width=2 \
+    --inner-border-width=1 \
+    "$@"

@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Noctarchy — Night Rule</title>
+  <meta name="description" content="Niri + Noctalia on Omarchy. A scrollable-tiling shell replacement.">
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="../branding/noctarchy.png" type="image/png">
+</head>
+<body>
+
+  <header class="hero">
+    <img src="../branding/noctarchy.png" alt="Noctarchy" class="logo">
+    <h1>Noctarchy</h1>
+    <p class="tagline">Night Rule — Niri + Noctalia on Omarchy</p>
+    <div class="hero-links">
+      <a href="#install">Install</a>
+      <a href="https://github.com/deoxizn/noctarchy">GitHub</a>
+    </div>
+  </header>
+
+  <main>
+
+    <section id="what">
+      <h2>What is it?</h2>
+      <p>
+        A shell replacement for Omarchy. It swaps
+        <span class="strong-pink">Hyprland</span> and
+        <span class="strong-pink">omarchy-shell</span> for
+        <span class="strong-blue">Niri</span> (scrollable-tiling Wayland
+        compositor) and <span class="strong-green">Noctalia</span> (native
+        C++23 desktop shell). Different paradigm, lighter footprint, same
+        theme system.
+      </p>
+      <p>
+        This is not a theme or a plugin — it is a full shell swap. Expect
+        stock Omarchy to <em>not</em> behave stock after installing.
+        <a href="https://github.com/deoxizn/noctarchy#read-this-first">Read
+        before installing</a>.
+      </p>
+    </section>
+
+    <section id="install">
+      <h2>Install</h2>
+      <pre><code>git clone https://github.com/deoxizn/noctarchy.git ~/.local/opt/noctarchy
+cd ~/.local/opt/noctarchy
+./install.sh</code></pre>
+      <p class="note">
+        Add <code>-y</code> to skip prompts, or <code>--dry-run</code> to
+        preview without touching anything.
+      </p>
+    </section>
+
+    <section id="keybindings">
+      <h2>Keybindings</h2>
+      <table>
+        <thead>
+          <tr><th>Binding</th><th>Action</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>SUPER+D</code></td><td>Noctalia launcher</td></tr>
+          <tr><td><code>SUPER+Alt+Space</code></td><td>Noctarchy root menu</td></tr>
+          <tr><td><code>SUPER+T</code></td><td>Terminal</td></tr>
+          <tr><td><code>SUPER+Q</code></td><td>Close window</td></tr>
+          <tr><td><code>SUPER+Ctrl+L</code></td><td>Lock screen</td></tr>
+          <tr><td><code>SUPER+Escape</code></td><td>Power menu</td></tr>
+          <tr><td><code>SUPER+K</code></td><td>Keybinding list</td></tr>
+          <tr><td><code>SUPER+O</code></td><td>Overview</td></tr>
+          <tr><td><code>SUPER+1-9</code></td><td>Focus workspace</td></tr>
+          <tr><td><code>SUPER+Shift+1-9</code></td><td>Move to workspace</td></tr>
+          <tr><td><code>Media keys</code></td><td>Play/pause, next, previous — any MPRIS player</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="compat">
+      <h2>Compatibility</h2>
+      <table>
+        <thead>
+          <tr><th>Stock Omarchy</th><th>In Noctarchy</th><th>Notes</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>omarchy-shell (bar, notifs, OSD)</td>
+            <td class="removed">Removed</td>
+            <td>Noctalia provides all three</td>
+          </tr>
+          <tr>
+            <td>omarchy-shell menus + lock screen</td>
+            <td class="removed">Removed</td>
+            <td>Fuzzel suite + Noctalia lock</td>
+          </tr>
+          <tr>
+            <td>Hyprland config (Lua)</td>
+            <td class="removed">Removed</td>
+            <td>Niri KDL config replaces it</td>
+          </tr>
+          <tr>
+            <td>Media / clipboard / emoji keys</td>
+            <td class="changed">Rebound</td>
+            <td>noctarchy-media + Noctalia clipboard</td>
+          </tr>
+          <tr>
+            <td>Theme switching</td>
+            <td class="unchanged">Unchanged</td>
+            <td>Theme bridge hook maps colors into Noctalia</td>
+          </tr>
+          <tr>
+            <td>Window management</td>
+            <td class="changed">Changed</td>
+            <td>Niri scrollable tiling replaces dwindle/master</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="credits">
+      <h2>Credits</h2>
+      <ul>
+        <li><a href="https://github.com/basecamp/omarchy">Omarchy</a> — window manager, theme system, keybindings</li>
+        <li><a href="https://github.com/niri-wm/niri">Niri</a> — scrollable-tiling Wayland compositor</li>
+        <li><a href="https://github.com/noctalia-dev/noctalia">Noctalia</a> — desktop shell, lock screen, launcher</li>
+        <li><a href="https://github.com/deoxizn/omartia-dots-remux">Stellarchy</a> — architecture inspiration</li>
+      </ul>
+    </section>
+
+  </main>
+
+  <footer>
+    <p>
+      <a href="https://github.com/deoxizn/noctarchy">GitHub</a>
+      &middot;
+      <a href="https://noctarchy.dirty.pizza">noctarchy.dirty.pizza</a>
+    </p>
+  </footer>
+
+</body>
+</html>

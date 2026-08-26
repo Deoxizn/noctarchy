@@ -1,0 +1,43 @@
+#!/bin/bash
+# noctarchy:media=mpris-controls
+# noctarchy:summary=Universal MPRIS media controls via playerctl
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+if ! command -v playerctl &>/dev/null; then
+    notify-send "Noctarchy" "playerctl not installed"
+    exit 1
+fi
+
+player=$(playerctl --format '{{playerName}}' 2>/dev/null || true)
+if [[ -z "$player" ]]; then
+    notify-send "Noctarchy" "No active media player"
+    exit 0
+fi
+
+status=$(playerctl --format '{{status}}' 2>/dev/null || echo "Stopped")
+title=$(playerctl --format '{{title}}' 2>/dev/null || echo "Unknown")
+artist=$(playerctl --format '{{artist}}' 2>/dev/null || echo "")
+
+header="$player"
+[[ -n "$title" ]] && header+=" — $title"
+[[ -n "$artist" ]] && header+=" — $artist"
+
+if [[ "$status" == "Playing" ]]; then
+    options="Pause\nNext\nPrevious\nStop"
+else
+    options="Play\nNext\nPrevious\nStop"
+fi
+
+choice=$(echo -e "$options" | "$SCRIPT_DIR/noctarchy-fuzzel" --dmenu --prompt="$header: ")
+
+[[ -z "$choice" ]] && exit 0
+
+case "$choice" in
+    Play)     playerctl play ;;
+    Pause)    playerctl pause ;;
+    Next)     playerctl next ;;
+    Previous) playerctl previous ;;
+    Stop)     playerctl stop ;;
+esac

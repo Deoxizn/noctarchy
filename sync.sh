@@ -110,9 +110,8 @@ echo ""
 # ──────────────────────────────────────────────
 
 info "Theme bridge hook:"
-# TODO: copy_if_changed "$REPO_DIR/hooks/theme-set.d/noctalia-sync.sh" \
-#   "$HOME/.config/omarchy/hooks/theme-set.d/noctalia-sync.sh" "noctalia-sync.sh"
-ok "  (placeholder — needs noctalia-sync.sh)"
+copy_if_changed "$REPO_DIR/hooks/theme-set.d/noctalia-sync.sh" \
+  "$HOME/.config/omarchy/hooks/theme-set.d/noctalia-sync.sh" "noctalia-sync.sh"
 
 echo ""
 
@@ -121,8 +120,21 @@ echo ""
 # ──────────────────────────────────────────────
 
 info "Auto-sync hook:"
-# TODO: install post-update hook
-ok "  (placeholder — needs hook script)"
+if [[ -f "$REPO_DIR/hooks/post-update.d/noctarchy-repo-sync.sh" ]]; then
+  HOOK_DST="$HOME/.config/omarchy/hooks/post-update.d/noctarchy-repo-sync.sh"
+  sed "s|@REPO_DIR@|$REPO_DIR|" "$REPO_DIR/hooks/post-update.d/noctarchy-repo-sync.sh" > "$HOOK_DST.tmp"
+  if [[ ! -f "$HOOK_DST" ]] || ! cmp -s "$HOOK_DST.tmp" "$HOOK_DST"; then
+    mv "$HOOK_DST.tmp" "$HOOK_DST"
+    chmod +x "$HOOK_DST"
+    ok "  installed noctarchy-repo-sync.sh"
+  else
+    rm -f "$HOOK_DST.tmp"
+    ok "  noctarchy-repo-sync.sh up to date"
+  fi
+  changed=$((changed+1))
+else
+  warn "  repo hook not found — skipping"
+fi
 
 # ──────────────────────────────────────────────
 # Niri config — merge from repo
@@ -214,8 +226,20 @@ info "Fastfetch branding:"
 if [[ -f $FF_DIR/config.jsonc ]] && [[ -f /etc/fastfetch/config.jsonc ]] &&
    cmp -s <(ff_debrand "$FF_DIR/config.jsonc") <(ff_debrand /etc/fastfetch/config.jsonc); then
   if ! $DRY_RUN; then
-    # TODO: brand_fastfetch for noctarchy
-    ok "  (placeholder — needs brand_fastfetch)"
+    cp /etc/fastfetch/config.jsonc "$FF_DIR/config.jsonc"
+    # Patch the OS line to show Noctarchy version
+    python3 - "$FF_DIR/config.jsonc" << 'FFPY'
+import sys, re
+path = sys.argv[1]
+with open(path) as f:
+    text = f.read()
+pattern = r'"text":\s*"version=\$\(omarchy-version\).*"'
+replacement = r'"text": "rev=$(noctarchy-version 2>/dev/null); ver=$(omarchy-version); echo \"Noctarchy${rev:+ $rev} (Omarchy $ver)\""'
+text = re.sub(pattern, replacement, text)
+with open(path, "w") as f:
+    f.write(text)
+FFPY
+    ok "  branded fastfetch"
   fi
 else
   ok "  fastfetch config unchanged or custom — left untouched"
