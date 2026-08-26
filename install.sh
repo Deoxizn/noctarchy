@@ -329,6 +329,75 @@ fi
 ok "noctarchy menus installed"
 
 # ──────────────────────────────────────────────
+# SDDM greeter — noctarchy theme
+# ──────────────────────────────────────────────
+
+info "SDDM greeter..."
+SDDM_SRC="$REPO_DIR/branding/sddm-theme"
+SDDM_DST="/usr/share/sddm/themes/noctarchy"
+OMARCHY_SDDM="/usr/share/sddm/themes/omarchy"
+SDDM_CONF="/etc/sddm.conf.d/10-theme.conf"
+
+if ! $DRY_RUN; then
+  if [[ -d $OMARCHY_SDDM ]]; then
+    run_sudo mkdir -p "$SDDM_DST"
+    for f in logo.png metadata.desktop theme.conf; do
+      if [[ ! -f $SDDM_DST/$f ]] || ! cmp -s "$SDDM_SRC/$f" "$SDDM_DST/$f"; then
+        run_sudo cp "$SDDM_SRC/$f" "$SDDM_DST/$f"
+      fi
+    done
+    for f in Main.qml bullet.png entry.png entry-failed.png lock.png lock-failed.png; do
+      if [[ -f $OMARCHY_SDDM/$f ]] && ! cmp -s "$OMARCHY_SDDM/$f" "$SDDM_DST/$f"; then
+        run_sudo cp "$OMARCHY_SDDM/$f" "$SDDM_DST/$f"
+      fi
+    done
+    if [[ -f $SDDM_CONF ]] && grep -q '^Current=omarchy' "$SDDM_CONF"; then
+      run_sudo sed -i 's/^Current=.*/Current=noctarchy/' "$SDDM_CONF"
+    fi
+    ok "SDDM greeter: noctarchy theme active"
+  else
+    warn "  Omarchy SDDM theme not found — skipping (greeter stays stock)"
+  fi
+else
+  info "[dry-run] would install noctarchy SDDM greeter theme (+ switch Current= if stock)"
+fi
+
+# ──────────────────────────────────────────────
+# Plymouth splash — noctarchy theme
+# ──────────────────────────────────────────────
+
+info "Plymouth boot splash..."
+PLYMOUTH_SRC="$REPO_DIR/branding/plymouth"
+PLYMOUTH_DST="/usr/share/plymouth/themes/noctarchy"
+OMARCHY_PLY="/usr/share/plymouth/themes/omarchy"
+
+if ! $DRY_RUN; then
+  if [[ -d $OMARCHY_PLY ]]; then
+    run_sudo mkdir -p "$PLYMOUTH_DST"
+    for pair in "noctarchy-logo.png:logo.png" "noctarchy.plymouth:noctarchy.plymouth"; do
+      src="$PLYMOUTH_SRC/${pair%%:*}"
+      dst="$PLYMOUTH_DST/${pair##*:}"
+      if [[ ! -f $dst ]] || ! cmp -s "$src" "$dst"; then
+        run_sudo cp "$src" "$dst"
+      fi
+    done
+    for f in bullet.png entry.png lock.png progress_bar.png progress_box.png omarchy.script; do
+      if [[ -f $OMARCHY_PLY/$f ]] && ! cmp -s "$OMARCHY_PLY/$f" "$PLYMOUTH_DST/$f"; then
+        run_sudo cp "$OMARCHY_PLY/$f" "$PLYMOUTH_DST/$f"
+      fi
+    done
+    if ! grep -q '^Theme=noctarchy' /etc/plymouth/plymouthd.conf 2>/dev/null; then
+      run_sudo plymouth-set-default-theme noctarchy
+    fi
+    ok "Plymouth splash: noctarchy theme active"
+  else
+    warn "  Omarchy plymouth theme not found — skipping"
+  fi
+else
+  info "[dry-run] would install noctarchy plymouth splash theme"
+fi
+
+# ──────────────────────────────────────────────
 # Sync current theme
 # ──────────────────────────────────────────────
 

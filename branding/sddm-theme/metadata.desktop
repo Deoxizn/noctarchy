@@ -1,0 +1,7 @@
+[SddmGreeterTheme]
+Name=Noctarchy
+Description=Minimal terminal-style login theme matching the Noctarchy aesthetic
+Author=Omarchy
+Type=sddm-theme
+Version=1.0
+QtVersion=6

@@ -207,6 +207,93 @@ fi
 echo ""
 
 # ──────────────────────────────────────────────
+# SDDM greeter — noctarchy theme
+# ──────────────────────────────────────────────
+
+SDDM_SRC="$REPO_DIR/branding/sddm-theme"
+SDDM_DST="/usr/share/sddm/themes/noctarchy"
+OMARCHY_SDDM="/usr/share/sddm/themes/omarchy"
+SDDM_CONF="/etc/sddm.conf.d/10-theme.conf"
+
+info "SDDM greeter:"
+if [[ -d $OMARCHY_SDDM ]]; then
+  if ! $DRY_RUN; then
+    sudo mkdir -p "$SDDM_DST"
+    for f in logo.png metadata.desktop theme.conf; do
+      if [[ ! -f $SDDM_DST/$f ]] || ! cmp -s "$SDDM_SRC/$f" "$SDDM_DST/$f"; then
+        sudo cp "$SDDM_SRC/$f" "$SDDM_DST/$f"
+        ok "  updated $f"
+        changed=$((changed+1))
+      fi
+    done
+    for f in Main.qml bullet.png entry.png entry-failed.png lock.png lock-failed.png; do
+      if [[ -f $OMARCHY_SDDM/$f ]] && ! cmp -s "$OMARCHY_SDDM/$f" "$SDDM_DST/$f"; then
+        sudo cp "$OMARCHY_SDDM/$f" "$SDDM_DST/$f"
+        ok "  refreshed $f from omarchy"
+        changed=$((changed+1))
+      fi
+    done
+    if [[ -f $SDDM_CONF ]] && grep -q '^Current=omarchy' "$SDDM_CONF"; then
+      sudo sed -i 's/^Current=.*/Current=noctarchy/' "$SDDM_CONF"
+      ok "  switched SDDM Current= to noctarchy"
+      changed=$((changed+1))
+    fi
+  else
+    info "  [dry-run] would sync noctarchy SDDM theme"
+  fi
+else
+  ok "  Omarchy SDDM theme not found — skipping"
+fi
+
+echo ""
+
+# ──────────────────────────────────────────────
+# Plymouth splash — noctarchy theme
+# ──────────────────────────────────────────────
+
+info "Plymouth splash:"
+PLYMOUTH_SRC="$REPO_DIR/branding/plymouth"
+PLYMOUTH_DST="/usr/share/plymouth/themes/noctarchy"
+OMARCHY_PLY="/usr/share/plymouth/themes/omarchy"
+
+if [[ -d $OMARCHY_PLY ]]; then
+  if ! $DRY_RUN; then
+    NEEDS_INITRD=false
+    sudo mkdir -p "$PLYMOUTH_DST"
+    for pair in "noctarchy-logo.png:logo.png" "noctarchy.plymouth:noctarchy.plymouth"; do
+      src="$PLYMOUTH_SRC/${pair%%:*}"
+      dst="$PLYMOUTH_DST/${pair##*:}"
+      if [[ ! -f $dst ]] || ! cmp -s "$src" "$dst"; then
+        sudo cp "$src" "$dst"
+        NEEDS_INITRD=true
+        changed=$((changed+1))
+      fi
+    done
+    for f in bullet.png entry.png lock.png progress_bar.png progress_box.png omarchy.script; do
+      if [[ -f $OMARCHY_PLY/$f ]] && ! cmp -s "$OMARCHY_PLY/$f" "$PLYMOUTH_DST/$f"; then
+        sudo cp "$OMARCHY_PLY/$f" "$PLYMOUTH_DST/$f"
+        NEEDS_INITRD=true
+        changed=$((changed+1))
+      fi
+    done
+    if ! grep -q '^Theme=noctarchy' /etc/plymouth/plymouthd.conf 2>/dev/null; then
+      sudo plymouth-set-default-theme noctarchy
+      NEEDS_INITRD=true
+    fi
+    if [[ $NEEDS_INITRD == true ]]; then
+      ok "  rebuilding initramfs..."
+      sudo limine-mkinitcpio || warn "  limine-mkinitcpio failed — run manually before rebooting"
+    fi
+  else
+    info "  [dry-run] would sync noctarchy plymouth splash"
+  fi
+else
+  ok "  Omarchy plymouth theme not found — skipping"
+fi
+
+echo ""
+
+# ──────────────────────────────────────────────
 # Fastfetch branding
 # ──────────────────────────────────────────────
 
