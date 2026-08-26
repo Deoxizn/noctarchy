@@ -4,6 +4,7 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+NOCTALIA_CFG="$HOME/.config/noctalia/config.toml"
 
 STATE_DIR="${XDG_STATE_HOME:-$HOME/.local/state}/omarchy/themes"
 SYSTEM_DIR="/usr/share/omarchy/themes"
@@ -34,13 +35,41 @@ if [[ ${#THEMES[@]} -eq 0 ]]; then
     exit 1
 fi
 
-selected=$(printf '%s\n' "${THEMES[@]}" | "$SCRIPT_DIR/noctarchy-fuzzel" --dmenu --prompt='Theme: ' --width=30 --lines=${#THEMES[@]})
-
-[[ -z "$selected" ]] && exit 0
-
-if command -v omarchy-theme-set &>/dev/null; then
-    omarchy-theme-set "$selected" && notify-send "Noctarchy" "Theme set to $selected" \
-        || notify-send "Noctarchy" "Failed to set theme"
-else
-    notify-send "Noctarchy" "omarchy-theme-set not found"
+# Read current bar source
+current_source="custom"
+if [[ -f "$NOCTALIA_CFG" ]]; then
+    current_source=$(grep -oP 'source\s*=\s*"\K[^"]*' "$NOCTALIA_CFG" 2>/dev/null || echo "custom")
 fi
+
+choice=$(
+  printf '%s\n' \
+    'Themes >' \
+    "Bar source: $current_source" |
+    "$SCRIPT_DIR/noctarchy-fuzzel" --dmenu --prompt='Theme: ' --width=32 --lines=2
+) || exit 0
+
+case "$choice" in
+    "Themes >")
+        selected=$(printf '%s\n' "${THEMES[@]}" | "$SCRIPT_DIR/noctarchy-fuzzel" --dmenu --prompt='Theme: ' --width=30 --lines=${#THEMES[@]})
+        [[ -z "$selected" ]] && exit 0
+        if command -v omarchy-theme-set &>/dev/null; then
+            omarchy-theme-set "$selected" && notify-send "Noctarchy" "Theme set to $selected" \
+                || notify-send "Noctarchy" "Failed to set theme"
+        else
+            notify-send "Noctarchy" "omarchy-theme-set not found"
+        fi
+        ;;
+    "Bar source: "*)
+        new_source="custom"
+        if [[ "$current_source" == "custom" ]]; then
+            new_source="wallpaper"
+        fi
+        if [[ -f "$NOCTALIA_CFG" ]]; then
+            sed -i "s/^source = \".*\"/source = \"$new_source\"/" "$NOCTALIA_CFG"
+        fi
+        # Restart noctalia to apply
+        systemctl --user restart noctalia 2>/dev/null && \
+            notify-send "Noctarchy" "Bar source: $new_source" || \
+            notify-send "Noctarchy" "Changed to $new_source — restart Noctalia to apply"
+        ;;
+esac
