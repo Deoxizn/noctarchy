@@ -313,7 +313,9 @@ UWSM_SESSION_SRC="$REPO_DIR/branding/uwsm-sessions/00-niri-uwsm.desktop"
 
 info "UWSM session:"
 if [[ -f $UWSM_SESSION_SRC ]]; then
-  if ! $DRY_RUN; then
+  if ! sudo -n true 2>/dev/null; then
+    warn "  sudo not available — skipping"
+  elif ! $DRY_RUN; then
     sudo mkdir -p "$UWSM_SESSION_DIR"
     if ! cmp -s "$UWSM_SESSION_SRC" "$UWSM_SESSION_DIR/00-niri-uwsm.desktop"; then
       sudo cp "$UWSM_SESSION_SRC" "$UWSM_SESSION_DIR/00-niri-uwsm.desktop"
@@ -341,7 +343,9 @@ PLYMOUTH_DST="/usr/share/plymouth/themes/noctarchy"
 OMARCHY_PLY="/usr/share/plymouth/themes/omarchy"
 
 if [[ -d $OMARCHY_PLY ]]; then
-  if ! $DRY_RUN; then
+  if ! sudo -n true 2>/dev/null; then
+    warn "  sudo not available — skipping"
+  elif ! $DRY_RUN; then
     NEEDS_INITRD=false
     sudo mkdir -p "$PLYMOUTH_DST"
     for pair in "noctarchy-logo.png:logo.png" "noctarchy.plymouth:noctarchy.plymouth"; do
