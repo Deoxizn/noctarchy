@@ -186,7 +186,7 @@ binds {
 
     // ── Close & quit ──
     Mod+Q { close-window; }
-    Mod+Shift+E { quit; confirm = "Quit Niri?"; }
+    Mod+Shift+E { quit; confirm="Quit Niri?"; }
 
     // ── Focus (arrow keys) ──
     Mod+Left { focus-column-left; }
