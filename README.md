@@ -114,7 +114,7 @@ Use `./install.sh -y` to skip confirmation prompts, or `--dry-run` to preview ev
 - Own the idle/sleep stack: Noctalia's built-in idle handling replaces stock Omarchy's `omarchy-sleep-lock.service`
 - Apply Niri config patches idempotently ([`patches/`](patches/)) and install the omarchy-update guard (a libalpm hook re-applies it after every omarchy upgrade)
 - Install an auto-sync hook into omarchy-update's post-update path: every system update pulls this repo and re-runs `sync.sh` when new commits exist (logged to `~/.local/state/noctarchy/repo-sync.log`, desktop-notified on failure) — older installs catch up once with `git pull && ./sync.sh`, then it stays current on its own
-- Install the fuzzel menu suite + `noctarchy-media` (see [Menu suite](#menu-suite)) — seed the fastfetch OS line, deploy branding art
+- Install the fuzzel menu suite + `noctarchy-media` (see [Menu suite](#menu-suite)) — including System → Kernel (CachyOS opt-in + boot-entry repair) and System → Splash (adopt/refresh the boot splash) — seed the fastfetch OS line, deploy branding art
 - Sync your current theme
 - Run the session-start preflight, then auto-logout after 5s if every check passed (Ctrl+C cancels) — logout uses `omarchy-system-logout` (`uwsm stop`) so the session ends cleanly
 
@@ -191,12 +191,36 @@ The remux ships its own identity on top of Omarchy. What lands where:
 
 | Binding | Action |
 |---|---|
-| `SUPER+D` | Noctalia launcher |
+| `SUPER+Space` | Fuzzel launcher (quick) |
+| `SUPER+D` | Noctalia launcher (full) |
 | `SUPER+Alt+Space` | Noctarchy root menu |
-| `SUPER+Ctrl+L` | Lock via Noctalia |
-| `SUPER+Escape` | Power menu (confirm guard on reboot/shutdown) |
-| `Media keys` | Play/pause, next, previous — any MPRIS player via `noctarchy-media` |
+| `SUPER+Enter` | Terminal |
+| `SUPER+Shift+B` | Browser |
+| `SUPER+Shift+E` | Editor (nvim) |
+| `SUPER+Shift+F` | File manager |
 | `SUPER+K` | Keybinding list (fuzzel) |
+| `SUPER+Q` | Close window |
+| `SUPER+Shift+Q` | Power menu |
+| `SUPER+O` | Overview |
+| `SUPER+F` | Maximize column |
+| `SUPER+Ctrl+F` | Fullscreen window |
+| `SUPER+R` | Cycle column width |
+| `SUPER+Shift+R` | Tabbed display |
+| `SUPER+Shift+Space` | Toggle floating |
+| `SUPER+P` / `SUPER+Shift+P` | Focus floating / Focus tiling |
+| `SUPER+[ / ]` | Consume / expel from column |
+| `SUPER+H/J/K/L` or arrows | Focus left/down/up/right |
+| `SUPER+Ctrl+H/J/K/L` or arrows | Move window |
+| `SUPER+1-9` | Focus workspace |
+| `SUPER+Shift+1-9` | Move to workspace |
+| `SUPER+U/I` | Workspace down/up |
+| `SUPER+N` | Noctalia notifications |
+| `SUPER+Comma` | Clear notifications |
+| `SUPER+Ctrl+L` | Lock via Noctalia |
+| `SUPER+Ctrl+V` | Clipboard history (Noctalia) |
+| `SUPER+C/V/X` | Copy/paste/cut via wtype |
+| `Media keys` | Play/pause, next, previous — any MPRIS player |
+| `SUPER+Print` | Screenshot region to clipboard |
 
 All Niri keybindings are defined in `~/.config/niri/config.kdl`. Run
 `niri msg --json event-stream` to debug bindings live.
@@ -218,21 +242,47 @@ switch. Esc navigates back one menu level.
 
 | Script | Purpose |
 |---|---|
-| `noctarchy-menu` | Root menu (alphabetized): Packages, Restart, Setup, System, Themes, Trigger, Update |
+| `noctarchy-menu` | Root menu (alphabetized): Config, Packages, Restart, Setup, System, Themes, Trigger, Update |
 | `noctarchy-trigger` / `noctarchy-hardware` / `noctarchy-speedtest` | Hardware toggles gated on detected hardware (laptop display, hybrid GPU, touchpad...) + network/disk speed tests |
 | `noctarchy-setup` / `noctarchy-network` / `noctarchy-security` | DNS picker + Wi-Fi QR code, and security setup (fingerprint/FIDO2/sshd/sudo) |
-| `noctarchy-system` | Config editor, default app pickers |
+| `noctarchy-system` | Config editor, default app pickers, and the Kernel / Splash submenus |
+| `noctarchy-kernel` | Opt into a prebuilt CachyOS kernel (default/bore/eevdf/lts/rt-bore) via chaotic-aur; Limine `default_entry:` follows by name — plus boot-entry status & repair |
+| `noctarchy-splash` | Adopt or refresh the Noctarchy boot splash (verifies the theme is self-contained before any initramfs rebuild) |
 | `noctarchy-power` | Lock, logout, suspend, hibernate, reboot, shutdown (destructive actions require Confirm) |
-| `noctarchy-keybinds` | Searchable keybinding list that dispatches binds (`--menu` for Esc-back) |
-| `noctarchy-themes` / `noctarchy-themes-list` | Theme switcher with preview thumbnails + git theme install |
+| `noctarchy-keybinds` | Searchable keybinding list parsed from `config.kdl` — shows actual binds with descriptions |
+| `noctarchy-themes` / `noctarchy-themes-list` | Theme switcher with preview thumbnails (fuzzel icon protocol) + git theme install |
 | `noctarchy-pkgs` / `noctarchy-install` / `noctarchy-remove` | Packages → Install (package/AUR/web app) and Remove (package/web app/theme) submenus |
 | `noctarchy-update` | Noctarchy system update, channel switcher, extra themes, firmware |
-| `noctarchy-config` | Edit `~/.config/niri/config.kdl` and `~/.config/noctalia/config.toml` in your default editor |
+| `noctarchy-config` | Edit niri `config.kdl`, Noctalia `config.toml`, palettes, hooks, scripts |
 | `noctarchy-defaults` | Default browser/editor/terminal/agent pickers (includes installed beta/nightly browsers) |
 | `noctarchy-restart` | Reload Niri, restart Noctalia shell, refresh theme |
+| `noctarchy-terminal` | Runs a command in a floating TUI.float terminal with logo/done polish |
 | `noctarchy-media` | Universal MPRIS media control — targets whichever player is currently playing |
-| `noctarchy-fuzzel` | Shared fuzzel wrapper — reads colors from the Noctalia scheme |
+| `noctarchy-wifi-qr` | Renders the current Wi-Fi as a scannable QR in a floating terminal |
+| `noctarchy-update-hardware` | Restart audio/Wi-Fi/Bluetooth/trackpad services |
+| `noctarchy-fuzzel` | Shared fuzzel wrapper — reads colors from Noctalia's `config.toml` `[theming]` section |
 | `noctarchy-version` | Prints the dots revision (`r<count>.<sha>`) shown on the fastfetch OS line |
+
+### Niri-specific
+
+- **Scrollable tiling**: windows tile in horizontal columns that scroll, never
+  resize each other. `SUPER+[` consumes a window into the column, `SUPER+]`
+  expels it.
+- **Column presets**: `SUPER+R` cycles through column width presets (half,
+  three-quarters, full).
+- **Tabbed display**: `SUPER+Shift+R` toggles tabbed mode within a column.
+- **Overview**: `SUPER+O` shows all workspaces and windows in an overview grid.
+
+### Noctalia-specific
+
+- **Launcher**: `SUPER+D` opens Noctalia's full Material You launcher.
+- **Notifications**: `SUPER+N` toggles the notifications panel; `SUPER+Comma`
+  clears the active notification.
+- **Clipboard history**: `SUPER+Ctrl+V` opens the clipboard manager.
+- **Lock screen**: `SUPER+Ctrl+L` locks via Noctalia's built-in lock screen
+  (supports fingerprint via PAM).
+- **Theme toggle**: the themes menu lets you switch between palette-derived bar
+  colors (from `colors.toml`) and wallpaper-generated Material You colors.
 
 <br><br>
 
