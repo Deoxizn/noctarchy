@@ -181,11 +181,16 @@ binds {
     Mod+Escape { spawn "noctarchy-power"; }
 
     // ── Terminal ──
-    Mod+T { spawn "foot"; }
+    Mod+T { spawn "xdg-terminal-exec"; }
+
+    // ── Apps (matches Omarchy conventions) ──
+    Mod+Shift+T { spawn "xdg-terminal-exec"; }
+    Mod+Shift+B { spawn "xdg-open" "https://"; }
+    Mod+Shift+E { spawn "xdg-terminal-exec" "-e" "nvim"; }
+    Mod+Shift+F { spawn "nautilus"; }
 
     // ── Close & quit ──
     Mod+Q { close-window; }
-    Mod+Shift+E { quit; confirm="Quit Niri?"; }
 
     // ── Focus (arrow keys) ──
     Mod+Left { focus-column-left; }
@@ -244,7 +249,7 @@ binds {
     Mod+BracketLeft { consume-window-into-column; }
     Mod+BracketRight { expel-window-from-column; }
     Mod+F { maximize-column; }
-    Mod+Shift+F { fullscreen-window; }
+    Mod+Ctrl+F { fullscreen-window; }
     Mod+C { center-column; }
     Mod+R { switch-preset-column-width; }
     Mod+Shift+R { toggle-column-tabbed-display; }
@@ -252,7 +257,7 @@ binds {
     // ── Floating ──
     Mod+Shift+Space { toggle-window-floating; }
     Mod+P { focus-floating; }
-    Mod+Shift+F { focus-tiling; }
+    Mod+Shift+P { focus-tiling; }
 
     // ── Screenshots ──
     Mod+Print { spawn-sh "grim -g \"$(slurp)\" - | wl-copy"; }
