@@ -30,8 +30,8 @@ do_action() {
         Logout)       niri msg action quit ;;
         Suspend)      systemctl suspend ;;
         Hibernate)    systemctl hibernate ;;
-        Reboot)       confirm "Reboot" && systemctl reboot ;;
-        Shutdown)     confirm "Shutdown" && systemctl poweroff ;;
+        Reboot)       confirm "Reboot" && omarchy-system-reboot ;;
+        Shutdown)     confirm "Shutdown" && omarchy-system-shutdown ;;
     esac
 }
 
