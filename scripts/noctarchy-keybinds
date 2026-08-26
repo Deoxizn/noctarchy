@@ -4,38 +4,108 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-
 NIRI_CONFIG="${XDG_CONFIG_HOME:-$HOME/.config}/niri/config.kdl"
 
-# Fallback hardcoded main binds
-declare -A BINDS=(
-    ["Super+Return"]="Open terminal"
-    ["Super+D"]="Open launcher"
-    ["Super+Q"]="Close window"
-    ["Super+Arrow keys"]="Move focus"
-    ["Super+Shift+Arrow keys"]="Move window"
-    ["Super+1-9"]="Switch to workspace"
-    ["Super+Shift+1-9"]="Move window to workspace"
-    ["Super+F"]="Fullscreen"
-    ["Super+Shift+F"]="Floating toggle"
-    ["Super+E"]="File manager"
-    ["Super+P"]="Power menu"
-    ["Super+R"]="Resize mode"
-    ["Super+Escape"]="Session menu"
+declare -A DESCRIPTIONS=(
+    ["focus-column-left"]="Focus left"
+    ["focus-column-right"]="Focus right"
+    ["focus-window-down"]="Focus down"
+    ["focus-window-up"]="Focus up"
+    ["move-column-left"]="Move column left"
+    ["move-column-right"]="Move column right"
+    ["move-window-down"]="Move window down"
+    ["move-window-up"]="Move window up"
+    ["close-window"]="Close window"
+    ["fullscreen-window"]="Fullscreen"
+    ["maximize-column"]="Maximize column"
+    ["switch-preset-column-width"]="Cycle column width"
+    ["toggle-column-tabbed-display"]="Tabbed display"
+    ["toggle-window-floating"]="Toggle floating"
+    ["focus-floating"]="Focus floating"
+    ["focus-tiling"]="Focus tiling"
+    ["toggle-overview"]="Overview"
+    ["show-hotkey-overlay"]="Show all keybinds"
+    ["consume-window-into-column"]="Join into column"
+    ["expel-window-from-column"]="Expel from column"
+    ["focus-workspace-down"]="Workspace down"
+    ["focus-workspace-up"]="Workspace up"
 )
 
-parse_kdl_binds() {
-    local line
-    local key
-    local desc
-    local binds_found=0
+declare -A SPAWN_DESCRIPTIONS=(
+    ["noctarchy-fuzzel"]="App launcher"
+    ["noctarchy-menu"]="Noctarchy menu"
+    ["noctarchy-keybinds"]="Keybinding list"
+    ["noctarchy-power"]="Power menu"
+    ["xdg-terminal-exec"]="Terminal"
+    ["xdg-terminal-exec -e nvim"]="Editor (nvim)"
+    ["nautilus"]="File manager"
+    ["grim"]="Screenshot"
+    ["wtype"]="Clipboard"
+    ["noctalia msg session lock"]="Lock screen"
+    ["noctalia msg clipboard-toggle"]="Clipboard history"
+    ["noctalia msg panel-toggle launcher"]="Noctalia launcher"
+    ["noctalia msg panel-toggle notifications"]="Notifications"
+    ["noctalia msg notification-clear-active"]="Clear notifications"
+    ["playerctl play-pause"]="Play/pause"
+    ["playerctl previous"]="Previous track"
+    ["playerctl next"]="Next track"
+    ["wpctl set-volume"]="Volume"
+    ["wpctl set-mute"]="Mute toggle"
+    ["brightnessctl set"]="Brightness"
+)
+
+parse_kdl() {
+    local line key action desc binds_found=0
 
     while IFS= read -r line; do
-        # Match lines like: Mod+Key { action; }
-        if [[ "$line" =~ ^[[:space:]]*(Mod|Super)\+[^\{]+\{ ]]; then
-            key=$(echo "$line" | sed 's/[[:space:]]*Mod+/Super+/' | sed 's/[[:space:]]*\{.*//' | xargs)
-            desc=$(echo "$line" | grep -oP '(?<=//)[^\n]+' | head -1 | xargs)
-            [[ -n "$desc" ]] && BINDS["$key"]="$desc"
+        # Skip empty lines and comments-only lines
+        [[ -z "$line" || "$line" =~ ^[[:space:]]*// ]] && continue
+
+        # Match keybind lines: Mod+... { action; }
+        if [[ "$line" =~ ^[[:space:]]*([A-Za-z0-9+]+)[[:space:]]*\{[[:space:]]*(.+)[[:space:]]*\} ]]; then
+            key="${BASH_REMATCH[1]}"
+            action="${BASH_REMATCH[2]%;}"  # strip trailing semicolon
+            action="${action%;}"           # strip another if nested
+
+            # Convert Mod+ to Super+
+            key="${key//Mod+/Super+}"
+
+            # Build description from action
+            desc=""
+
+            # Check exact spawn matches first
+            for pattern in "${!SPAWN_DESCRIPTIONS[@]}"; do
+                if [[ "$action" == *"$pattern"* ]]; then
+                    desc="${SPAWN_DESCRIPTIONS[$pattern]}"
+                    break
+                fi
+            done
+
+            # Check action matches
+            if [[ -z "$desc" ]]; then
+                for action_name in "${!DESCRIPTIONS[@]}"; do
+                    if [[ "$action" == *"$action_name"* ]]; then
+                        desc="${DESCRIPTIONS[$action_name]}"
+                        break
+                    fi
+                done
+            fi
+
+            # Workspace actions
+            if [[ -z "$desc" ]]; then
+                if [[ "$action" =~ focus-workspace[[:space:]]+\"?([a-z0-9]+)\"? ]]; then
+                    ws="${BASH_REMATCH[1]}"
+                    desc="Workspace $ws"
+                elif [[ "$action" =~ move-column-to-workspace[[:space:]]+\"?([a-z0-9]+)\"? ]]; then
+                    ws="${BASH_REMATCH[1]}"
+                    desc="Move to workspace $ws"
+                fi
+            fi
+
+            # Fallback: clean up action for display
+            [[ -z "$desc" ]] && desc="$action"
+
+            printf '%s — %s\n' "$key" "$desc"
             ((binds_found++)) || true
         fi
     done < "$NIRI_CONFIG"
@@ -43,13 +113,14 @@ parse_kdl_binds() {
     return $binds_found
 }
 
+output=""
 if [[ -f "$NIRI_CONFIG" ]]; then
-    parse_kdl_binds || true
+    output=$(parse_kdl 2>/dev/null || true)
 fi
 
-output=""
-for key in $(echo "${!BINDS[@]}" | tr ' ' '\n' | sort); do
-    output+="${key} — ${BINDS[$key]}"$'\n'
-done
+if [[ -z "$output" ]]; then
+    echo "No keybinds found in $NIRI_CONFIG"
+    exit 1
+fi
 
-echo -n "$output" | "$SCRIPT_DIR/noctarchy-fuzzel" --dmenu --prompt="Keybinds: " --width=48
+echo -n "$output" | sort | "$SCRIPT_DIR/noctarchy-fuzzel" --dmenu --prompt="Keybinds: " --width=42 --lines=30

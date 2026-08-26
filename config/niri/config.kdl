@@ -184,8 +184,8 @@ binds {
     Mod+T { spawn "xdg-terminal-exec"; }
 
     // ── Apps (matches Omarchy conventions) ──
-    Mod+Shift+T { spawn "xdg-terminal-exec"; }
-    Mod+Shift+B { spawn "xdg-open" "https://"; }
+    Mod+B { spawn "xdg-open" "https://"; }
+    Mod+E { spawn "nautilus"; }
     Mod+Shift+E { spawn "xdg-terminal-exec" "-e" "nvim"; }
     Mod+Shift+F { spawn "nautilus"; }
 
@@ -296,7 +296,6 @@ binds {
 
     // ── Noctalia-specific ──
     Mod+N { spawn "noctalia" "msg" "panel-toggle" "notifications"; }
-    Mod+Alt+D { spawn "noctalia" "msg" "panel-toggle" "launcher"; }
 }
 
 // ──────────────────────────────────────────────
