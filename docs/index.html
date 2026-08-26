@@ -175,7 +175,7 @@
   <div class="grid">
     <div class="card"><h3>Niri scrollable tiling</h3><p>A column-based compositor where windows scroll vertically — no master/stack, no dwindle. Spring animations, gaps, shadows, and workspace tags out of the box.</p></div>
     <div class="card"><h3>Noctalia shell</h3><p>Bar, notifications, OSD, launcher and lock screen — all native C++23, no Quickshell. A systemd user service that survives crashes and relogs.</p></div>
-    <div class="card"><h3>Theme bridge</h3><p><code>omarchy-theme-set</code> keeps working: every theme's colors are mapped into Noctalia's palette live. Any Omarchy theme, zero per-theme config.</p></div>
+    <div class="card"><h3>Theme bridge</h3><p><code>omarchy-theme-set</code> keeps working: a hook generates a Noctalia custom palette from each theme's <code>colors.toml</code>, patches Niri border colors live, and syncs the wallpaper. Toggle between palette-derived and wallpaper-generated bar colors from the themes menu.</p></div>
     <div class="card"><h3>Fuzzel menu suite</h3><p>Root, power, keybinds, themes with previews, updates, config — all themed from the live Noctalia scheme via <code>noctarchy-fuzzel</code>.</p></div>
     <div class="card"><h3>Self-updating</h3><p>Every system update also pulls the remux and re-syncs your install — configs merge in place, your edits always win. No manual upgrading, ever.</p></div>
     <div class="card"><h3>Boot splash</h3><p>Opt-in Noctarchy plymouth theme, one menu entry away. A libalpm splash guard re-applies it to any kernel installed later — no more stock splash surprises.</p></div>
@@ -264,7 +264,7 @@
     <tr><td>Hyprland config (Lua)</td><td><b>Removed</b></td><td>Niri KDL config replaces it</td></tr>
     <tr><td>Media keys (<code>XF86Audio*</code>)</td><td><b>Were dead, now rebound</b></td><td><code>noctarchy-media</code> — controls whichever MPRIS player is currently playing</td></tr>
     <tr><td>Clipboard (<kbd>SUPER+Ctrl+V</kbd>)</td><td><b>Was dead, now rebound</b></td><td>Noctalia clipboard</td></tr>
-    <tr><td>Theme switching (<code>omarchy-theme-set</code>)</td><td><b>Works as before</b></td><td>A hook bridges each theme's colors.toml into Noctalia's palette live</td></tr>
+    <tr><td>Theme switching (<code>omarchy-theme-set</code>)</td><td><b>Works as before</b></td><td>Hook generates Noctalia custom palette from <code>colors.toml</code>, patches Niri borders, syncs wallpaper. Toggle bar source in themes menu.</td></tr>
     <tr><td>Window management, workspaces, app binds</td><td><b>Changed</b></td><td>Niri scrollable tiling replaces dwindle/master</td></tr>
   </table>
   <p class="muted" style="margin-top:0.9rem;">Anything not listed here that shells out to <code>omarchy-shell</code> in your own scripts will also be dead — grep for it.</p>
