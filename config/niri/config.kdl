@@ -264,6 +264,11 @@ binds {
     Ctrl+Print { spawn-sh "grim - | wl-copy"; }
     Alt+Print { spawn-sh "grim -g \"$(slurp)\" ~/Pictures/Screenshots/\"$(date +%Y-%m-%d_%H-%M-%S).png\""; }
 
+    // ── Clipboard (universal copy/paste via wtype) ──
+    Mod+C { spawn-sh "wtype -M ctrl -k c"; }
+    Mod+V { spawn-sh "wtype -M ctrl -k v"; }
+    Mod+X { spawn-sh "wtype -M ctrl -k x"; }
+
     // ── Media keys ──
     XF86AudioRaiseVolume { spawn "wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "5%+"; allow-when-locked=true; }
     XF86AudioLowerVolume { spawn "wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "5%-"; allow-when-locked=true; }
