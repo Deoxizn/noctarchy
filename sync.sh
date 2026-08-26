@@ -15,6 +15,12 @@
 set -euo pipefail
 
 REPO_DIR="$(cd "$(dirname "$0")" && pwd)"
+
+# When run via sudo, $HOME points to /root — resolve the real user's home
+if [[ -n "${SUDO_USER:-}" ]]; then
+  HOME="$(eval echo "~$SUDO_USER")"
+fi
+
 STATE_DIR="$HOME/.local/state/noctarchy"
 STATE_REPO_FILE="$STATE_DIR/repo-dir"
 DRY_RUN=false

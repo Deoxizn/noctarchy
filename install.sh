@@ -13,6 +13,12 @@
 set -euo pipefail
 
 REPO_DIR="$(cd "$(dirname "$0")" && pwd)"
+
+# When run via sudo, $HOME points to /root — resolve the real user's home
+if [[ -n "${SUDO_USER:-}" ]]; then
+  HOME="$(eval echo "~$SUDO_USER")"
+fi
+
 BACKUP_DIR="$HOME/.config/noctarchy-backup"
 BACKUP_TS="$(date +%Y%m%d%H%M%S)"
 BACKUP_PATH="$BACKUP_DIR/$BACKUP_TS"
