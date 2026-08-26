@@ -223,7 +223,10 @@ SDDM_CONF="/etc/sddm.conf.d/10-theme.conf"
 
 info "SDDM greeter:"
 if [[ -d $OMARCHY_SDDM ]]; then
-  if ! $DRY_RUN; then
+  # Check if we can sudo (may fail without TTY when run from hook)
+  if ! sudo -n true 2>/dev/null; then
+    warn "  sudo not available (no TTY) — skipping SDDM sync"
+  elif ! $DRY_RUN; then
     sudo mkdir -p "$SDDM_DST"
     for f in logo.png metadata.desktop theme.conf; do
       if [[ ! -f $SDDM_DST/$f ]] || ! cmp -s "$SDDM_SRC/$f" "$SDDM_DST/$f"; then
