@@ -391,11 +391,6 @@ window-rule {
 
 // Layer rules — blur background for bars/overlays
 layer-rule {
-    namespace "waybar"
-    blur
-}
-
-layer-rule {
     namespace "fuzzel"
     blur
 }
@@ -410,7 +405,6 @@ layer-rule {
 // ──────────────────────────────────────────────
 
 spawn-at-startup "noctalia"
-spawn-at-startup "waybar"
 spawn-at-startup "swayidle" "-w" "timeout" "600" "niri msg action power-off-monitors"
 spawn-sh-at-startup "systemctl --user import-environment $(env | cut -d= -f1) && dbus-update-activation-environment --systemd --all"
 
