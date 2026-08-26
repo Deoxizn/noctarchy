@@ -450,6 +450,20 @@ for f in screensaver.txt about.txt; do
 done
 unset BRAND_STOCK
 
+# Deploy noctarchy.png for fastfetch
+FF_PNG_SRC="$REPO_DIR/branding/noctarchy.png"
+FF_PNG_DST="$BRANDING_DIR/noctarchy.png"
+if [[ -f $FF_PNG_SRC ]]; then
+  mkdir -p "$BRANDING_DIR"
+  if [[ ! -f $FF_PNG_DST ]] || ! cmp -s "$FF_PNG_SRC" "$FF_PNG_DST"; then
+    if ! $DRY_RUN; then cp "$FF_PNG_SRC" "$FF_PNG_DST"; fi
+    ok "  noctarchy.png installed"
+    changed=$((changed+1))
+  else
+    ok "  noctarchy.png up to date"
+  fi
+fi
+
 echo ""
 
 # ──────────────────────────────────────────────

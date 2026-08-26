@@ -395,6 +395,19 @@ if ! $DRY_RUN; then
       ok "SDDM default session already set to Niri"
     fi
   fi
+
+  # Install UWSM niri session file (sorts first in SDDM session list)
+  UWSM_SESSION_DIR="/usr/local/share/wayland-sessions"
+  UWSM_SESSION_SRC="$REPO_DIR/branding/uwsm-sessions/00-niri-uwsm.desktop"
+  if [[ -f "$UWSM_SESSION_SRC" ]]; then
+    run_sudo mkdir -p "$UWSM_SESSION_DIR"
+    if [[ ! -f "$UWSM_SESSION_DIR/00-niri-uwsm.desktop" ]] || ! cmp -s "$UWSM_SESSION_SRC" "$UWSM_SESSION_DIR/00-niri-uwsm.desktop"; then
+      run_sudo cp "$UWSM_SESSION_SRC" "$UWSM_SESSION_DIR/00-niri-uwsm.desktop"
+      ok "UWSM niri session installed"
+    else
+      ok "UWSM niri session already installed"
+    fi
+  fi
 else
   info "[dry-run] would install noctarchy SDDM greeter theme (+ switch Current= if stock)"
 fi
@@ -471,6 +484,44 @@ if ! $DRY_RUN; then
       fi
     fi
   done
+
+  # Install noctarchy.png for fastfetch
+  FF_LOGO_SRC="$REPO_DIR/branding/noctarchy.png"
+  FF_LOGO_DST="$BRANDING_DIR/noctarchy.png"
+  if [[ -f "$FF_LOGO_SRC" ]]; then
+    if [[ ! -f "$FF_LOGO_DST" ]] || ! cmp -s "$FF_LOGO_SRC" "$FF_LOGO_DST"; then
+      cp "$FF_LOGO_SRC" "$FF_LOGO_DST"
+      ok "  noctarchy.png installed"
+    fi
+  fi
+
+  # Brand fastfetch config
+  FF_DIR="$HOME/.config/fastfetch"
+  FF_STOCK="/etc/fastfetch/config.jsonc"
+  if [[ -f "$FF_STOCK" ]]; then
+    mkdir -p "$FF_DIR"
+    if [[ ! -f "$FF_DIR/config.jsonc" ]]; then
+      cp "$FF_STOCK" "$FF_DIR/config.jsonc"
+    fi
+    python3 - "$FF_DIR/config.jsonc" << 'FFPY'
+import sys, re
+path = sys.argv[1]
+with open(path) as f:
+    text = f.read()
+# Use noctarchy.png as logo at 50% width
+text = re.sub(
+    r'"logo":\s*\{[^}]*\}',
+    '"logo": {\n    "type": "file",\n    "source": "~/.config/omarchy/branding/noctarchy.png",\n    "width": 32,\n    "padding": {\n      "top": 1,\n      "right": 2,\n      "left": 2\n    }\n  }',
+    text, flags=re.DOTALL)
+# Brand OS version
+pattern = r'"text":\s*"version=\$\(omarchy-version\).*"'
+replacement = '"text": "rev=$(noctarchy-version 2>/dev/null); ver=$(omarchy-version); echo \\"Noctarchy${rev:+ $rev} (Omarchy $ver)\\""'
+text = re.sub(pattern, replacement, text)
+with open(path, "w") as f:
+    f.write(text)
+FFPY
+    ok "  fastfetch branded (noctarchy.png logo)"
+  fi
 else
   info "[dry-run] would install branding art"
 fi
