@@ -1,0 +1,130 @@
+# Noctarchy — Noctalia config
+# https://github.com/deoxizn/noctarchy
+
+# ──────────────────────────────────────────────
+# General
+# ──────────────────────────────────────────────
+
+[general]
+terminal = "alacritty"
+launcher = "fuzzel"
+file_manager = "nautilus"
+browser = "firefox"
+
+# ──────────────────────────────────────────────
+# Bar
+# ──────────────────────────────────────────────
+
+[bar]
+position = "top"
+height = 40
+opacity = 0.95
+exclusive = true
+
+[bar.widgets]
+left = ["workspaces", "separator", "active-window"]
+center = ["clock"]
+right = ["network", "bluetooth", "battery", "volume", "brightness", "tray", "media"]
+
+[bar.widgets.clock]
+format = "%H:%M"
+interval = 1
+tooltip_format = "%A, %d %B %Y"
+
+[bar.widgets.workspaces]
+persistent = [1, 2, 3, 4, 5]
+
+[bar.widgets.battery]
+critical_threshold = 15
+warning_threshold = 30
+show_percentage = true
+
+[bar.widgets.network]
+show_wifi = true
+show_wired = true
+show_vpn = true
+
+[bar.widgets.media]
+show_album_art = true
+max_title_length = 40
+
+[bar.widgets.volume]
+show_percentage = true
+
+[bar.widgets.brightness]
+show_percentage = true
+
+# ──────────────────────────────────────────────
+# Launcher
+# ──────────────────────────────────────────────
+
+[launcher]
+command = "fuzzel"
+width = 600
+height = 400
+
+# ──────────────────────────────────────────────
+# Notifications
+# ──────────────────────────────────────────────
+
+[notifications]
+enabled = true
+timeout = 5000
+max_visible = 5
+position = "top-right"
+
+# ──────────────────────────────────────────────
+# Lock screen
+# ──────────────────────────────────────────────
+
+[lock]
+command = "swaylock"
+idle_timeout = 300
+before_sleep = true
+
+# ──────────────────────────────────────────────
+# Wallpaper
+# ──────────────────────────────────────────────
+
+[wallpaper]
+enabled = true
+directory = "~/Pictures/Wallpapers"
+mode = "fill"
+interval = 300
+transition = "fade"
+
+# ──────────────────────────────────────────────
+# Dock
+# ──────────────────────────────────────────────
+
+[dock]
+enabled = false
+
+# ──────────────────────────────────────────────
+# OSD (volume/brightness overlays)
+# ──────────────────────────────────────────────
+
+[osd]
+enabled = true
+volume = true
+brightness = true
+timeout = 2000
+
+# ──────────────────────────────────────────────
+# Clipboard
+# ──────────────────────────────────────────────
+
+[clipboard]
+enabled = true
+max_entries = 100
+encrypted = true
+
+# ──────────────────────────────────────────────
+# Theming
+# ──────────────────────────────────────────────
+
+[theming]
+source = "wallpaper"
+dark_mode = true
+accent_color = "#7c3aed"
+border_radius = 12

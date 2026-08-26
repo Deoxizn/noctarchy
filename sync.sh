@@ -1,0 +1,286 @@
+#!/usr/bin/env bash
+# ██████╗ ██╗  ██╗ █████╗ ███╗   ██╗████████╗ ██████╗ ███╗   ███╗
+# ██╔══██╗██║  ██║██╔══██╗████╗  ██║╚══██╔══╝██╔═══██╗████╗ ████║
+# ██████╔╝███████║███████║██╔██╗ ██║   ██║   ██║   ██║██╔████╔██║
+# ██╔═══╝ ██╔══██║██╔══██║██║╚██╗██║   ██║   ██║   ██║██║╚██╔╝██║
+# ██║     ██║  ██║██║  ██║██║ ╚████║   ██║   ╚██████╔╝██║ ╚═╝ ██║
+# ╚═╝     ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝   ╚═╝    ╚═════╝ ╚═╝     ╚═╝
+
+# noctarchy sync
+# Applies the current checkout's state to an existing noctarchy install:
+# menu scripts, hooks, config merges (personal edits preserved), branding.
+# Never pulls — the auto-sync hook pulls then calls this; manual passes:
+# git pull then ./sync.sh.
+
+set -euo pipefail
+
+REPO_DIR="$(cd "$(dirname "$0")" && pwd)"
+STATE_DIR="$HOME/.local/state/noctarchy"
+STATE_REPO_FILE="$STATE_DIR/repo-dir"
+DRY_RUN=false
+ADOPT_KDL=false
+
+for arg in "$@"; do
+  case "$arg" in
+    -n|--dry-run) DRY_RUN=true ;;
+    --adopt-kdl) ADOPT_KDL=true ;;
+    -h|--help)
+      echo "Usage: ./sync.sh [--dry-run] [--adopt-kdl]"
+      echo "  --dry-run    show what would change without touching anything"
+      echo "  --adopt-kdl  adopt repo versions of niri config that have no"
+      echo "               sync history (your current file is backed up first)"
+      exit 0 ;;
+    *)
+      printf '\033[0;31m[noctarchy]\033[0m %s\n' "Unknown argument: $arg (see --help)"
+      exit 1 ;;
+  esac
+done
+
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+CYAN='\033[0;36m'
+NC='\033[0m'
+
+info()  { echo -e "${CYAN}[noctarchy]${NC} $*"; }
+ok()    { echo -e "${GREEN}[noctarchy]${NC} $*"; }
+warn()  { echo -e "${YELLOW}[noctarchy]${NC} $*"; }
+err()   { echo -e "${RED}[noctarchy]${NC} $*" >&2; }
+
+changed=0
+
+copy_if_changed() { # <src> <dst> <label>
+  local src="$1" dst="$2" label="$3"
+  if [[ ! -f $dst ]]; then
+    if $DRY_RUN; then
+      info "  [dry-run] would install $label"
+    else
+      mkdir -p "$(dirname "$dst")"
+      install -m755 "$src" "$dst"
+      ok "  installed $label"
+    fi
+    changed=$((changed+1))
+  elif ! cmp -s "$src" "$dst"; then
+    if $DRY_RUN; then
+      info "  [dry-run] would update $label"
+    else
+      install -m755 "$src" "$dst"
+      ok "  updated $label"
+    fi
+    changed=$((changed+1))
+  else
+    ok "  $label up to date"
+  fi
+}
+
+# ──────────────────────────────────────────────
+# Preflight
+# ──────────────────────────────────────────────
+
+if [[ ! -f "$HOME/.config/niri/config.kdl" ]]; then
+  err "Niri config not found — is noctarchy installed?"
+  err "Run ./install.sh first for a fresh install."
+  exit 1
+fi
+
+# ──────────────────────────────────────────────
+# Menu suite scripts → ~/.local/bin
+# ──────────────────────────────────────────────
+
+info "Menu suite scripts:"
+
+shopt -s nullglob
+repo_scripts=("$REPO_DIR"/scripts/noctarchy-*)
+if (( ${#repo_scripts[@]} == 0 )); then
+  warn "  no scripts found in repo"
+fi
+for src in "${repo_scripts[@]}"; do
+  copy_if_changed "$src" "$HOME/.local/bin/$(basename "$src")" "$(basename "$src")"
+done
+# Scripts removed upstream but still installed locally
+for dst in "$HOME/.local/bin/"noctarchy-*; do
+  [[ -f "$REPO_DIR/scripts/$(basename "$dst")" ]] || warn "  $(basename "$dst") no longer in repo — left in place, remove manually if unwanted"
+done
+shopt -u nullglob
+
+echo ""
+
+# ──────────────────────────────────────────────
+# Theme bridge hook
+# ──────────────────────────────────────────────
+
+info "Theme bridge hook:"
+# TODO: copy_if_changed "$REPO_DIR/hooks/theme-set.d/noctalia-sync.sh" \
+#   "$HOME/.config/omarchy/hooks/theme-set.d/noctalia-sync.sh" "noctalia-sync.sh"
+ok "  (placeholder — needs noctalia-sync.sh)"
+
+echo ""
+
+# ──────────────────────────────────────────────
+# Auto-sync hook
+# ──────────────────────────────────────────────
+
+info "Auto-sync hook:"
+# TODO: install post-update hook
+ok "  (placeholder — needs hook script)"
+
+# ──────────────────────────────────────────────
+# Niri config — merge from repo
+# ──────────────────────────────────────────────
+
+NIRI_SRC="$REPO_DIR/config/niri/config.kdl"
+NIRI_DST="$HOME/.config/niri/config.kdl"
+NIRI_BASE="$HOME/.config/niri/.noctarchy-base/config.kdl"
+info "Niri config:"
+
+if [[ ! -f $NIRI_SRC ]]; then
+  warn "  repo config.kdl not found — skipping"
+elif [[ ! -f $NIRI_DST ]]; then
+  if $DRY_RUN; then
+    info "  [dry-run] would install config.kdl"
+  else
+    mkdir -p "$(dirname "$NIRI_DST")"
+    install -m644 "$NIRI_SRC" "$NIRI_DST"
+    mkdir -p "$(dirname "$NIRI_BASE")"
+    cp -f "$NIRI_SRC" "$NIRI_BASE"
+    ok "  installed config.kdl"
+  fi
+  changed=$((changed+1))
+elif cmp -s "$NIRI_SRC" "$NIRI_DST"; then
+  mkdir -p "$(dirname "$NIRI_BASE")"
+  cp -f "$NIRI_SRC" "$NIRI_BASE"
+  ok "  config.kdl up to date"
+elif [[ ! -f $NIRI_BASE ]]; then
+  warn "  config.kdl differs and has no sync history — left untouched"
+  warn "    review: diff \"$NIRI_SRC\" \"$NIRI_DST\""
+  warn "    or adopt repo version (backs up yours): ./sync.sh --adopt-kdl"
+else
+  tmp_current="$(mktemp)"
+  cp "$NIRI_DST" "$tmp_current"
+  if git merge-file -L yours -L base -L repo "$tmp_current" "$NIRI_BASE" "$NIRI_SRC" >/dev/null 2>&1; then
+    if $DRY_RUN; then
+      info "  [dry-run] would merge repo changes into config.kdl (your edits kept)"
+    else
+      cp "$NIRI_DST" "$NIRI_DST.pre-upgrade.bak"
+      install -m644 "$tmp_current" "$NIRI_DST"
+      cp -f "$NIRI_SRC" "$NIRI_BASE"
+      ok "  merged repo changes into config.kdl (backup: config.kdl.pre-upgrade.bak)"
+    fi
+    changed=$((changed+1))
+  else
+    cp "$tmp_current" "$HOME/.config/niri/config.kdl.conflict"
+    warn "  config.kdl has conflicts — NOT applied"
+    warn "    resolve manually: config.kdl.conflict → config.kdl"
+    changed=$((changed+1))
+  fi
+  rm -f "$tmp_current"
+fi
+
+echo ""
+
+# ──────────────────────────────────────────────
+# Noctalia config
+# ──────────────────────────────────────────────
+
+NOCTALIA_SRC="$REPO_DIR/config/noctalia/config.toml"
+NOCTALIA_DST="$HOME/.config/noctalia/config.toml"
+info "Noctalia config:"
+
+if [[ -f $NOCTALIA_SRC ]]; then
+  copy_if_changed "$NOCTALIA_SRC" "$NOCTALIA_DST" "noctalia/config.toml"
+else
+  warn "  repo config.toml not found — skipping"
+fi
+
+echo ""
+
+# ──────────────────────────────────────────────
+# Fastfetch branding
+# ──────────────────────────────────────────────
+
+FF_DIR="$HOME/.config/fastfetch"
+NEW_FF_OS='"text": "rev=$(noctarchy-version 2>/dev/null); ver=$(omarchy-version); echo \"Noctarchy${rev:+ \$rev} (Omarchy \$ver)\""'
+FF_OS_STOCK_RAW='"text": "version=$(omarchy-version) && echo \"Omarchy $version\""'
+
+ff_debrand() {
+  local s
+  s=$(cat "$1"; printf x)
+  s=${s%x}
+  s=${s//'"$(noctarchy-version 2>/dev/null); ver=$(omarchy-version); echo \"Noctarchy${rev:+ \$rev} (Omarchy \$ver)\""/'"$FF_OS_STOCK_RAW"'}
+  printf '%s' "$s"
+}
+
+info "Fastfetch branding:"
+if [[ -f $FF_DIR/config.jsonc ]] && [[ -f /etc/fastfetch/config.jsonc ]] &&
+   cmp -s <(ff_debrand "$FF_DIR/config.jsonc") <(ff_debrand /etc/fastfetch/config.jsonc); then
+  if ! $DRY_RUN; then
+    # TODO: brand_fastfetch for noctarchy
+    ok "  (placeholder — needs brand_fastfetch)"
+  fi
+else
+  ok "  fastfetch config unchanged or custom — left untouched"
+fi
+
+echo ""
+
+# ──────────────────────────────────────────────
+# Branding (screensaver.txt / about.txt)
+# ──────────────────────────────────────────────
+
+info "Branding:"
+BRANDING_DIR="$HOME/.config/omarchy/branding"
+declare -A BRAND_STOCK=(
+  ["screensaver.txt"]="/usr/share/omarchy/logo.txt"
+  ["about.txt"]="/usr/share/omarchy/icon.txt"
+)
+for f in screensaver.txt about.txt; do
+  src="$REPO_DIR/branding/$f"
+  dst="$BRANDING_DIR/$f"
+  stock="${BRAND_STOCK[$f]}"
+  if [[ ! -f $src ]]; then
+    warn "  $f missing from repo — skipping"
+    continue
+  fi
+  mkdir -p "$BRANDING_DIR"
+  if [[ ! -f $dst ]]; then
+    if ! $DRY_RUN; then cp "$src" "$dst"; fi
+    ok "  $f installed"
+    changed=$((changed+1))
+  elif cmp -s "$dst" "$src"; then
+    ok "  $f up to date"
+  elif [[ -n $stock && -f $stock ]] && cmp -s "$dst" "$stock"; then
+    if $DRY_RUN; then
+      info "  [dry-run] would replace stock $f with Noctarchy art"
+    else
+      cp "$src" "$dst"
+    fi
+    ok "  $f rebranded (was stock Omarchy art)"
+    changed=$((changed+1))
+  elif grep -q 'Noctarchy' "$dst"; then
+    if $DRY_RUN; then
+      info "  [dry-run] would refresh $f to current Noctarchy art"
+    else
+      cp "$src" "$dst"
+    fi
+    ok "  $f refreshed (older noctarchy version)"
+    changed=$((changed+1))
+  else
+    ok "  $f customized — left untouched"
+  fi
+done
+unset BRAND_STOCK
+
+echo ""
+
+# ──────────────────────────────────────────────
+# Summary
+# ──────────────────────────────────────────────
+
+if (( changed == 0 )); then
+  ok "Everything already up to date."
+elif $DRY_RUN; then
+  info "$changed item(s) would be synced."
+else
+  ok "$changed item(s) synced."
+  echo -e "${CYAN}[noctarchy]${NC} If keybinds changed, run: ${YELLOW}niri msg action load-config-file${NC}"
+fi
