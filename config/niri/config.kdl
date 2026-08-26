@@ -175,7 +175,7 @@ workspace "media"
 binds {
     // ── Launcher & menus ──
     Mod+D { spawn "noctarchy-fuzzel"; }
-    Mod+Space { spawn "noctalia" "ipc" "launcher" "toggle"; }
+    Mod+Space { spawn "noctalia" "msg" "panel-toggle" "launcher"; }
     Mod+Alt+Space { spawn "noctarchy-menu"; }
     Mod+K { spawn "noctarchy-keybinds"; }
     Mod+Shift+? { show-hotkey-overlay; }
@@ -280,13 +280,13 @@ binds {
     XF86MonBrightnessDown allow-when-locked=true { spawn "brightnessctl" "set" "5%-"; }
 
     // ── Lock ──
-    Mod+Ctrl+L { spawn "noctalia" "ipc" "lock"; }
+    Mod+Ctrl+L { spawn "noctalia" "msg" "session" "lock"; }
 
     // ── Clipboard ──
-    Mod+Ctrl+V { spawn "noctalia" "ipc" "clipboard" "toggle"; }
+    Mod+Ctrl+V { spawn "noctalia" "msg" "clipboard-toggle"; }
 
     // ── Notifications ──
-    Mod+Comma { spawn "noctalia" "ipc" "notifications" "clear"; }
+    Mod+Comma { spawn "noctalia" "msg" "notification-clear-active"; }
 
     // ── Overview ──
     Mod+O { toggle-overview; }
@@ -295,8 +295,8 @@ binds {
     Mod+Shift+Q { spawn "noctarchy-power"; }
 
     // ── Noctalia-specific ──
-    Mod+N { spawn "noctalia" "ipc" "notifications" "toggle"; }
-    Mod+Alt+D { spawn "noctalia" "ipc" "launcher" "toggle"; }
+    Mod+N { spawn "noctalia" "msg" "panel-toggle" "notifications"; }
+    Mod+Alt+D { spawn "noctalia" "msg" "panel-toggle" "launcher"; }
 }
 
 // ──────────────────────────────────────────────
