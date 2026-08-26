@@ -55,5 +55,4 @@ exec fuzzel \
     --selection-text-color="$sel_text_color" \
     --border-color="$border_color" \
     --border-width=2 \
-    --inner-border-width=1 \
     "$@"
