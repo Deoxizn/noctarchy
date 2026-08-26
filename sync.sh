@@ -399,15 +399,36 @@ import sys, re
 path = sys.argv[1]
 with open(path) as f:
     text = f.read()
-# Use noctarchy.png as logo at 50% width
-text = re.sub(
-    r'"logo":\s*\{[^}]*\}',
-    '"logo": {\n    "type": "file",\n    "source": "~/.config/omarchy/branding/noctarchy.png",\n    "width": 32,\n    "padding": {\n      "top": 1,\n      "right": 2,\n      "left": 2\n    }\n  }',
-    text, flags=re.DOTALL)
+
+# Replace logo section by counting braces
+start = text.find('"logo"')
+if start >= 0:
+    # find opening { of logo value
+    brace_start = text.index('{', start)
+    depth = 0
+    for i in range(brace_start, len(text)):
+        if text[i] == '{': depth += 1
+        elif text[i] == '}': depth -= 1
+        if depth == 0:
+            old_logo = text[start:i+1]
+            break
+    new_logo = ('"logo": {\n'
+                '    "type": "file",\n'
+                '    "source": "~/.config/omarchy/branding/noctarchy.png",\n'
+                '    "width": 32,\n'
+                '    "padding": {\n'
+                '      "top": 1,\n'
+                '      "right": 2,\n'
+                '      "left": 2\n'
+                '    }\n'
+                '  }')
+    text = text.replace(old_logo, new_logo, 1)
+
 # Brand OS version
 pattern = r'"text":\s*"version=\$\(omarchy-version\).*"'
 replacement = '"text": "rev=$(noctarchy-version 2>/dev/null); ver=$(omarchy-version); echo \\"Noctarchy${rev:+ $rev} (Omarchy $ver)\\""'
 text = re.sub(pattern, replacement, text)
+
 with open(path, "w") as f:
     f.write(text)
 FFPY
