@@ -181,8 +181,7 @@ binds {
     Mod+Escape { spawn "noctarchy-power"; }
 
     // ── Terminal ──
-    Mod+T { spawn "alacritty"; }
-    Mod+Shift+T { spawn "foot"; }
+    Mod+T { spawn "foot"; }
 
     // ── Close & quit ──
     Mod+Q { close-window; }
@@ -256,9 +255,9 @@ binds {
     Mod+Shift+F { focus-tiling; }
 
     // ── Screenshots ──
-    Mod+Print { spawn "grim" "-g" "$(slurp)" - | "wl-copy"; }
-    Ctrl+Print { spawn "grim" - | "wl-copy"; }
-    Alt+Print { spawn "grim" -g "$(slurp)" ~/Pictures/Screenshots/"$(date +%Y-%m-%d_%H-%M-%S).png"; }
+    Mod+Print { spawn-sh "grim -g \"$(slurp)\" - | wl-copy"; }
+    Ctrl+Print { spawn-sh "grim - | wl-copy"; }
+    Alt+Print { spawn-sh "grim -g \"$(slurp)\" ~/Pictures/Screenshots/\"$(date +%Y-%m-%d_%H-%M-%S).png\""; }
 
     // ── Media keys ──
     XF86AudioRaiseVolume { spawn "wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "5%+"; allow-when-locked=true; }

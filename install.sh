@@ -109,7 +109,7 @@ info "Checking dependencies..."
 
 DEPS_PKGS=()
 for pkg in niri noctalia fuzzel grim slurp wl-clipboard libnotify \
-  swayidle swaylock swaybg mako xwayland-satellite; do
+  swayidle swaylock swaybg mako xwayland-satellite playerctl; do
   if ! pacman -Qi "$pkg" &>/dev/null; then
     DEPS_PKGS+=("$pkg")
   fi
