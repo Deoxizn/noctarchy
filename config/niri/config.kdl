@@ -208,11 +208,9 @@ binds {
     Mod+H { focus-column-left; }
     Mod+L { focus-column-right; }
     Mod+J { focus-window-down; }
-    Mod+K { focus-window-up; }
 
     // ── Move (vim-style) ──
     Mod+Ctrl+H { move-column-left; }
-    Mod+Ctrl+L { move-column-right; }
     Mod+Ctrl+J { move-window-down; }
     Mod+Ctrl+K { move-window-up; }
 
@@ -250,7 +248,6 @@ binds {
     Mod+BracketRight { expel-window-from-column; }
     Mod+F { maximize-column; }
     Mod+Ctrl+F { fullscreen-window; }
-    Mod+C { center-column; }
     Mod+R { switch-preset-column-width; }
     Mod+Shift+R { toggle-column-tabbed-display; }
 
@@ -270,17 +267,17 @@ binds {
     Mod+X { spawn-sh "wtype -M ctrl -k x"; }
 
     // ── Media keys ──
-    XF86AudioRaiseVolume { spawn-sh "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+"; allow-when-locked=true; }
-    XF86AudioLowerVolume { spawn-sh "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"; allow-when-locked=true; }
-    XF86AudioMute { spawn-sh "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"; allow-when-locked=true; }
-    XF86AudioMicMute { spawn-sh "wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"; allow-when-locked=true; }
-    XF86AudioPlay { spawn "playerctl" "play-pause"; allow-when-locked=true; }
-    XF86AudioPrev { spawn "playerctl" "previous"; allow-when-locked=true; }
-    XF86AudioNext { spawn "playerctl" "next"; allow-when-locked=true; }
+    XF86AudioRaiseVolume allow-when-locked=true { spawn-sh "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+"; }
+    XF86AudioLowerVolume allow-when-locked=true { spawn-sh "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"; }
+    XF86AudioMute allow-when-locked=true { spawn-sh "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"; }
+    XF86AudioMicMute allow-when-locked=true { spawn-sh "wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"; }
+    XF86AudioPlay allow-when-locked=true { spawn "playerctl" "play-pause"; }
+    XF86AudioPrev allow-when-locked=true { spawn "playerctl" "previous"; }
+    XF86AudioNext allow-when-locked=true { spawn "playerctl" "next"; }
 
     // ── Brightness ──
-    XF86MonBrightnessUp { spawn "brightnessctl" "set" "5%+"; allow-when-locked=true; }
-    XF86MonBrightnessDown { spawn "brightnessctl" "set" "5%-"; allow-when-locked=true; }
+    XF86MonBrightnessUp allow-when-locked=true { spawn "brightnessctl" "set" "5%+"; }
+    XF86MonBrightnessDown allow-when-locked=true { spawn "brightnessctl" "set" "5%-"; }
 
     // ── Lock ──
     Mod+Ctrl+L { spawn "noctalia" "ipc" "lock"; }
@@ -292,7 +289,7 @@ binds {
     Mod+Comma { spawn "noctalia" "ipc" "notifications" "clear"; }
 
     // ── Overview ──
-    Mod+O { overview; }
+    Mod+O { toggle-overview; }
 
     // ── Power menu ──
     Mod+Shift+Q { spawn "noctarchy-power"; }
@@ -308,105 +305,109 @@ binds {
 
 // Floating dialogs
 window-rule {
-    app-id "pavucontrol"
-    open-floating
+    match app-id="pavucontrol"
+    open-floating true
 }
 
 window-rule {
-    app-id "nm-connection-editor"
-    open-floating
+    match app-id="nm-connection-editor"
+    open-floating true
 }
 
 window-rule {
-    app-id "blueman-manager"
-    open-floating
+    match app-id="blueman-manager"
+    open-floating true
 }
 
 window-rule {
-    app-id "org.gnome.Calculator"
-    open-floating
+    match app-id="org.gnome.Calculator"
+    open-floating true
 }
 
 window-rule {
-    app-id "org.gnome.Settings"
-    open-floating
+    match app-id="org.gnome.Settings"
+    open-floating true
 }
 
 window-rule {
-    app-id "feh"
-    open-floating
+    match app-id="feh"
+    open-floating true
 }
 
 window-rule {
-    app-id "imv"
-    open-floating
+    match app-id="imv"
+    open-floating true
 }
 
 // Default terminal
 window-rule {
-    app-id "Alacritty"
+    match app-id="Alacritty"
     default-column-width { proportion 0.5; }
 }
 
 // File manager
 window-rule {
-    app-id "org.gnome.Nautilus"
-    open-floating
+    match app-id="org.gnome.Nautilus"
+    open-floating true
 }
 
 // Browser — send to browser workspace
 window-rule {
-    app-id "firefox"
+    match app-id="firefox"
     open-on-workspace "browser"
 }
 
 window-rule {
-    app-id "chromium"
+    match app-id="chromium"
     open-on-workspace "browser"
 }
 
 window-rule {
-    app-id "brave-browser"
+    match app-id="brave-browser"
     open-on-workspace "browser"
 }
 
 // Code editors — send to code workspace
 window-rule {
-    app-id "code"
+    match app-id="code"
     open-on-workspace "code"
 }
 
 window-rule {
-    app-id "jetbrains-*"
+    match app-id="jetbrains-*"
     open-on-workspace "code"
 }
 
 // Media
 window-rule {
-    app-id "mpv"
+    match app-id="mpv"
     open-on-workspace "media"
 }
 
 // Chat
 window-rule {
-    app-id "discord"
+    match app-id="discord"
     open-on-workspace "chat"
 }
 
 window-rule {
-    app-id "org.telegram.desktop"
+    match app-id="org.telegram.desktop"
     open-on-workspace "chat"
 }
 
 // Layer rules — blur background for bars/overlays
 layer-rule {
-    namespace "fuzzel"
-    blur
+    match namespace="fuzzel"
+    background-effect {
+        blur true
+    }
 }
 
 layer-rule {
-    namespace "noctalia"
-    blur
+    match namespace="noctalia"
+    background-effect {
+        blur true
+    }
 }
 
 // ──────────────────────────────────────────────
