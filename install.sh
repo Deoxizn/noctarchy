@@ -420,6 +420,12 @@ if ! $DRY_RUN; then
     else
       ok "UWSM niri session already installed"
     fi
+
+    # Remove Omarchy Hyprland session so uwsm defaults to Niri
+    if [[ -f "$UWSM_SESSION_DIR/omarchy.desktop" ]]; then
+      run_sudo rm -f "$UWSM_SESSION_DIR/omarchy.desktop"
+      ok "Removed omarchy.desktop (uwsm will default to Niri)"
+    fi
   fi
 else
   info "[dry-run] would install noctarchy SDDM greeter theme (+ switch Current= if stock)"
