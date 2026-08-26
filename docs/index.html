@@ -199,23 +199,61 @@
   <h2>Constellation of keybinds</h2>
   <table>
     <tr><th>Binding</th><th>Action</th></tr>
-    <tr><td><kbd>SUPER+D</kbd></td><td>Noctalia launcher</td></tr>
+    <tr><td><kbd>SUPER+T</kbd></td><td>Terminal (xdg-terminal-exec)</td></tr>
+    <tr><td><kbd>SUPER+Shift+T</kbd></td><td>Terminal (duplicate)</td></tr>
+    <tr><td><kbd>SUPER+D</kbd></td><td>Fuzzel launcher</td></tr>
+    <tr><td><kbd>SUPER+Space</kbd></td><td>Noctalia launcher</td></tr>
     <tr><td><kbd>SUPER+Alt+Space</kbd></td><td>Noctarchy root menu</td></tr>
-    <tr><td><kbd>SUPER+T</kbd></td><td>Terminal</td></tr>
-    <tr><td><kbd>SUPER+Q</kbd></td><td>Close window</td></tr>
-    <tr><td><kbd>SUPER+Ctrl+L</kbd></td><td>Lock screen</td></tr>
-    <tr><td><kbd>SUPER+Escape</kbd></td><td>Power menu</td></tr>
     <tr><td><kbd>SUPER+K</kbd></td><td>Keybinding list</td></tr>
+    <tr><td><kbd>SUPER+Escape</kbd></td><td>Power menu</td></tr>
+    <tr><td><kbd>SUPER+Q</kbd></td><td>Close window</td></tr>
+    <tr><td><kbd>SUPER+Shift+Q</kbd></td><td>Power menu (alt)</td></tr>
     <tr><td><kbd>SUPER+O</kbd></td><td>Overview</td></tr>
+    <tr><td><kbd>SUPER+N</kbd></td><td>Noctalia notifications</td></tr>
+    <tr><td><kbd>SUPER+Comma</kbd></td><td>Clear notifications</td></tr>
+    <tr><td><kbd>SUPER+Ctrl+L</kbd></td><td>Lock screen</td></tr>
+    <tr><td><kbd>SUPER+Ctrl+V</kbd></td><td>Clipboard history</td></tr>
+    <tr><td colspan="2" style="padding-top:1rem;"><b>Navigation</b></td></tr>
+    <tr><td><kbd>SUPER+H/J/K/L</kbd></td><td>Focus left/down/up/right</td></tr>
+    <tr><td><kbd>SUPER+Arrow keys</kbd></td><td>Focus left/down/up/right</td></tr>
+    <tr><td><kbd>SUPER+Ctrl+H/J/K/L</kbd></td><td>Move window</td></tr>
     <tr><td><kbd>SUPER+1-9</kbd></td><td>Focus workspace</td></tr>
     <tr><td><kbd>SUPER+Shift+1-9</kbd></td><td>Move to workspace</td></tr>
-    <tr><td>Media keys</td><td>Play/pause, next, previous — any MPRIS player</td></tr>
+    <tr><td><kbd>SUPER+U/I</kbd></td><td>Workspace down/up</td></tr>
+    <tr><td colspan="2" style="padding-top:1rem;"><b>Layout</b></td></tr>
+    <tr><td><kbd>SUPER+F</kbd></td><td>Maximize column</td></tr>
+    <tr><td><kbd>SUPER+Ctrl+F</kbd></td><td>Fullscreen window</td></tr>
+    <tr><td><kbd>SUPER+C</kbd></td><td>Center column</td></tr>
+    <tr><td><kbd>SUPER+R</kbd></td><td>Cycle column width</td></tr>
+    <tr><td><kbd>SUPER+Shift+R</kbd></td><td>Tabbed display</td></tr>
+    <tr><td><kbd>SUPER+Shift+Space</kbd></td><td>Toggle floating</td></tr>
+    <tr><td><kbd>SUPER+P</kbd></td><td>Focus floating</td></tr>
+    <tr><td><kbd>SUPER+Shift+P</kbd></td><td>Focus tiling</td></tr>
+    <tr><td><kbd>SUPER+[ / ]</kbd></td><td>Consume / expel from column</td></tr>
+    <tr><td colspan="2" style="padding-top:1rem;"><b>Apps (Omarchy-style)</b></td></tr>
+    <tr><td><kbd>SUPER+Shift+B</kbd></td><td>Browser (xdg-open)</td></tr>
+    <tr><td><kbd>SUPER+Shift+F</kbd></td><td>File manager (nautilus)</td></tr>
+    <tr><td><kbd>SUPER+Shift+E</kbd></td><td>Editor (nvim)</td></tr>
+    <tr><td colspan="2" style="padding-top:1rem;"><b>Clipboard</b></td></tr>
+    <tr><td><kbd>SUPER+C</kbd></td><td>Copy (wtype sends Ctrl+C)</td></tr>
+    <tr><td><kbd>SUPER+V</kbd></td><td>Paste (wtype sends Ctrl+V)</td></tr>
+    <tr><td><kbd>SUPER+X</kbd></td><td>Cut (wtype sends Ctrl+X)</td></tr>
+    <tr><td colspan="2" style="padding-top:1rem;"><b>Media / Hardware</b></td></tr>
+    <tr><td>Volume keys</td><td>wpctl volume up/down/mute</td></tr>
+    <tr><td>Mic mute</td><td>wpctl source mute toggle</td></tr>
+    <tr><td>Play/Prev/Next</td><td>playerctl MPRIS controls</td></tr>
+    <tr><td>Brightness keys</td><td>brightnessctl up/down</td></tr>
+    <tr><td colspan="2" style="padding-top:1rem;"><b>Screenshots</b></td></tr>
+    <tr><td><kbd>SUPER+Print</kbd></td><td>Select region → clipboard</td></tr>
+    <tr><td><kbd>Ctrl+Print</kbd></td><td>Full screen → clipboard</td></tr>
+    <tr><td><kbd>Alt+Print</kbd></td><td>Select region → save to ~/Pictures</td></tr>
   </table>
 </section>
 
 <section class="wrap" id="limits">
   <h2>Honest fine print</h2>
   <ul class="nice">
+    <li><b>Universal copy/paste works differently.</b> Omarchy/Hyprland intercepts <kbd>SUPER+C/V</kbd> and injects Ctrl+C/V into any focused window. Niri cannot do this — Noctarchy uses <code>wtype</code> to simulate the keypress instead. It works in most apps but may not work in every edge case.</li>
     <li><b>No quattro plugins.</b> Plugin support lives inside omarchy-shell, which this removes — bar widgets, panels, overlays, menus and services from <code>~/.config/omarchy/plugins/</code> silently disappear.</li>
   </ul>
   <table style="margin-top:1.4rem;">
