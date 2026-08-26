@@ -6,7 +6,7 @@ set -euo pipefail
 
 CONFIG="$HOME/.config/noctalia/config.toml"
 
-# Defaults — dark palette matching Noctalia's typical night aesthetic
+# Defaults
 bg_color="1a1b26cc"
 text_color="c0caf5ff"
 match_color="7aa2f7ff"
@@ -28,27 +28,32 @@ if [[ -f "$CONFIG" ]]; then
     done < <(grep -E '^\s*(bg_color|text_color|accent_color|border_color)\s*=' "$CONFIG")
 fi
 
-# Parse optional hex to rgba if needed (simple #RRGGBB → add alpha)
-add_alpha() {
-    local color="$1" alpha="$2"
-    if [[ "$color" == \#* ]]; then
-        echo "${color}${alpha}"
-    else
-        echo "$color"
-    fi
+# Ensure RGBA format (8 hex digits)
+ensure_rgba() {
+    local color="$1"
+    color="${color#\#}"
+    case ${#color} in
+        6) echo "${color}ff" ;;
+        8) echo "$color" ;;
+        *) echo "$color" ;;
+    esac
 }
 
-bg_color=$(add_alpha "$bg_color" "cc")
-text_color=$(add_alpha "$text_color" "ff")
-match_color=$(add_alpha "$match_color" "ff")
-sel_bg_color=$(add_alpha "$sel_bg_color" "dd")
-sel_text_color=$(add_alpha "$sel_text_color" "ff")
-border_color=$(add_alpha "$border_color" "ff")
+bg_color=$(ensure_rgba "$bg_color")
+text_color=$(ensure_rgba "$text_color")
+match_color=$(ensure_rgba "$match_color")
+sel_bg_color=$(ensure_rgba "$sel_bg_color")
+sel_text_color=$(ensure_rgba "$sel_text_color")
+border_color=$(ensure_rgba "$border_color")
 
 exec fuzzel \
     --font="JetBrainsMono Nerd Font:size=11" \
-    --color="${bg_color},${text_color},${match_color},${sel_bg_color},${sel_text_color}" \
-    --border-color="${border_color}" \
+    --background-color="$bg_color" \
+    --text-color="$text_color" \
+    --match-color="$match_color" \
+    --selection-color="$sel_bg_color" \
+    --selection-text-color="$sel_text_color" \
+    --border-color="$border_color" \
     --border-width=2 \
     --inner-border-width=1 \
     "$@"
