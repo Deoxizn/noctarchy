@@ -18,6 +18,8 @@
 - Fix theme hook wallpaper: copy wallpapers to noctalia state dir + call `noctalia msg wallpaper-set` ([`f0c323e`](https://github.com/deoxizn/noctarchy/commit/f0c323e))
 - Update README: full keybinds table, complete menu suite, Niri/Noctalia-specific sections ([`e06266b`](https://github.com/deoxizn/noctarchy/commit/e06266b))
 - Website: clean up keybinds table, remove duplicate sections ([`53bfc26`](https://github.com/deoxizn/noctarchy/commit/53bfc26))
+- Install: remove `omarchy.desktop` after installing niri session so `uwsm stop` defaults to Niri on first logout ([`15760ef`](https://github.com/deoxizn/noctarchy/commit/15760ef))
+- Install: show `uwsm stop` command in summary so users know how to start Niri ([`795ac4b`](https://github.com/deoxizn/noctarchy/commit/795ac4b))
 
 - Fix `noctarchy-fuzzel`: remove `--inner-border-width` (not supported in fuzzel 1.14) ([`56cd0ac`](https://github.com/deoxizn/noctarchy/commit/56cd0ac))
 - Fix `sync.sh`: skip SDDM, UWSM and Plymouth sections gracefully when sudo unavailable (no TTY) ([`8001eec`](https://github.com/deoxizn/noctarchy/commit/8001eec))
