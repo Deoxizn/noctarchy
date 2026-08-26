@@ -178,7 +178,7 @@ binds {
     Mod+Space { spawn "noctalia" "msg" "panel-toggle" "launcher"; }
     Mod+Alt+Space { spawn "noctarchy-menu"; }
     Mod+K { spawn "noctarchy-keybinds"; }
-    Mod+Shift+? { show-hotkey-overlay; }
+    Mod+Shift+slash { show-hotkey-overlay; }
 
     // ── Terminal ──
     Mod+T { spawn "xdg-terminal-exec"; }
