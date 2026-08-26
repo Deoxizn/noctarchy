@@ -358,6 +358,16 @@ if ! $DRY_RUN; then
   else
     warn "  Omarchy SDDM theme not found — skipping (greeter stays stock)"
   fi
+
+  # Set Niri as default session
+  SDDM_SESSION="/etc/sddm.conf.d/10-session.conf"
+  if [[ ! -f "$SDDM_SESSION" ]] || ! grep -q 'niri.desktop' "$SDDM_SESSION" 2>/dev/null; then
+    run_sudo mkdir -p /etc/sddm.conf.d
+    run_sudo bash -c 'printf "[General]\nDisplayServer=wayland\nSession=wayland=niri.desktop\n" > /etc/sddm.conf.d/10-session.conf'
+    ok "SDDM default session set to Niri"
+  else
+    ok "SDDM default session already set to Niri"
+  fi
 else
   info "[dry-run] would install noctarchy SDDM greeter theme (+ switch Current= if stock)"
 fi

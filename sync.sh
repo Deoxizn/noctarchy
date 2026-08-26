@@ -238,6 +238,14 @@ if [[ -d $OMARCHY_SDDM ]]; then
       ok "  switched SDDM Current= to noctarchy"
       changed=$((changed+1))
     fi
+    # Set Niri as default session
+    SDDM_SESSION="/etc/sddm.conf.d/10-session.conf"
+    if [[ ! -f "$SDDM_SESSION" ]] || ! grep -q 'niri.desktop' "$SDDM_SESSION" 2>/dev/null; then
+      sudo mkdir -p /etc/sddm.conf.d
+      sudo bash -c 'printf "[General]\nDisplayServer=wayland\nSession=wayland=niri.desktop\n" > /etc/sddm.conf.d/10-session.conf'
+      ok "  SDDM default session set to Niri"
+      changed=$((changed+1))
+    fi
   else
     info "  [dry-run] would sync noctarchy SDDM theme"
   fi
