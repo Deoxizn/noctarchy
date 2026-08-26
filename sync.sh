@@ -251,14 +251,30 @@ if [[ -d $OMARCHY_SDDM ]]; then
         ok "  patched $(basename "$f")"
         changed=$((changed+1))
       fi
+      # Ensure RememberLastSession=false so SDDM doesn't remember old Hyprland session
+      if [[ -f "$f" ]] && grep -q '^RememberLastSession=true' "$f" 2>/dev/null; then
+        sudo sed -i 's/^RememberLastSession=true/RememberLastSession=false/' "$f"
+        ok "  disabled RememberLastSession in $(basename "$f")"
+        changed=$((changed+1))
+      fi
     done
-    # Set Niri as default session
+    # Set Niri as default session via Autologin section
     SDDM_SESSION="/etc/sddm.conf.d/10-session.conf"
-    if [[ ! -f "$SDDM_SESSION" ]] || ! grep -q 'niri.desktop' "$SDDM_SESSION" 2>/dev/null; then
-      sudo mkdir -p /etc/sddm.conf.d
-      sudo bash -c 'printf "[General]\nDisplayServer=wayland\nSession=wayland=niri.desktop\n" > /etc/sddm.conf.d/10-session.conf'
-      ok "  SDDM default session set to Niri"
-      changed=$((changed+1))
+    SDDM_SESSION_SRC="$REPO_DIR/branding/sddm/10-session.conf"
+    if [[ -f "$SDDM_SESSION_SRC" ]]; then
+      if [[ ! -f "$SDDM_SESSION" ]] || ! grep -q 'niri.desktop' "$SDDM_SESSION" 2>/dev/null || grep -q 'Session=wayland=' "$SDDM_SESSION" 2>/dev/null; then
+        sudo mkdir -p /etc/sddm.conf.d
+        sudo cp "$SDDM_SESSION_SRC" "$SDDM_SESSION"
+        ok "  SDDM default session set to Niri"
+        changed=$((changed+1))
+      fi
+    else
+      if [[ ! -f "$SDDM_SESSION" ]] || ! grep -q 'niri.desktop' "$SDDM_SESSION" 2>/dev/null; then
+        sudo mkdir -p /etc/sddm.conf.d
+        sudo bash -c 'printf "[Autologin]\nSession=niri.desktop\n\n[Users]\nRememberLastUser=true\nRememberLastSession=false\n" > /etc/sddm.conf.d/10-session.conf'
+        ok "  SDDM default session set to Niri"
+        changed=$((changed+1))
+      fi
     fi
   else
     info "  [dry-run] would sync noctarchy SDDM theme"

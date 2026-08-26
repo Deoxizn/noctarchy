@@ -365,20 +365,35 @@ if ! $DRY_RUN; then
       if [[ -f "$f" ]] && grep -q '^Current=omarchy' "$f" 2>/dev/null; then
         run_sudo sed -i 's/^Current=.*/Current=noctarchy/' "$f"
       fi
+      # Ensure RememberLastSession=false so SDDM doesn't remember old session
+      if [[ -f "$f" ]] && grep -q '^RememberLastSession=true' "$f" 2>/dev/null; then
+        run_sudo sed -i 's/^RememberLastSession=true/RememberLastSession=false/' "$f"
+      fi
     done
     ok "SDDM greeter: noctarchy theme active"
   else
     warn "  Omarchy SDDM theme not found — skipping (greeter stays stock)"
   fi
 
-  # Set Niri as default session
+  # Set Niri as default session via Autologin section
   SDDM_SESSION="/etc/sddm.conf.d/10-session.conf"
-  if [[ ! -f "$SDDM_SESSION" ]] || ! grep -q 'niri.desktop' "$SDDM_SESSION" 2>/dev/null; then
-    run_sudo mkdir -p /etc/sddm.conf.d
-    run_sudo bash -c 'printf "[General]\nDisplayServer=wayland\nSession=wayland=niri.desktop\n" > /etc/sddm.conf.d/10-session.conf'
-    ok "SDDM default session set to Niri"
+  SDDM_SESSION_SRC="$REPO_DIR/branding/sddm/10-session.conf"
+  if [[ -f "$SDDM_SESSION_SRC" ]]; then
+    if [[ ! -f "$SDDM_SESSION" ]] || ! grep -q 'niri.desktop' "$SDDM_SESSION" 2>/dev/null || grep -q 'Session=wayland=' "$SDDM_SESSION" 2>/dev/null; then
+      run_sudo mkdir -p /etc/sddm.conf.d
+      run_sudo cp "$SDDM_SESSION_SRC" "$SDDM_SESSION"
+      ok "SDDM default session set to Niri"
+    else
+      ok "SDDM default session already set to Niri"
+    fi
   else
-    ok "SDDM default session already set to Niri"
+    if [[ ! -f "$SDDM_SESSION" ]] || ! grep -q 'niri.desktop' "$SDDM_SESSION" 2>/dev/null; then
+      run_sudo mkdir -p /etc/sddm.conf.d
+      run_sudo bash -c 'printf "[Autologin]\nSession=niri.desktop\n\n[Users]\nRememberLastUser=true\nRememberLastSession=false\n" > /etc/sddm.conf.d/10-session.conf'
+      ok "SDDM default session set to Niri"
+    else
+      ok "SDDM default session already set to Niri"
+    fi
   fi
 else
   info "[dry-run] would install noctarchy SDDM greeter theme (+ switch Current= if stock)"
