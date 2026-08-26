@@ -6,32 +6,32 @@
 
 ## 2026-08-26
 
-- Initial release — Niri + Noctalia shell replacement for Omarchy
-- Niri config: scrollable tiling, spring animations, pink/blue/green focus ring, workspace binds, window/layer rules, xwayland-satellite
-- Noctalia config: top bar, workspaces/clock/network/battery/volume/brightness/tray/media widgets, swaylock, wallpaper-driven theming
-- Theme bridge hook: maps Omarchy colors.toml → Noctalia config.toml accent + Niri border colors live on every theme change
-- Auto-sync hook: pulls repo and re-runs sync.sh after `omarchy-update`, flock-guarded, notifies on failure
-- libalpm guard: prevents stock `omarchy-restart-shell` from killing Noctalia during package upgrades
-- Menu suite: 13 scripts — fuzzel, menu, power, keybinds, restart, config, themes, media, version, update, terminal, splash, kernel
-- Plymouth boot splash + SDDM greeter theme matching the Noctarchy identity
-- Kernel submenu: CachyOS variants (default, BORE, EEVDF, LTS, RT-BORE) via chaotic-aur
-- HiddenCommands.md: every stock Omarchy command the Noctarchy menu leaves out
-- Branding: screensaver.txt + about.txt ASCII art
-- Website: noctarchy.dirty.pizza landing page (CNAME ready)
-- Install/sync/uninstall: full lifecycle with dry-run, backup, 3-way KDL merge, state tracking
-
-## Fixes (post-release)
-
-- Fixed `noctarchy-fuzzel`: fuzzel 1.14 uses `--background-color`/`--text-color` individually, not `--color` — wrapper was passing an invalid option and crashing all menus
-- Fixed Niri config KDL parse error: `@DEFAULT_AUDIO_SINK@` inside `spawn` strings broke the KDL parser; switched media key binds to `spawn-sh`
-- Fixed `install.sh` + `sync.sh` fastfetch branding: logo replacement regex stopped at first `}` inside nested padding objects — replaced with brace-counting parser
-- Fixed Niri keybind conflicts: `Mod+Shift+F` was bound three times (fullscreen, focus-tiling, file manager) — re-separated to `SUPER+Ctrl+F`/`SUPER+Shift+P`/`SUPER+Shift+F`
-- Fixed universal copy/paste: `SUPER+C/V/X` now use `wtype -M ctrl` to simulate Ctrl+C/V/X since Niri lacks Hyprland's `send-shortcut`
-- Fixed Niri window rules: added `match` prefix to `app-id` and `open-floating true` value (bare `open-floating` is invalid)
-- Fixed Niri layer rules: added `match` prefix to `namespace` and `blur` → `background-effect { blur true }` (standalone `blur` is invalid)
-- Fixed `allow-when-locked=true` syntax: must be on keybind declaration line, not inside braces
-- Fixed duplicate keybinds: `Mod+K`, `Mod+C`, `Mod+Ctrl+L` were each bound twice
-- Fixed `overview` → `toggle-overview` (invalid action name)
-- Fixed sync.sh: skip SDDM/UWSM/Plymouth sections gracefully when sudo unavailable (no TTY)
-- Fastfetch: auto-detect foot/kitty/ghostty terminal for sixel/auto logo protocol instead of hardcoded `file` type
-- Theme hook: now patches `config.toml` accent colors and Niri border colors, not just unused `theme.toml`
+- Fix `noctarchy-fuzzel`: remove `--inner-border-width` (not supported in fuzzel 1.14) ([`56cd0ac`](https://github.com/deoxizn/noctarchy/commit/56cd0ac))
+- Fix `sync.sh`: skip SDDM, UWSM and Plymouth sections gracefully when sudo unavailable (no TTY) ([`8001eec`](https://github.com/deoxizn/noctarchy/commit/8001eec))
+- Fix fastfetch logo type: `auto` for ghostty/kitty, `sixel` for foot ([`f66be51`](https://github.com/deoxizn/noctarchy/commit/f66be51))
+- Theme hook: patch Noctalia `config.toml` accent colors and Niri border colors on every theme change, not just unused `theme.toml` ([`f9567e1`](https://github.com/deoxizn/noctarchy/commit/f9567e1))
+- Fix Niri config: window rules need `match` prefix on `app-id`, `open-floating` needs `true` value, layer rules need `background-effect { blur true }` not standalone `blur` ([`d82f430`](https://github.com/deoxizn/noctarchy/commit/d82f430))
+- Fix `allow-when-locked=true` syntax: must be on keybind declaration line, not inside braces ([`d82f430`](https://github.com/deoxizn/noctarchy/commit/d82f430))
+- Fix duplicate keybinds: `Mod+K`, `Mod+C`, `Mod+Ctrl+L` were each bound twice ([`d82f430`](https://github.com/deoxizn/noctarchy/commit/d82f430))
+- Fix `overview` → `toggle-overview` (invalid action name) ([`d82f430`](https://github.com/deoxizn/noctarchy/commit/d82f430))
+- Fastfetch: auto-detect foot/kitty/ghostty terminal for sixel/auto logo protocol ([`f9567e1`](https://github.com/deoxizn/noctarchy/commit/f9567e1))
+- Fix `noctarchy-fuzzel`: fuzzel 1.14 uses `--background-color`/`--text-color` individually, not `--color` ([`7a0abb9`](https://github.com/deoxizn/noctarchy/commit/7a0abb9))
+- Fix `install.sh` + `sync.sh` fastfetch branding: logo replacement regex stopped at first `}` inside nested padding — replaced with brace-counting parser ([`fc7c168`](https://github.com/deoxizn/noctarchy/commit/fc7c168))
+- Fix Niri config KDL parse error: `@DEFAULT_AUDIO_SINK@` inside `spawn` strings broke the parser; switched media key binds to `spawn-sh` ([`a490ce4`](https://github.com/deoxizn/noctarchy/commit/a490ce4))
+- Fix universal copy/paste: `SUPER+C/V/X` now use `wtype -M ctrl` since Niri lacks Hyprland's `send-shortcut` ([`4f3f558`](https://github.com/deoxizn/noctarchy/commit/4f3f558))
+- Fix Niri keybind conflicts: `SUPER+Shift+F` was bound three times — re-separated ([`4106064`](https://github.com/deoxizn/noctarchy/commit/4106064))
+- Website: full keybinds table, universal copy/paste honesty note ([`ed225cd`](https://github.com/deoxizn/noctarchy/commit/ed225cd))
+- Website: rename keybinds section to "The night shift" ([`d82f430`](https://github.com/deoxizn/noctarchy/commit/d82f430))
+- Initial release — Niri + Noctalia shell replacement for Omarchy ([`9cb988d`](https://github.com/deoxizn/noctarchy/commit/9cb988d))
+- Niri config: scrollable tiling, spring animations, focus ring, workspace binds, window/layer rules, xwayland-satellite ([`9cb988d`](https://github.com/deoxizn/noctarchy/commit/9cb988d))
+- Noctalia config: top bar, workspaces/clock/network/battery/volume/brightness/tray/media widgets, swaylock, wallpaper-driven theming ([`9cb988d`](https://github.com/deoxizn/noctarchy/commit/9cb988d))
+- Theme bridge hook: maps Omarchy colors.toml → Noctalia palette + wallpaper sync on every theme change ([`43c3394`](https://github.com/deoxizn/noctarchy/commit/43c3394))
+- Auto-sync hook: pulls repo and re-runs sync.sh after `omarchy-update` ([`43c3394`](https://github.com/deoxizn/noctarchy/commit/43c3394))
+- libalpm guard: prevents stock `omarchy-restart-shell` from killing Noctalia during package upgrades ([`43c3394`](https://github.com/deoxizn/noctarchy/commit/43c3394))
+- Menu suite: 13 scripts — fuzzel, menu, power, keybinds, restart, config, themes, media, version, update, terminal, splash, kernel ([`43c3394`](https://github.com/deoxizn/noctarchy/commit/43c3394))
+- Plymouth boot splash + SDDM greeter theme matching the Noctarchy identity ([`af53ab7`](https://github.com/deoxizn/noctarchy/commit/af53ab7))
+- Kernel submenu: CachyOS variants (default, BORE, EEVDF, LTS, RT-BORE) via chaotic-aur ([`af53ab7`](https://github.com/deoxizn/noctarchy/commit/af53ab7))
+- HiddenCommands.md: every stock Omarchy command the Noctarchy menu leaves out ([`af53ab7`](https://github.com/deoxizn/noctarchy/commit/af53ab7))
+- Branding: screensaver.txt + about.txt ASCII art, fastfetch branded in sync.sh ([`43c3394`](https://github.com/deoxizn/noctarchy/commit/43c3394))
+- Website: noctarchy.dirty.pizza landing page ([`a3040f7`](https://github.com/deoxizn/noctarchy/commit/a3040f7))
+- Install/sync/uninstall: full lifecycle with dry-run, backup, 3-way KDL merge, state tracking ([`9cb988d`](https://github.com/deoxizn/noctarchy/commit/9cb988d))
