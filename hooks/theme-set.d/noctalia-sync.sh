@@ -1,18 +1,20 @@
 #!/usr/bin/env bash
-# noctalia-sync.sh — Bridge omarchy colors.toml → Noctalia theme.toml
+# noctalia-sync.sh — Bridge omarchy colors.toml → Noctalia + Niri theme
 # Installed to: ~/.config/omarchy/hooks/theme-set.d/
 # Triggered automatically by omarchy-theme-set after every theme change.
 #
-# Reads omarchy's current colors.toml and generates a TOML theme file
-# for Noctalia at ~/.config/noctalia/theme.toml.
-# Includes wallpaper sync if the theme ships a backgrounds/ directory.
-# Set NOCTALIA_SYNC_NO_WALLPAPER=1 to skip wallpaper sync.
+# Reads omarchy's current colors.toml and:
+#   1. Updates Noctalia config.toml accent colors
+#   2. Updates Niri config.kdl border/focus ring colors
+#   3. Generates Noctalia theme.toml as reference
+#   4. Syncs wallpaper if the theme ships a backgrounds/ directory.
 
 set -euo pipefail
 
 THEME_DIR="${OMARCHY_CURRENT_THEME:-$HOME/.local/state/omarchy/current/theme}"
 NOCTALIA_DIR="$HOME/.config/noctalia"
-NOCTALIA_THEME="$NOCTALIA_DIR/theme.toml"
+NOCTALIA_CFG="$NOCTALIA_DIR/config.toml"
+NIRI_CFG="$HOME/.config/niri/config.kdl"
 
 if [[ ! -f "$THEME_DIR/colors.toml" ]]; then
   echo "noctalia-sync: no colors.toml found at $THEME_DIR" >&2
@@ -28,22 +30,24 @@ else
   THEME_NAME=$(basename "$THEME_DIR")
 fi
 
-export NOCTARCHIA_THEME_DIR="$THEME_DIR"
+export OMARCHY_CURRENT_THEME="$THEME_DIR"
 export NOCTARCHIA_THEME_NAME="$THEME_NAME"
-export NOCTARCHIA_NOCTALIA_DIR="$NOCTALIA_DIR"
+export NOCTALIA_DIR
+export NIRI_CFG
 
 python3 <<'PYEOF'
 import os
+import re
 import tomllib
 from pathlib import Path
 
-theme_dir = Path(os.environ["NOCTARCHIA_THEME_DIR"])
-theme_name = os.environ["NOCTARCHIA_THEME_NAME"]
-noctalia_dir = Path(os.environ["NOCTARCHIA_NOCTALIA_DIR"])
+theme_dir = Path(os.environ["OMARCHY_CURRENT_THEME"] or Path.home() / ".local/state/omarchy/current/theme")
+theme_name = os.environ.get("NOCTARCHIA_THEME_NAME", "unknown")
+noctalia_dir = Path(os.environ["NOCTALIA_DIR"])
+noctalia_cfg = noctalia_dir / "config.toml"
+niri_cfg = Path(os.environ["NIRI_CFG"])
 
 data = tomllib.loads((theme_dir / "colors.toml").read_text())
-mode = data.get("mode", "dark")
-
 
 def hex_color(key, fallback):
     v = data.get(key)
@@ -51,67 +55,54 @@ def hex_color(key, fallback):
         return "#" + v.lstrip("#")[:6]
     return "#" + fallback
 
+accent          = hex_color("accent",           "7c3aed")
+background      = hex_color("background",       "1a1a2e")
+dark_background = hex_color("dark_background",  "11111b")
+foreground      = hex_color("foreground",       "c0d0e0")
+muted           = hex_color("muted",            "586070")
 
-accent          = hex_color("accent",           "888888")
-background      = hex_color("background",       "111111")
-dark_background = hex_color("dark_background",  "1a1a1a")
-darker_bg       = hex_color("darker_background","0a0a0a")
-lighter_bg      = hex_color("lighter_background","333333")
-foreground      = hex_color("foreground",       "cccccc")
-dark_foreground = hex_color("dark_foreground",  "444444")
-muted           = hex_color("muted",            "666666")
-selection       = hex_color("selection",        "222222")
-red             = hex_color("red",              "ff4444")
-yellow          = hex_color("yellow",           "aaaa44")
-green           = hex_color("green",            "44aa44")
-cyan            = hex_color("cyan",             "44aaaa")
-blue            = hex_color("blue",             "4444ff")
-magenta         = hex_color("magenta",          "aa44aa")
-bright_red      = hex_color("bright_red",       "ff6666")
-bright_yellow   = hex_color("bright_yellow",    "cccc66")
-bright_green    = hex_color("bright_green",     "66cc66")
-bright_cyan     = hex_color("bright_cyan",      "66cccc")
-bright_blue     = hex_color("bright_blue",      "6666ff")
-bright_magenta  = hex_color("bright_magenta",   "cc66cc")
-bright_fg       = hex_color("bright_foreground","eeeeee")
+# ── 1. Patch Noctalia config.toml ──
+if noctalia_cfg.exists():
+    cfg = noctalia_cfg.read_text()
+    # Replace accent_color in [theming] section
+    cfg = re.sub(r'(accent_color\s*=\s*)"[^"]*"', f'\\1"{accent}"', cfg)
+    # Replace dark_mode based on mode
+    mode = data.get("mode", "dark")
+    cfg = re.sub(r'(dark_mode\s*=\s*)(?:true|false)', f'\\1{"true" if mode == "dark" else "false"}', cfg)
+    noctalia_cfg.write_text(cfg)
+    print(f"noctalia-sync: patched config.toml accent={accent}")
+
+# ── 2. Patch Niri config.kdl borders ──
+if niri_cfg.exists():
+    kdl = niri_cfg.read_text()
+    # Focus ring active color
+    kdl = re.sub(r'(active-color\s+)("#f472b6")', f'\\1"{accent}"', kdl, count=1)
+    # Border active color
+    kdl = re.sub(r'(active-color\s+)("#60a5fa")', f'\\1"{accent}"', kdl, count=1)
+    niri_cfg.write_text(kdl)
+    print(f"noctalia-sync: patched config.kdl borders accent={accent}")
+
+# ── 3. Generate theme.toml as reference ──
+mode = data.get("mode", "dark")
+bright_fg = hex_color("bright_foreground", "eeeeee")
 
 lines = [
     "# Noctalia theme — auto-generated by noctalia-sync.sh",
-    "# Do not edit manually; changes are overwritten on theme change.",
+    f"# Source: {theme_name} / colors.toml",
     "",
     f"name = \"{theme_name}\"",
     f"mode = \"{mode}\"",
     "",
     "[palette]",
     f"accent           = \"{accent}\"",
-    f"background       = \"{background}\"",
-    f"dark_background  = \"{dark_background}\"",
-    f"darker_background= \"{darker_bg}\"",
-    f"lighter_background=\"{lighter_bg}\"",
+    f"background       = \"{hex_color('background', '111111')}\"",
     f"foreground       = \"{foreground}\"",
-    f"dark_foreground  = \"{dark_foreground}\"",
     f"muted            = \"{muted}\"",
-    f"selection        = \"{selection}\"",
-    "",
-    f"red              = \"{red}\"",
-    f"yellow           = \"{yellow}\"",
-    f"green            = \"{green}\"",
-    f"cyan             = \"{cyan}\"",
-    f"blue             = \"{blue}\"",
-    f"magenta          = \"{magenta}\"",
-    "",
-    f"bright_red       = \"{bright_red}\"",
-    f"bright_yellow    = \"{bright_yellow}\"",
-    f"bright_green     = \"{bright_green}\"",
-    f"bright_cyan      = \"{bright_cyan}\"",
-    f"bright_blue      = \"{bright_blue}\"",
-    f"bright_magenta   = \"{bright_magenta}\"",
     f"bright_foreground= \"{bright_fg}\"",
 ]
-
 (noctalia_dir / "theme.toml").write_text("\n".join(lines) + "\n")
 
-# Wallpaper sync — write to noctalia's state if backgrounds dir exists.
+# ── 4. Wallpaper sync ──
 if os.environ.get("NOCTALIA_SYNC_NO_WALLPAPER") != "1":
     wp_dir = theme_dir / "backgrounds"
     if wp_dir.is_dir():
@@ -132,7 +123,7 @@ if os.environ.get("NOCTALIA_SYNC_NO_WALLPAPER") != "1":
             if cur.is_symlink() or cur.exists():
                 cur.unlink()
             cur.symlink_to(target)
+            print(f"noctalia-sync: wallpaper → {target}")
 
+print(f"noctalia-sync: synced theme '{theme_name}'")
 PYEOF
-
-echo "noctalia-sync: synced theme '$THEME_NAME' → $NOCTALIA_THEME" >&2

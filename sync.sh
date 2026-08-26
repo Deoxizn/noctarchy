@@ -383,6 +383,17 @@ FF_STOCK="/etc/fastfetch/config.jsonc"
 
 info "Fastfetch branding:"
 FF_LOGO_SRC="$REPO_DIR/branding/noctarchy.png"
+
+# Detect terminal for image protocol
+FF_TERMINAL_TYPE="small"
+if command -v ghostty &>/dev/null; then
+  FF_TERMINAL_TYPE="kitty"
+elif command -v kitty &>/dev/null; then
+  FF_TERMINAL_TYPE="kitty"
+elif command -v foot &>/dev/null; then
+  FF_TERMINAL_TYPE="sixel"
+fi
+
 if [[ -f $FF_DIR/config.jsonc ]] && [[ -f $FF_STOCK ]]; then
   if ! $DRY_RUN; then
     cp "$FF_STOCK" "$FF_DIR/config.jsonc"
@@ -394,16 +405,17 @@ if [[ -f $FF_DIR/config.jsonc ]] && [[ -f $FF_STOCK ]]; then
         cp "$FF_LOGO_SRC" "$FF_LOGO_DST"
       fi
     fi
-    python3 - "$FF_DIR/config.jsonc" << 'FFPY'
+    python3 - "$FF_DIR/config.jsonc" "$FF_TERMINAL_TYPE" << 'FFPY'
 import sys, re
 path = sys.argv[1]
+logo_type = sys.argv[2]
+
 with open(path) as f:
     text = f.read()
 
 # Replace logo section by counting braces
 start = text.find('"logo"')
 if start >= 0:
-    # find opening { of logo value
     brace_start = text.index('{', start)
     depth = 0
     for i in range(brace_start, len(text)):
@@ -412,16 +424,30 @@ if start >= 0:
         if depth == 0:
             old_logo = text[start:i+1]
             break
-    new_logo = ('"logo": {\n'
-                '    "type": "file",\n'
-                '    "source": "~/.config/omarchy/branding/noctarchy.png",\n'
-                '    "width": 32,\n'
-                '    "padding": {\n'
-                '      "top": 1,\n'
-                '      "right": 2,\n'
-                '      "left": 2\n'
-                '    }\n'
-                '  }')
+
+    if logo_type in ("sixel", "kitty"):
+        new_logo = ('"logo": {\n'
+                    f'    "type": "{logo_type}",\n'
+                    '    "source": "~/.config/omarchy/branding/noctarchy.png",\n'
+                    '    "width": 32,\n'
+                    '    "padding": {\n'
+                    '      "top": 1,\n'
+                    '      "right": 2,\n'
+                    '      "left": 2\n'
+                    '    }\n'
+                    '  }')
+    else:
+        # No image terminal — use built-in small text logo
+        new_logo = ('"logo": {\n'
+                    '    "type": "builtin",\n'
+                    '    "source": "small",\n'
+                    '    "padding": {\n'
+                    '      "top": 1,\n'
+                    '      "right": 1,\n'
+                    '      "left": 1\n'
+                    '    }\n'
+                    '  }')
+
     text = text.replace(old_logo, new_logo, 1)
 
 # Brand OS version
@@ -432,7 +458,7 @@ text = re.sub(pattern, replacement, text)
 with open(path, "w") as f:
     f.write(text)
 FFPY
-    ok "  branded fastfetch (noctarchy.png logo)"
+    ok "  branded fastfetch (noctarchy.png logo, $FF_TERMINAL_TYPE protocol)"
   fi
 else
   ok "  fastfetch config unchanged or custom — left untouched"
