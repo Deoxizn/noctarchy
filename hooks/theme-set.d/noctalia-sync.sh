@@ -66,16 +66,19 @@ selection       = hex_color("selection",         "292e42")
 # ── 1. Patch Noctalia config.toml ──
 if noctalia_cfg.exists():
     cfg = noctalia_cfg.read_text()
+    # Patch existing keys
     cfg = re.sub(r'(accent_color\s*=\s*)"[^"]*"', f'\\1"{accent}"', cfg)
     cfg = re.sub(r'(bg_color\s*=\s*)"[^"]*"',     f'\\1"{background}"', cfg)
     cfg = re.sub(r'(text_color\s*=\s*)"[^"]*"',   f'\\1"{foreground}"', cfg)
     cfg = re.sub(r'(border_color\s*=\s*)"[^"]*"', f'\\1"{muted}"', cfg)
     cfg = re.sub(r'(sel_bg_color\s*=\s*)"[^"]*"', f'\\1"{selection}"', cfg)
-    # Add keys if missing (first run)
-    if 'bg_color' not in cfg:
-        cfg = cfg.replace('accent_color =', f'bg_color = "{background}"\ntext_color = "{foreground}"\nborder_color = "{muted}"\nsel_bg_color = "{selection}"\naccent_color =')
     mode = data.get("mode", "dark")
     cfg = re.sub(r'(dark_mode\s*=\s*)(?:true|false)', f'\\1{"true" if mode == "dark" else "false"}', cfg)
+    # Insert missing keys after accent_color line
+    for key, val in [("bg_color", background), ("text_color", foreground),
+                     ("border_color", muted), ("sel_bg_color", selection)]:
+        if key not in cfg:
+            cfg = re.sub(r'(accent_color\s*=\s*"[^"]*")', f'\\1\n{key} = "{val}"', cfg)
     noctalia_cfg.write_text(cfg)
     print(f"noctalia-sync: patched config.toml accent={accent} bg={background} fg={foreground} border={muted}")
 
