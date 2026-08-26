@@ -306,30 +306,19 @@ echo ""
 # ──────────────────────────────────────────────
 
 FF_DIR="$HOME/.config/fastfetch"
-NEW_FF_OS='"text": "rev=$(noctarchy-version 2>/dev/null); ver=$(omarchy-version); echo \"Noctarchy${rev:+ \$rev} (Omarchy \$ver)\""'
-FF_OS_STOCK_RAW='"text": "version=$(omarchy-version) && echo \"Omarchy $version\""'
-
-ff_debrand() {
-  local s
-  s=$(cat "$1"; printf x)
-  s=${s%x}
-  s=${s//'"$(noctarchy-version 2>/dev/null); ver=$(omarchy-version); echo \"Noctarchy${rev:+ \$rev} (Omarchy \$ver)\""/'"$FF_OS_STOCK_RAW"'}
-  printf '%s' "$s"
-}
+FF_STOCK="/etc/fastfetch/config.jsonc"
 
 info "Fastfetch branding:"
-if [[ -f $FF_DIR/config.jsonc ]] && [[ -f /etc/fastfetch/config.jsonc ]] &&
-   cmp -s <(ff_debrand "$FF_DIR/config.jsonc") <(ff_debrand /etc/fastfetch/config.jsonc); then
+if [[ -f $FF_DIR/config.jsonc ]] && [[ -f $FF_STOCK ]]; then
   if ! $DRY_RUN; then
-    cp /etc/fastfetch/config.jsonc "$FF_DIR/config.jsonc"
-    # Patch the OS line to show Noctarchy version
+    cp "$FF_STOCK" "$FF_DIR/config.jsonc"
     python3 - "$FF_DIR/config.jsonc" << 'FFPY'
 import sys, re
 path = sys.argv[1]
 with open(path) as f:
     text = f.read()
 pattern = r'"text":\s*"version=\$\(omarchy-version\).*"'
-replacement = r'"text": "rev=$(noctarchy-version 2>/dev/null); ver=$(omarchy-version); echo \"Noctarchy${rev:+ $rev} (Omarchy $ver)\""'
+replacement = '"text": "rev=$(noctarchy-version 2>/dev/null); ver=$(omarchy-version); echo \\"Noctarchy${rev:+ $rev} (Omarchy $ver)\\""'
 text = re.sub(pattern, replacement, text)
 with open(path, "w") as f:
     f.write(text)
