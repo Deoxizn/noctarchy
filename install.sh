@@ -221,7 +221,7 @@ with open(path, "w") as f:
 print(f"  injected {anchor}")
 sys.exit(0)
 STUBPY
-    then
+    if [[ $? -eq 0 ]]; then
       ok "  hyprland.lua patched (default autostart disabled)"
     else
       err "  Could not patch hyprland.lua automatically"
