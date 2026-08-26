@@ -181,7 +181,7 @@ binds {
     Mod+Shift+slash { show-hotkey-overlay; }
 
     // ── Terminal ──
-    Mod+T { spawn "xdg-terminal-exec"; }
+    Mod+Return { spawn "xdg-terminal-exec"; }
 
     // ── Apps (matches Omarchy conventions) ──
     Mod+B { spawn "xdg-open" "https://"; }
