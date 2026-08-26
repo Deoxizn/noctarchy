@@ -1,0 +1,20 @@
+#!/bin/bash
+# noctarchy:install=package-installer
+# noctarchy:summary=Install submenu: packages, AUR builds, or a web app
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+choice=$(
+  printf '%s\n' \
+    'Package' \
+    'AUR' \
+    'Web App' |
+    "$SCRIPT_DIR/noctarchy-fuzzel" --dmenu --prompt='Install: ' --width=26 --lines=3
+) || exit 0
+
+case "$choice" in
+  Package)   exec omarchy-launch-or-focus-tui --app-id=TUI.float omarchy-pkg-install ;;
+  AUR)       exec omarchy-launch-or-focus-tui --app-id=TUI.float omarchy-pkg-aur-install ;;
+  "Web App") exec "$SCRIPT_DIR/noctarchy-terminal" omarchy-webapp-install ;;
+esac

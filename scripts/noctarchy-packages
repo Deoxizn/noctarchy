@@ -1,0 +1,19 @@
+#!/bin/bash
+# noctarchy:packages=package-manager
+# noctarchy:summary=Packages submenu: install or remove packages, AUR builds, web apps
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+choice=$(
+  printf '%s\n' \
+    'Install >' \
+    'Remove >' |
+    "$SCRIPT_DIR/noctarchy-fuzzel" --dmenu --prompt='Packages: ' --width=26 --lines=2
+) || exit 0
+choice=${choice%' >'}
+
+case "$choice" in
+  Install) exec "$SCRIPT_DIR/noctarchy-install" ;;
+  Remove)  exec "$SCRIPT_DIR/noctarchy-remove" ;;
+esac

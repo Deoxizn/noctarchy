@@ -1,6 +1,6 @@
 #!/bin/bash
 # noctarchy:themes=theme-switcher
-# noctarchy:summary=Switch themes via omarchy-theme-set with fuzzel selector
+# noctarchy:summary=Switch themes and toggle bar color source
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -67,7 +67,6 @@ case "$choice" in
         if [[ -f "$NOCTALIA_CFG" ]]; then
             sed -i "s/^source = \".*\"/source = \"$new_source\"/" "$NOCTALIA_CFG"
         fi
-        # Restart noctalia to apply
         systemctl --user restart noctalia 2>/dev/null && \
             notify-send "Noctarchy" "Bar source: $new_source" || \
             notify-send "Noctarchy" "Changed to $new_source — restart Noctalia to apply"

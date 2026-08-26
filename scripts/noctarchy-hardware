@@ -1,0 +1,31 @@
+#!/bin/bash
+# noctarchy:hardware=hardware-toggles
+# noctarchy:summary=Hardware toggles: touchpad, touchscreen, hybrid GPU, laptop display
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+menu=""
+declare -A cmd_for=()
+
+add() {
+  local label=$1 cond=$2
+  shift 2
+  [[ -n $cond ]] && ! "$cond" >/dev/null 2>&1 && return 0
+  cmd_for[$label]="$*"
+  menu+="$label"$'\n'
+}
+
+add 'Touchpad'       omarchy-hw-touchpad      omarchy-toggle-touchpad
+add 'Touchscreen'    omarchy-hw-touchscreen   omarchy-toggle-touchscreen
+add 'Hybrid GPU'     omarchy-hw-hybrid-gpu    "$SCRIPT_DIR/noctarchy-terminal" omarchy-toggle-hybrid-gpu
+
+[[ -n $menu ]] || exit 0
+
+choice=$(
+  printf '%s' "$menu" |
+    "$SCRIPT_DIR/noctarchy-fuzzel" --dmenu --prompt='Hardware: ' --width=26 --lines=${#cmd_for[@]}
+) || exit 0
+
+cmd=${cmd_for[$choice]:-}
+[[ -n $cmd ]] && eval exec "$cmd"

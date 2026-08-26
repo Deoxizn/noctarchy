@@ -1,0 +1,37 @@
+#!/bin/bash
+# noctarchy:network=network-setup
+# noctarchy:summary=Network setup: DNS provider picker and Wi-Fi sharing QR code
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+entries=('DNS >')
+[[ $(omarchy-network-status 2>/dev/null) == wifi* ]] && entries+=('Wi-Fi QR Code')
+
+choice=$(
+  printf '%s\n' "${entries[@]}" |
+    "$SCRIPT_DIR/noctarchy-fuzzel" --dmenu --prompt='Network: ' --width=26 --lines=${#entries[@]}
+) || exit 0
+choice=${choice%' >'}
+
+case "$choice" in
+  DNS) ;;
+  'Wi-Fi QR Code') exec omarchy-launch-or-focus-tui --app-id=TUI.float "$SCRIPT_DIR/noctarchy-wifi-qr" ;;
+  *) exit 0 ;;
+esac
+
+current=$(omarchy-dns 2>/dev/null)
+
+pick=$(
+  printf '%s\n' DHCP Cloudflare Google Custom |
+    awk -v cur="$current" '$0 == cur { print "✓ " $0; next } { print }' |
+    "$SCRIPT_DIR/noctarchy-fuzzel" --dmenu --prompt='DNS: ' --width=22 --lines=4
+) || exit 0
+
+provider=${pick#✓ }
+[[ -n $provider ]] || exit 0
+
+case "$provider" in
+  Custom) exec "$SCRIPT_DIR/noctarchy-terminal" omarchy-dns Custom ;;
+  *)      exec omarchy-dns "$provider" ;;
+esac

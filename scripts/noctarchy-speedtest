@@ -1,0 +1,20 @@
+#!/bin/bash
+# noctarchy:speedtest=speed-tests
+# noctarchy:summary=Speed tests: network down/up and disk
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+choice=$(
+  printf '%s\n' \
+    'Network download' \
+    'Network upload' \
+    'Disk' |
+    "$SCRIPT_DIR/noctarchy-fuzzel" --dmenu --prompt='Speed test: ' --width=26 --lines=3
+) || exit 0
+
+case "$choice" in
+  "Network download") exec "$SCRIPT_DIR/noctarchy-terminal" omarchy-network-speedtest down ;;
+  "Network upload")   exec "$SCRIPT_DIR/noctarchy-terminal" omarchy-network-speedtest up ;;
+  Disk)               exec "$SCRIPT_DIR/noctarchy-terminal" omarchy-disk-speedtest ;;
+esac

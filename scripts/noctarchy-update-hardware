@@ -1,0 +1,22 @@
+#!/bin/bash
+# noctarchy:update-hardware=restart-hardware-stacks
+# noctarchy:summary=Restart hardware stacks: audio, Wi-Fi, Bluetooth, trackpad
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+choice=$(
+  printf '%s\n' \
+    'Audio' \
+    'Wi-Fi' \
+    'Bluetooth' \
+    'Trackpad' |
+    "$SCRIPT_DIR/noctarchy-fuzzel" --dmenu --prompt='Restart: ' --width=26 --lines=4
+) || exit 0
+
+case "$choice" in
+  Audio)     exec "$SCRIPT_DIR/noctarchy-terminal" omarchy-restart-audio ;;
+  Wi-Fi)     exec "$SCRIPT_DIR/noctarchy-terminal" omarchy-restart-wifi ;;
+  Bluetooth) exec "$SCRIPT_DIR/noctarchy-terminal" omarchy-restart-bluetooth ;;
+  Trackpad)  exec "$SCRIPT_DIR/noctarchy-terminal" omarchy-restart-trackpad ;;
+esac

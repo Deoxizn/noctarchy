@@ -1,0 +1,23 @@
+#!/bin/bash
+# noctarchy:setup=setup-submenu
+# noctarchy:summary=Setup submenu: network, security, hardware, defaults
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+choice=$(
+  printf '%s\n' \
+    'Defaults >' \
+    'Hardware >' \
+    'Network >' \
+    'Security >' |
+    "$SCRIPT_DIR/noctarchy-fuzzel" --dmenu --prompt='Setup: ' --width=26 --lines=4
+) || exit 0
+choice=${choice%' >'}
+
+case "$choice" in
+  Defaults) exec "$SCRIPT_DIR/noctarchy-defaults" ;;
+  Hardware) exec "$SCRIPT_DIR/noctarchy-hardware" ;;
+  Network)  exec "$SCRIPT_DIR/noctarchy-network" ;;
+  Security) exec "$SCRIPT_DIR/noctarchy-security" ;;
+esac

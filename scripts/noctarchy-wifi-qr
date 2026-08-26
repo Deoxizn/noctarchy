@@ -1,0 +1,24 @@
+#!/bin/bash
+# noctarchy:wifi-qr=wifi-qr-code
+# noctarchy:summary=Show the current Wi-Fi connection as a scannable QR code
+set -euo pipefail
+
+out=$(omarchy-network-qr --meta 2>&1) || {
+  printf '\n  %s\n' "$out"
+  sleep 3
+  exit 1
+}
+
+meta=$(head -n1 <<<"$out")
+ssid=$(awk -F'\t' '{print $4}' <<<"$meta")
+
+printf '\n  Wi-Fi: %s\n\n' "$ssid"
+
+tail -n +2 <<<"$out" | python3 -c '
+import sys
+for row in sys.stdin.read().split():
+    print("".join("\033[40m  \033[0m" if module == "1" else "\033[107m  \033[0m" for module in row))
+'
+
+printf '\n  Scan with a phone camera. Press any key to close...'
+read -rsn1

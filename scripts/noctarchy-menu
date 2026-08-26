@@ -5,14 +5,25 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-choice=$(echo -e "Packages >\nRestart >\nSetup >\nSystem >\nThemes >\nTrigger >\nUpdate >" | "$SCRIPT_DIR/noctarchy-fuzzel" --dmenu --prompt='☽ Noctarchy ✦ ' --width=28 --lines=7)
+choice=$(
+  printf '%s\n' \
+    'Packages >' \
+    'Restart >' \
+    'Setup >' \
+    'System >' \
+    'Themes >' \
+    'Trigger >' \
+    'Update >' |
+    "$SCRIPT_DIR/noctarchy-fuzzel" --dmenu --prompt='☽ Noctarchy ✦ ' --width=28 --lines=7
+) || exit 0
+choice=${choice%' >'}
 
 case "$choice" in
-    "Packages >")  exec "$SCRIPT_DIR/noctarchy-packages" 2>/dev/null || notify-send "Noctarchy" "Packages menu not found" ;;
-    "Restart >")   exec "$SCRIPT_DIR/noctarchy-restart" ;;
-    "Setup >")     exec "$SCRIPT_DIR/noctarchy-config" ;;
-    "System >")    exec "$SCRIPT_DIR/noctarchy-power" ;;
-    "Themes >")    exec "$SCRIPT_DIR/noctarchy-themes" ;;
-    "Trigger >")   exec "$SCRIPT_DIR/noctarchy-trigger" 2>/dev/null || notify-send "Noctarchy" "Trigger menu not found" ;;
-    "Update >")    exec "$SCRIPT_DIR/noctarchy-update" ;;
+  Packages) exec "$SCRIPT_DIR/noctarchy-packages" ;;
+  Restart)  exec "$SCRIPT_DIR/noctarchy-restart" ;;
+  Setup)    exec "$SCRIPT_DIR/noctarchy-setup" ;;
+  System)   exec "$SCRIPT_DIR/noctarchy-power" ;;
+  Themes)   exec "$SCRIPT_DIR/noctarchy-themes" ;;
+  Trigger)  exec "$SCRIPT_DIR/noctarchy-speedtest" ;;
+  Update)   exec "$SCRIPT_DIR/noctarchy-update" ;;
 esac
