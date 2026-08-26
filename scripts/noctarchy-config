@@ -1,34 +1,24 @@
 #!/bin/bash
-# noctarchy:config=editor-launcher
-# noctarchy:summary=Open Noctarchy/Niri config in default editor
+# noctarchy:menu=config
+# noctarchy:summary=Edit Noctarchy config files
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-NIRI_CONFIG="${XDG_CONFIG_HOME:-$HOME/.config}/niri/config.kdl"
-NOCTALIA_CONFIG="${XDG_CONFIG_HOME:-$HOME/.config}/noctalia/config.toml"
-
-choice=$(printf '%s\n' \
-    "Niri config (config.kdl)" \
-    "Noctalia config (config.toml)" | "$SCRIPT_DIR/noctarchy-fuzzel" --dmenu --prompt='Config: ' --width=32 --lines=2)
-
-[[ -z "$choice" ]] && exit 0
-
-EDITOR="${EDITOR:-}"
-if [[ -z "$EDITOR" ]]; then
-    for cmd in code nano vim; do
-        if command -v "$cmd" &>/dev/null; then
-            EDITOR="$cmd"
-            break
-        fi
-    done
-fi
+choice=$(
+  printf '%s\n' \
+    'Niri config' \
+    'Noctalia config' \
+    'Palettes' \
+    'Hooks' \
+    'Scripts' |
+    "$SCRIPT_DIR/noctarchy-fuzzel" --dmenu --prompt='Config: ' --width=24 --lines=5
+) || exec "$SCRIPT_DIR/noctarchy-menu"
 
 case "$choice" in
-    "Niri config (config.kdl)")
-        exec "$EDITOR" "$NIRI_CONFIG"
-        ;;
-    "Noctalia config (config.toml)")
-        exec "$EDITOR" "$NOCTALIA_CONFIG"
-        ;;
+  'Niri config')     xdg-terminal-exec -e "${EDITOR:-nvim}" "${XDG_CONFIG_HOME:-$HOME/.config}/niri/config.kdl" ;;
+  'Noctalia config') xdg-terminal-exec -e "${EDITOR:-nvim}" "${XDG_CONFIG_HOME:-$HOME/.config}/noctalia/config.toml" ;;
+  'Palettes')        xdg-terminal-exec -e "${EDITOR:-nvim}" "${XDG_CONFIG_HOME:-$HOME/.config}/noctalia/palettes/" ;;
+  'Hooks')           xdg-terminal-exec -e "${EDITOR:-nvim}" "${XDG_DATA_HOME:-$HOME/.local/share}/noctarchy/hooks/" ;;
+  'Scripts')         xdg-terminal-exec -e "${EDITOR:-nvim}" "${XDG_DATA_HOME:-$HOME/.local/share}/noctarchy/scripts/" ;;
 esac

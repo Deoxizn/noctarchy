@@ -8,18 +8,20 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 choice=$(
   printf '%s\n' \
     'Packages >' \
+    'Config >' \
     'Restart >' \
     'Setup >' \
     'System >' \
     'Themes >' \
     'Trigger >' \
     'Update >' |
-    "$SCRIPT_DIR/noctarchy-fuzzel" --dmenu --prompt='☽ Noctarchy ✦ ' --width=28 --lines=7
+    "$SCRIPT_DIR/noctarchy-fuzzel" --dmenu --prompt='☽ Noctarchy ✦ ' --width=28 --lines=8
 ) || exit 0
 choice=${choice%' >'}
 
 case "$choice" in
   Packages) exec "$SCRIPT_DIR/noctarchy-packages" ;;
+  Config)   exec "$SCRIPT_DIR/noctarchy-config" ;;
   Restart)  exec "$SCRIPT_DIR/noctarchy-restart" ;;
   Setup)    exec "$SCRIPT_DIR/noctarchy-setup" ;;
   System)   exec "$SCRIPT_DIR/noctarchy-power" ;;
