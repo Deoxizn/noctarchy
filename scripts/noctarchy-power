@@ -25,13 +25,13 @@ confirm() {
 
 do_action() {
     case "$choice" in
-        Screensaver)  hyprctl dispatch dpms off 2>/dev/null || true ;;
+        Screensaver)  niri msg action consume-window-portal-shot 2>/dev/null || true ;;
         Lock)         niri msg action lock 2>/dev/null || loginctl lock-session ;;
-        Logout)       omarchy-system-logout ;;
+        Logout)       niri msg action quit ;;
         Suspend)      systemctl suspend ;;
         Hibernate)    systemctl hibernate ;;
-        Reboot)       confirm "Reboot" && omarchy-system-reboot ;;
-        Shutdown)     confirm "Shutdown" && omarchy-system-shutdown ;;
+        Reboot)       confirm "Reboot" && systemctl reboot ;;
+        Shutdown)     confirm "Shutdown" && systemctl poweroff ;;
     esac
 }
 
