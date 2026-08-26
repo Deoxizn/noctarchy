@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="noctarchy.png" alt="Noctarchy" width="450">
+<img src="branding/noctarchy.png" alt="Noctarchy" width="450">
 
 [noctarchy.dirty.pizza](https://noctarchy.dirty.pizza)
 
