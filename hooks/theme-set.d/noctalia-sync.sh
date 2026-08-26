@@ -66,30 +66,27 @@ selection       = hex_color("selection",         "292e42")
 # ── 1. Patch Noctalia config.toml ──
 if noctalia_cfg.exists():
     cfg = noctalia_cfg.read_text()
-    # Patch existing keys
-    cfg = re.sub(r'(accent_color\s*=\s*)"[^"]*"', f'\\1"{accent}"', cfg)
-    cfg = re.sub(r'(bg_color\s*=\s*)"[^"]*"',     f'\\1"{background}"', cfg)
-    cfg = re.sub(r'(text_color\s*=\s*)"[^"]*"',   f'\\1"{foreground}"', cfg)
-    cfg = re.sub(r'(border_color\s*=\s*)"[^"]*"', f'\\1"{muted}"', cfg)
-    cfg = re.sub(r'(sel_bg_color\s*=\s*)"[^"]*"', f'\\1"{selection}"', cfg)
     mode = data.get("mode", "dark")
-    cfg = re.sub(r'(dark_mode\s*=\s*)(?:true|false)', f'\\1{"true" if mode == "dark" else "false"}', cfg)
-    # Insert missing keys after accent_color line
-    for key, val in [("bg_color", background), ("text_color", foreground),
-                     ("border_color", muted), ("sel_bg_color", selection)]:
-        if key not in cfg:
-            cfg = re.sub(r'(accent_color\s*=\s*"[^"]*")', f'\\1\n{key} = "{val}"', cfg)
+    # Replace entire [theming] section
+    theming_block = f"""[theming]
+source = "wallpaper"
+dark_mode = {"true" if mode == "dark" else "false"}
+accent_color = "{accent}"
+bg_color = "{background}"
+text_color = "{foreground}"
+border_color = "{muted}"
+sel_bg_color = "{selection}"
+border_radius = 12"""
+    cfg = re.sub(r'\[theming\].*?(?=\n\[|\Z)', theming_block, cfg, flags=re.DOTALL)
     noctalia_cfg.write_text(cfg)
     print(f"noctalia-sync: patched config.toml accent={accent} bg={background} fg={foreground} border={muted}")
 
 # ── 2. Patch Niri config.kdl borders ──
 if niri_cfg.exists():
     kdl = niri_cfg.read_text()
-    # Focus ring: active-color and inactive-color
-    kdl = re.sub(r'(active-color\s+)"#[0-9a-fA-F]{6}"',   f'\\1"{accent}"', kdl)
+    # Use word-boundary-like matching: active-color (not inactive-color)
+    kdl = re.sub(r'(?<!\w)(active-color\s+)"#[0-9a-fA-F]{6}"', f'\\1"{accent}"', kdl)
     kdl = re.sub(r'(inactive-color\s+)"#[0-9a-fA-F]{6}"', f'\\1"{muted}"', kdl)
-    # Window border: active-color and inactive-color (inside border blocks)
-    kdl = re.sub(r'((?:active|inactive)-color\s+)"#[0-9a-fA-F]{6}"', f'\\1"{accent}"', kdl)
     niri_cfg.write_text(kdl)
     print(f"noctalia-sync: patched config.kdl borders accent={accent} inactive={muted}")
 
