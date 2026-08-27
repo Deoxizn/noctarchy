@@ -251,6 +251,7 @@ PartOf=graphical-session.target
 
 [Service]
 Type=simple
+ExecStartPre=/bin/sh -c '! pgrep -x noctalia >/dev/null 2>&1'
 ExecStart=/usr/bin/noctalia
 Restart=on-failure
 RestartSec=2

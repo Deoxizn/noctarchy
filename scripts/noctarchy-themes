@@ -1,18 +1,45 @@
 #!/bin/bash
 # noctarchy:themes=theme-submenu
-# noctarchy:summary=Themes submenu: browse the theme list or install a new theme
+# noctarchy:summary=Themes submenu: browse the theme list, switch palette source, or install a new theme
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+NOCTALIA_CFG="${XDG_CONFIG_HOME:-$HOME/.config}/noctalia/config.toml"
 
 choice=$(
   printf '%s\n' \
     'Theme list' \
+    'Palette source' \
     'Install theme' |
-    "$SCRIPT_DIR/noctarchy-fuzzel" --dmenu --prompt='Themes: ' --width=26 --lines=2
+    "$SCRIPT_DIR/noctarchy-fuzzel" --dmenu --prompt='Themes: ' --width=26 --lines=3
 ) || exec "$SCRIPT_DIR/noctarchy-menu"
 
 case "$choice" in
   "Theme list")    exec "$SCRIPT_DIR/noctarchy-themes-list" ;;
   "Install theme") exec omarchy-launch-or-focus-tui --app-id=TUI.float omarchy-theme-install ;;
+  "Palette source")
+    current=""
+    if [[ -f "$NOCTALIA_CFG" ]] && grep -q 'source = "custom"' "$NOCTALIA_CFG" 2>/dev/null; then
+      current="Theme"
+    else
+      current="Wallpaper"
+    fi
+    source_choice=$(
+      printf '%s\n' \
+        'Theme (custom palette)' \
+        'Wallpaper (Material You)' |
+        "$SCRIPT_DIR/noctarchy-fuzzel" --dmenu --prompt="Palette ($current): " --width=30 --lines=2
+    ) || exec "$SCRIPT_DIR/noctarchy-themes"
+    if [[ -z "$source_choice" ]]; then
+      exec "$SCRIPT_DIR/noctarchy-themes"
+    fi
+    if [[ "$source_choice" == *"custom"* ]]; then
+      sed -i 's/^source = .*/source = "custom"/' "$NOCTALIA_CFG"
+      sed -i 's/^custom_palette = .*/custom_palette = "omarchy"/' "$NOCTALIA_CFG"
+      echo "Switched to Theme palette"
+    else
+      sed -i 's/^source = .*/source = "wallpaper"/' "$NOCTALIA_CFG"
+      echo "Switched to Wallpaper palette"
+    fi
+    ;;
 esac

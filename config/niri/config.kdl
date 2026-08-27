@@ -259,7 +259,7 @@ binds {
     Ctrl+Print { spawn-sh "grim - | wl-copy"; }
     Alt+Print { spawn-sh "grim -g \"$(slurp)\" ~/Pictures/Screenshots/\"$(date +%Y-%m-%d_%H-%M-%S).png\""; }
 
-    // ── Clipboard (universal copy/paste via wtype) ──
+    // ── Clipboard (wtype for GUI apps, terminals use Shift+Ctrl+C/V) ──
     Mod+C { spawn-sh "wtype -M ctrl -k c"; }
     Mod+V { spawn-sh "wtype -M ctrl -k v"; }
     Mod+X { spawn-sh "wtype -M ctrl -k x"; }
