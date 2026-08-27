@@ -282,6 +282,25 @@ if systemctl --user is-enabled --quiet omarchy-shell.service 2>/dev/null; then
 fi
 
 # ──────────────────────────────────────────────
+# Libalpm guard — prevent omarchy-restart-shell from running during upgrades
+# ──────────────────────────────────────────────
+
+info "Installing omarchy-restart-shell guard..."
+
+GUARD_SRC="$REPO_DIR/hooks/libalpm/noctarchy-guard-restart-shell.sh"
+HOOK_SRC="$REPO_DIR/hooks/libalpm/noctarchy-restart-shell-guard.hook"
+if [[ -f "$GUARD_SRC" && -f "$HOOK_SRC" ]]; then
+  if ! $DRY_RUN; then
+    run_sudo cp "$GUARD_SRC" /usr/local/bin/noctarchy-guard-restart-shell.sh
+    run_sudo chmod +x /usr/local/bin/noctarchy-guard-restart-shell.sh
+    run_sudo cp "$HOOK_SRC" /usr/share/libalpm/hooks/noctarchy-restart-shell-guard.hook
+    # Apply guard immediately
+    /usr/local/bin/noctarchy-guard-restart-shell.sh 2>/dev/null || true
+  fi
+  ok "  libalpm guard installed (prevents omarchy-restart-shell during upgrades)"
+fi
+
+# ──────────────────────────────────────────────
 # Install theme bridge hook
 # ──────────────────────────────────────────────
 

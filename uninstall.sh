@@ -145,6 +145,14 @@ fi
 shopt -u nullglob
 
 # ──────────────────────────────────────────────
+# Remove libalpm guard
+# ──────────────────────────────────────────────
+
+rm -f /usr/local/bin/noctarchy-guard-restart-shell.sh 2>/dev/null || true
+rm -f /usr/share/libalpm/hooks/noctarchy-restart-shell-guard.hook 2>/dev/null || true
+ok "  libalpm guard removed"
+
+# ──────────────────────────────────────────────
 # Remove noctarchy state
 # ──────────────────────────────────────────────
 

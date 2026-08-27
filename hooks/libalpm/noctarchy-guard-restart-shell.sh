@@ -16,7 +16,7 @@ guard = (
     "#!/bin/bash\n"
     "\n"
     "# noctarchy: Noctalia handles the shell; skip Omarchy shell restart.\n"
-    'if pgrep -f noctalia >/dev/null 2>&1; then\n'
+    'if pgrep -x noctalia >/dev/null 2>&1; then\n'
     '  echo "Noctalia active; skipping Omarchy shell restart."\n'
     "  exit 0\n"
     "fi\n"
