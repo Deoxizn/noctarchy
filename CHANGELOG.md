@@ -4,6 +4,10 @@
      one bullet per change: - Description ([`short-hash`](commit-url)).
      Skip README rewordings, screenshots and demo videos. -->
 
+## 2026-08-27
+
+- Fix `sync.sh`: stop clobbering personalized `~/.config/noctalia/config.toml` on every update — an existing config is now preserved (only installed if absent) so per-machine bar/widget customizations (bongocat, arch-updater, lockscreen monitors) survive `omarchy-update` ([`40fc6a2`](https://github.com/deoxizn/noctarchy/commit/40fc6a2))
+
 ## 2026-08-26
 
 - Swap screenshot bindings: `Ctrl+Print` saves to `~/Pictures`, `Alt+Print` copies to clipboard (easier to reach) ([`f9a1394`](https://github.com/deoxizn/noctarchy/commit/f9a1394))
