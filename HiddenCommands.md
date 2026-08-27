@@ -1,23 +1,343 @@
 # Hidden Commands
 
-Every stock Omarchy menu command the Noctarchy menu leaves out, runnable by hand.
+Noctarchy keeps the menu lean — these are stock Omarchy actions that still work
+on this system but don't appear anywhere in the fuzzel suite. Run them in any
+terminal, or bind your favorites in `~/.config/niri/config.kdl`.
 
-## omarchy commands
+> Commands that stock Omarchy wraps in a floating presentation window are listed
+> bare here — same effect, minus the wrapper. Rows that drive the Omarchy shell
+> (Quickshell bar, menu, panels) or Hyprland itself are left out entirely, since
+> Noctarchy replaces those with Niri + Noctalia.
 
-| Command | What it does |
+<br><br>
+
+## Learn
+
+| | |
 |---|---|
-| `omarchy defaults terminal` | Reset terminal to stock theme |
-| `omarchy defaults keybindings` | Reset keybindings to stock |
-| `omarchy defaults theme` | Reset theme to default |
-| `omarchy defaults shell` | Reset shell settings to stock |
-| `omarchy refresh hyprland` | Regenerate Hyprland config from templates |
-| `omarchy refresh fonts` | Rebuild font cache |
-| `omarchy refresh desktop` | Refresh desktop entries |
-| `omarchy theme set <name>` | Apply a theme by name |
-| `omarchy theme list` | List available themes |
-| `omarchy theme current` | Show current theme |
-| `omarchy update` | Update system packages |
-| `omarchy version` | Show Omarchy version |
+| Omarchy manual | `omarchy-launch-webapp 'https://omarchy.org/manual/'` |
+| Niri wiki | `omarchy-launch-webapp 'https://github.com/YaLTeR/niri/wiki'` |
+| Arch wiki | `omarchy-launch-webapp 'https://wiki.archlinux.org/title/Main_page'` |
+| LazyVim keymaps | `omarchy-launch-webapp 'https://www.lazyvim.org/keymaps'` |
+| Bash cheatsheet | `omarchy-launch-webapp 'https://devhints.io/bash'` |
+| Community Discord | `omarchy-launch-discord-community` |
+
+<br><br>
+
+## Capture
+
+| | |
+|---|---|
+| OCR text from region | `omarchy-capture-text` |
+| Decode QR from region | `omarchy-capture-qr` |
+| Color picker | `pkill hyprpicker \|\| hyprpicker -a` |
+| Transcode media | `omarchy-transcode` |
+
+> Full-screen and region screenshots / recordings rely on `hyprctl` in stock
+> Omarchy, so they don't run here. Niri + Noctalia handle those instead.
+
+<br><br>
+
+## Reminders
+
+| | |
+|---|---|
+| Set a reminder | `omarchy-reminder -i` |
+| Quick reminder | `omarchy-reminder 30 "Check the oven"` |
+| Clear all | `omarchy-reminder clear` |
+
+(`omarchy-reminder show` needs the Omarchy shell panel, so it's a no-op here.)
+
+<br><br>
+
+## Share
+
+| | |
+|---|---|
+| Receive (LocalSend) | `uwsm-app -- localsend` |
+| Send via Taildrop | `omarchy-tailscale-send` |
+| Receive via Taildrop | `omarchy-tailscale-receive` |
+
+(`omarchy-menu-share clipboard|file|folder` uses the Omarchy shell modal, so it's
+left out here.)
+
+<br><br>
+
+## Toggles
+
+| | |
+|---|---|
+| Stay awake (idle/lock) | `omarchy-toggle-idle` |
+| Notification silencing | `omarchy-toggle-notification-silencing` |
+| Crash capture | `omarchy-toggle-crash-capture` |
+| Screensaver | `omarchy-toggle-screensaver` |
+| General feature toggle | `omarchy-toggle` |
+
+(Workspace-layout, window-gaps, and 1-window-ratio toggles are Hyprland-only and
+are omitted; nightlight needs `hyprsunset`, also omitted.)
+
+<br><br>
+
+## Style
+
+| | |
+|---|---|
+| Reset boot splash | `omarchy-plymouth-reset` |
+| Boot splash from theme | `omarchy-plymouth-set-by-theme "<theme>"` |
+| Font: Cascadia Mono | `omarchy-install-font 'Cascadia Mono' ttf-cascadia-mono-nerd 'CaskaydiaMono Nerd Font'` |
+| Font: Meslo LG Mono | `omarchy-install-font 'Meslo LG Mono' ttf-meslo-nerd 'MesloLGL Nerd Font'` |
+| Font: Fira Code | `omarchy-install-font 'Fira Code' ttf-firacode-nerd 'FiraCode Nerd Font'` |
+| Font: Victor Code | `omarchy-install-font 'Victor Code' ttf-victor-mono-nerd 'VictorMono Nerd Font'` |
+| Font: Bitstream Vera | `omarchy-install-font 'Bitstream Vera Code' ttf-bitstream-vera-mono-nerd 'BitstromWera Nerd Font'` |
+| Font: Iosevka | `omarchy-install-font Iosevka ttf-iosevka-nerd 'Iosevka Nerd Font Mono'` |
+
+<br><br>
+
+## Setup
+
+| | |
+|---|---|
+| Edit XCompose | `omarchy-launch-config-editor ~/.XCompose && omarchy-restart-xcompose` |
+| Direct boot (skip GRUB/Limine menu) | `omarchy-setup-direct-boot` |
+| Factory reset (btrfs only) | `omarchy-system-factory-reset` |
+
+Factory reset rolls the system back to stock snapshots — **it will undo the
+remux**. Know what you're doing.
+
+<br><br>
+
+## Install
+
+**Gaming**
+
+| | |
+|---|---|
+| Steam | `omarchy-install-gaming-steam` |
+| RetroArch | `omarchy-install-gaming-retroarch` |
+| RetroArch game launcher | `omarchy-games-retro-install` |
+| Minecraft | `omarchy-install-and-launch Minecraft minecraft-launcher minecraft-launcher` |
+| NVIDIA GeForce NOW | `omarchy-install-gaming-geforce-now` |
+| Xbox Cloud Gaming | `omarchy-install-gaming-xbox-cloud` |
+| Xbox controllers | `omarchy-install-gaming-xbox-controllers` |
+| Battle.net | `omarchy-install-gaming-battlenet` |
+| Lutris | `omarchy-install-gaming-lutris` |
+| Heroic (Epic Games) | `omarchy-install-gaming-heroic` |
+
+<br><br>
+
+**Browsers**
+
+| | |
+|---|---|
+| Chrome | `omarchy-install-browser chrome` |
+| Edge | `omarchy-install-browser edge` |
+| Brave | `omarchy-install-browser brave` |
+| Brave Origin | `omarchy-install-browser brave-origin` |
+| Firefox | `omarchy-install-browser firefox` |
+| Zen | `omarchy-install-browser zen` |
+
+<br><br>
+
+**Services**
+
+| | |
+|---|---|
+| 1Password | `omarchy-install-service-1password` |
+| Bitwarden | `omarchy-install-and-launch Bitwarden 'bitwarden bitwarden-cli' bitwarden` |
+| Dropbox | `omarchy-install-service-dropbox` |
+| Spotify | `omarchy-install-service-spotify` |
+| Signal | `omarchy-install-service-signal` |
+| Tailscale | `omarchy-install-service-tailscale` |
+| NordVPN | `omarchy-install-service-nordvpn` |
+| ONCE | `omarchy-install-service-once` |
+| Chromium Google account | `omarchy-install-chromium-google-account` |
+
+<br><br>
+
+**Editors**
+
+| | |
+|---|---|
+| VSCode | `omarchy-install-editor-vscode` |
+| Zed | `omarchy-install-editor-zed` |
+| Helix | `omarchy-install-editor-helix` |
+| Emacs | `omarchy-install-editor-emacs` |
+| Cursor | `omarchy-install-and-launch Cursor cursor-bin cursor` |
+| Sublime Text | `omarchy-install-and-launch 'Sublime Text' sublime-text-4 sublime_text` |
+| Vim | `omarchy-install-app Vim vim` |
+
+<br><br>
+
+**Terminals**
+
+| | |
+|---|---|
+| Alacritty | `omarchy-install-terminal alacritty` |
+| Foot | `omarchy-install-terminal foot` |
+| Ghostty | `omarchy-install-terminal ghostty` |
+| Kitty | `omarchy-install-terminal kitty` |
+
+<br><br>
+
+**AI**
+
+| | |
+|---|---|
+| ChatGPT Desktop | `omarchy-install-ai-chatgpt` |
+| Dictation (Voxtype) | `omarchy-voxtype-install` |
+| Grok Bot | `omarchy-install-and-launch 'Grok Bot' grok-bot grok-bot` |
+| LM Studio | `omarchy-install-app 'LM Studio' lmstudio-bin` |
+| Ollama | `omarchy-install-app Ollama ollama` (`ollama-cuda` / `ollama-rocm` per GPU) |
+| T3 Code | `omarchy-install-and-launch 'T3 Code' t3code-bin t3code` |
+
+<br><br>
+
+**Development environments**
+
+| | |
+|---|---|
+| Ruby on Rails | `omarchy-install-dev-env ruby` |
+| Go | `omarchy-install-dev-env go` |
+| PHP | `omarchy-install-dev-env php` |
+| Laravel | `omarchy-install-dev-env laravel` |
+| Symfony | `omarchy-install-dev-env symfony` |
+| Python | `omarchy-install-dev-env python` |
+| Elixir | `omarchy-install-dev-env elixir` |
+| Phoenix | `omarchy-install-dev-env phoenix` |
+| Zig | `omarchy-install-dev-env zig` |
+| Rust | `omarchy-install-dev-env rust` |
+| Java | `omarchy-install-dev-env java` |
+| .NET | `omarchy-install-dev-env dotnet` |
+| OCaml | `omarchy-install-dev-env ocaml` |
+| Clojure | `omarchy-install-dev-env clojure` |
+| Scala | `omarchy-install-dev-env scala` |
+| Node.js | `omarchy-install-dev-env node` |
+| Bun | `omarchy-install-dev-env bun` |
+| Deno | `omarchy-install-dev-env deno` |
+| Docker databases | `omarchy-install-docker-dbs` |
+
+<br><br>
+
+**Extras**
+
+| | |
+|---|---|
+| TUI apps | `omarchy-tui-install` |
+| Windows VM | `omarchy-windows-vm install` |
+| Removed defaults back | `omarchy-install-preinstalls` |
+| Reinstall Omarchy (packages + configs) | `omarchy-reinstall` |
+
+<br><br>
+
+## Remove
+
+**Browsers**
+
+| | |
+|---|---|
+| Chrome | `omarchy-remove-browser chrome` |
+| Edge | `omarchy-remove-browser edge` |
+| Brave | `omarchy-remove-browser brave` |
+| Brave Origin | `omarchy-remove-browser brave-origin` |
+| Firefox | `omarchy-remove-browser firefox` |
+| Zen | `omarchy-remove-browser zen` |
+
+<br><br>
+
+**Gaming**
+
+| | |
+|---|---|
+| Steam | `omarchy-remove-gaming-steam` |
+| RetroArch | `omarchy-remove-gaming-retroarch` |
+| Minecraft | `omarchy-remove-gaming-minecraft` |
+| NVIDIA GeForce NOW | `omarchy-remove-gaming-geforce-now` |
+| Xbox Cloud Gaming | `omarchy-remove-gaming-xbox-cloud` |
+| Xbox controllers | `omarchy-remove-gaming-xbox-controllers` |
+| Battle.net | `omarchy-remove-gaming-battlenet` |
+| Lutris | `omarchy-remove-gaming-lutris` |
+| Heroic (Epic Games) | `omarchy-remove-gaming-heroic` |
+
+<br><br>
+
+**Services**
+
+| | |
+|---|---|
+| Dropbox | `omarchy-remove-service-dropbox` |
+| Tailscale | `omarchy-remove-service-tailscale` |
+
+<br><br>
+
+**AI**
+
+| | |
+|---|---|
+| ChatGPT Desktop | `omarchy-remove-ai-chatgpt` |
+| Dictation (Voxtype) | `omarchy-voxtype-remove` |
+| Grok Bot | `omarchy-remove-ai-grok-bot` |
+| LM Studio | `omarchy-remove-ai-lm-studio` |
+| Ollama | `omarchy-remove-ai-ollama` |
+| T3 Code | `omarchy-remove-ai-t3-code` |
+
+<br><br>
+
+**Development environments**
+
+| | |
+|---|---|
+| Ruby on Rails | `omarchy-remove-dev-env ruby` |
+| Go | `omarchy-remove-dev-env go` |
+| PHP | `omarchy-remove-dev-env php` |
+| Laravel | `omarchy-remove-dev-env laravel` |
+| Symfony | `omarchy-remove-dev-env symfony` |
+| Python | `omarchy-remove-dev-env python` |
+| Elixir | `omarchy-remove-dev-env elixir` |
+| Phoenix | `omarchy-remove-dev-env phoenix` |
+| Zig | `omarchy-remove-dev-env zig` |
+| Rust | `omarchy-remove-dev-env rust` |
+| Java | `omarchy-remove-dev-env java` |
+| .NET | `omarchy-remove-dev-env dotnet` |
+| OCaml | `omarchy-remove-dev-env ocaml` |
+| Clojure | `omarchy-remove-dev-env clojure` |
+| Scala | `omarchy-remove-dev-env scala` |
+| Node.js | `omarchy-remove-dev-env node` |
+| Bun | `omarchy-remove-dev-env bun` |
+| Deno | `omarchy-remove-dev-env deno` |
+
+<br><br>
+
+**Security** (their setup half *is* in the menu)
+
+| | |
+|---|---|
+| Fingerprint | `omarchy-remove-security-fingerprint` |
+| Fido2 | `omarchy-remove-security-fido2` |
+| SSHD | `omarchy-remove-security-sshd` |
+
+<br><br>
+
+**Extras**
+
+| | |
+|---|---|
+| TUI apps | `omarchy-tui-remove` |
+| Windows VM | `omarchy-windows-vm remove` |
+| Removed defaults again | `omarchy-remove-preinstalls` |
+
+<br><br>
+
+## Update
+
+| | |
+|---|---|
+| Drive encryption password | `omarchy-drive-password` |
+| User password | `passwd` |
+| Sync system clock | `omarchy-update-time` |
+| Reset Plymouth config | `omarchy-refresh-plymouth` |
+| Reset tmux config | `omarchy-refresh-tmux` |
+
+<br><br>
 
 ## Noctarchy commands
 
@@ -43,6 +363,7 @@ Every stock Omarchy menu command the Noctarchy menu leaves out, runnable by hand
 | `noctarchy-kernel run lts` | Install LTS kernel |
 | `noctarchy-kernel run rt-bore` | Install RT BORE kernel |
 | `noctarchy-kernel run status` | Check kernel status |
+| `noctarchy-wallpaper-reset` | Restore DP-1/HDMI-A-1 wallpapers (Mod+Alt+W) |
 
 ## Niri commands
 
