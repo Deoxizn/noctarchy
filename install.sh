@@ -294,8 +294,9 @@ if [[ -f "$GUARD_SRC" && -f "$HOOK_SRC" ]]; then
     run_sudo cp "$GUARD_SRC" /usr/local/bin/noctarchy-guard-restart-shell.sh
     run_sudo chmod +x /usr/local/bin/noctarchy-guard-restart-shell.sh
     run_sudo cp "$HOOK_SRC" /usr/share/libalpm/hooks/noctarchy-restart-shell-guard.hook
+    run_sudo /usr/local/bin/noctarchy-guard-restart-shell.sh
   fi
-  ok "  libalpm guard installed (prevents omarchy-restart-shell during upgrades)"
+  ok "  libalpm guard installed and applied (prevents omarchy-restart-shell during upgrades)"
 fi
 
 # ──────────────────────────────────────────────
