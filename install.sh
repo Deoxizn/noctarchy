@@ -251,8 +251,7 @@ PartOf=graphical-session.target
 
 [Service]
 Type=simple
-ExecStartPre=/bin/sh -c '! pgrep -x noctalia >/dev/null 2>&1'
-ExecStart=/usr/bin/noctalia
+ExecStart=/bin/sh -c 'if pgrep -x noctalia >/dev/null 2>&1; then echo "noctalia already running, skipping"; exit 0; fi; exec noctalia'
 Restart=on-failure
 RestartSec=2
 
