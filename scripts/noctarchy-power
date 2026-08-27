@@ -25,7 +25,7 @@ confirm() {
 
 do_action() {
     case "$choice" in
-        Screensaver)  foot bash ~/.config/niri/scripts/screensaver.sh &
+        Screensaver)  $(grep '^terminal' ~/.config/noctalia/config.toml | cut -d'"' -f2) bash ~/.config/niri/scripts/screensaver.sh &
         Lock)         niri msg action lock 2>/dev/null || loginctl lock-session ;;
         Logout)       niri msg action quit ;;
         Suspend)      systemctl suspend ;;
