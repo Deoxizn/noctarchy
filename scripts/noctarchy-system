@@ -1,0 +1,24 @@
+#!/bin/bash
+# noctarchy:menu=system
+# noctarchy:summary=System submenu: config editor, default apps, kernel and boot splash.
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# Rows ending in ">" open a submenu.
+choice=$(
+  printf '%s\n' \
+    'Config >' \
+    'Defaults >' \
+    'Kernel >' \
+    'Splash >' |
+    "$SCRIPT_DIR/noctarchy-fuzzel" --dmenu --prompt='System: ' --width=26 --lines=4
+) || exec "$SCRIPT_DIR/noctarchy-menu"   # Esc = back to root menu
+choice=${choice%' >'}
+
+case "$choice" in
+  Config)   exec "$SCRIPT_DIR/noctarchy-config" ;;
+  Defaults) exec "$SCRIPT_DIR/noctarchy-defaults" ;;
+  Kernel)   exec "$SCRIPT_DIR/noctarchy-kernel" ;;
+  Splash)   exec "$SCRIPT_DIR/noctarchy-splash" ;;
+esac

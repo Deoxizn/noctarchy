@@ -6,6 +6,8 @@
 
 ## 2026-08-27
 
+- Rewrite `HiddenCommands.md` to mirror Stellarchy's curated list, filtered for Niri/Noctalia: drop Hyprland-only and Omarchy-shell-dependent commands, add newer compatible ones (capture-text/qr, Taildrop send/receive, toggle, reinstall) ([`643a5d2`](https://github.com/deoxizn/noctarchy/commit/643a5d2))
+- Add `System` and `Trigger` submenus to the root menu: `System` opens Config/Defaults/Kernel/Splash, `Trigger` opens Hardware/Speed Test (port of Stellarchy's stub submenus)
 - Fix `sync.sh`: stop clobbering personalized `~/.config/noctalia/config.toml` on every update — an existing config is now preserved (only installed if absent) so per-machine bar/widget customizations (bongocat, arch-updater, lockscreen monitors) survive `omarchy-update` ([`40fc6a2`](https://github.com/deoxizn/noctarchy/commit/40fc6a2))
 
 ## 2026-08-26

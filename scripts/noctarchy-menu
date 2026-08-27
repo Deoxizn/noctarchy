@@ -24,8 +24,8 @@ case "$choice" in
   Config)   exec "$SCRIPT_DIR/noctarchy-config" ;;
   Restart)  exec "$SCRIPT_DIR/noctarchy-restart" ;;
   Setup)    exec "$SCRIPT_DIR/noctarchy-setup" ;;
-  System)   exec "$SCRIPT_DIR/noctarchy-power" ;;
+  System)   exec "$SCRIPT_DIR/noctarchy-system" ;;
   Themes)   exec "$SCRIPT_DIR/noctarchy-themes" ;;
-  Trigger)  exec "$SCRIPT_DIR/noctarchy-speedtest" ;;
+  Trigger)  exec "$SCRIPT_DIR/noctarchy-trigger" ;;
   Update)   exec "$SCRIPT_DIR/noctarchy-update" ;;
 esac
