@@ -145,6 +145,15 @@ fi
 shopt -u nullglob
 
 # ──────────────────────────────────────────────
+# Remove theme bridge hook
+# ──────────────────────────────────────────────
+
+if [[ -f "$HOME/.config/omarchy/hooks/theme-set.d/noctalia-sync.sh" ]]; then
+  rm "$HOME/.config/omarchy/hooks/theme-set.d/noctalia-sync.sh"
+  ok "  Removed theme bridge hook"
+fi
+
+# ──────────────────────────────────────────────
 # Remove libalpm guard
 # ──────────────────────────────────────────────
 
@@ -153,12 +162,60 @@ rm -f /usr/share/libalpm/hooks/noctarchy-restart-shell-guard.hook 2>/dev/null ||
 ok "  libalpm guard removed"
 
 # ──────────────────────────────────────────────
+# Restore stock plymouth splash
+# ──────────────────────────────────────────────
+
+if grep -q '^Theme=noctarchy' /etc/plymouth/plymouthd.conf 2>/dev/null; then
+  info "Restoring stock Omarchy splash..."
+  sudo plymouth-set-default-theme omarchy
+  if mountpoint -q /boot && command -v limine-mkinitcpio &>/dev/null; then
+    if sudo limine-mkinitcpio; then
+      ok "  Stock splash restored, initramfs rebuilt"
+    else
+      warn "  limine-mkinitcpio failed — run it manually before rebooting"
+    fi
+  else
+    warn "  /boot not mounted or limine-mkinitcpio missing — run: sudo limine-mkinitcpio"
+  fi
+fi
+
+# ──────────────────────────────────────────────
+# Remove SDDM theme and restore stock
+# ──────────────────────────────────────────────
+
+if [[ -d /usr/share/sddm/themes/noctarchy ]]; then
+  info "Removing noctarchy SDDM theme..."
+  sudo rm -rf /usr/share/sddm/themes/noctarchy
+  if [[ -f /etc/sddm.conf.d/10-theme.conf ]] && grep -q '^Current=noctarchy' /etc/sddm.conf.d/10-theme.conf; then
+    sudo sed -i 's/^Current=.*/Current=omarchy/' /etc/sddm.conf.d/10-theme.conf
+    ok "  Theme removed, greeter back to omarchy"
+  else
+    ok "  Theme removed"
+  fi
+fi
+
+# ──────────────────────────────────────────────
 # Remove noctarchy state
 # ──────────────────────────────────────────────
 
 info "Removing noctarchy state..."
 rm -rf "$HOME/.local/state/noctarchy" 2>/dev/null || true
 ok "  ~/.local/state/noctarchy removed"
+
+# ──────────────────────────────────────────────
+# Remove repo directory
+# ──────────────────────────────────────────────
+
+if [[ -d "$HOME/.local/opt/noctarchy" ]]; then
+  echo ""
+  read -rp "Remove repo at ~/.local/opt/noctarchy? [y/N] " REMOVE_REPO
+  if [[ "$REMOVE_REPO" =~ ^[Yy]$ ]]; then
+    rm -rf "$HOME/.local/opt/noctarchy"
+    ok "  Removed ~/.local/opt/noctarchy"
+  else
+    info "  Repo preserved at ~/.local/opt/noctarchy"
+  fi
+fi
 
 # ──────────────────────────────────────────────
 # Summary
