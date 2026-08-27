@@ -159,6 +159,21 @@ fi
 
 rm -f /usr/local/bin/noctarchy-guard-restart-shell.sh 2>/dev/null || true
 rm -f /usr/share/libalpm/hooks/noctarchy-restart-shell-guard.hook 2>/dev/null || true
+
+# Revert guard patch from omarchy-restart-shell
+F=/usr/share/omarchy/bin/omarchy-restart-shell
+if [[ -f "$F" ]] && grep -q 'noctarchy' "$F" 2>/dev/null; then
+  sudo python3 - "$F" <<'PYEOF'
+import sys
+p = sys.argv[1]
+s = open(p).read()
+lines = s.split("\n")
+new_lines = [l for l in lines if "noctarchy" not in l and "Noctalia handles the shell" not in l and "pgrep -x noctalia" not in l and "Noctalia active" not in l]
+open(p, "w").write("\n".join(new_lines))
+print("guard reverted")
+PYEOF
+  ok "  Reverted guard patch from omarchy-restart-shell"
+fi
 ok "  libalpm guard removed"
 
 # ──────────────────────────────────────────────

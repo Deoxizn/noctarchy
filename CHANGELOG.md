@@ -8,6 +8,7 @@
 
 - Remove redundant notifications from auto-sync hook (terminal already shows status)
 - Uninstall: restore stock plymouth splash, remove SDDM theme, clean up theme bridge hook, offer to remove repo directory ([`2271d5b`](https://github.com/deoxizn/noctarchy/commit/2271d5b))
+- Uninstall: revert `omarchy-restart-shell` guard patch to restore stock shell behavior
 - Add libalpm guard: patch `omarchy-restart-shell` to skip when Noctalia is active (prevents "shell did not become ready" error on `omarchy-update`) ([`f1b2674`](https://github.com/deoxizn/noctarchy/commit/f1b2674))
 - Restore palette source toggle in themes menu (switch between custom palette and Material You) ([`2164942`](https://github.com/deoxizn/noctarchy/commit/2164942))
 - Fix noctalia service crash loop: skip start when already running via uwsm session ([`42f5056`](https://github.com/deoxizn/noctarchy/commit/42f5056))
