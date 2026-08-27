@@ -6,14 +6,12 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 choice=$(printf '%s\n' \
-    "Screensaver" \
-    "Stop Screensaver" \
     "Lock" \
     "Logout" \
     "Suspend" \
     "Hibernate" \
     "Reboot" \
-    "Shutdown" | "$SCRIPT_DIR/noctarchy-fuzzel" --dmenu --prompt='Power: ' --width=28 --lines=8)
+    "Shutdown" | "$SCRIPT_DIR/noctarchy-fuzzel" --dmenu --prompt='Power: ' --width=28 --lines=6)
 
 [[ -z "$choice" ]] && exit 0
 
@@ -26,9 +24,7 @@ confirm() {
 
 do_action() {
     case "$choice" in
-        Screensaver)      $(grep '^terminal' ~/.config/noctalia/config.toml | cut -d'"' -f2) bash ~/.config/niri/scripts/screensaver.sh & ;;
-        Stop\ Screensaver) pkill -x ttfx 2>/dev/null; niri msg action power-on-monitors 2>/dev/null || true ;;
-        Lock)             niri msg action lock 2>/dev/null || loginctl lock-session ;;
+        Lock)         niri msg action lock 2>/dev/null || loginctl lock-session ;;
         Logout)       niri msg action quit ;;
         Suspend)      systemctl suspend ;;
         Hibernate)    systemctl hibernate ;;
