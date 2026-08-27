@@ -6,8 +6,8 @@
 
 ## 2026-08-26
 
-- Restore palette source toggle in themes menu (switch between custom palette and Material You) ([`2164942`](https://github.com/deoxizn/noctarchy/commit/2164942))
 - Add libalpm guard: patch `omarchy-restart-shell` to skip when Noctalia is active (prevents "shell did not become ready" error on `omarchy-update`) ([`f1b2674`](https://github.com/deoxizn/noctarchy/commit/f1b2674))
+- Restore palette source toggle in themes menu (switch between custom palette and Material You) ([`2164942`](https://github.com/deoxizn/noctarchy/commit/2164942))
 - Fix noctalia service crash loop: skip start when already running via uwsm session ([`42f5056`](https://github.com/deoxizn/noctarchy/commit/42f5056))
 - Install: show `uwsm stop` command in summary so users know how to start Niri ([`795ac4b`](https://github.com/deoxizn/noctarchy/commit/795ac4b))
 - Install: remove `omarchy.desktop` after installing niri session so `uwsm stop` defaults to Niri on first logout ([`15760ef`](https://github.com/deoxizn/noctarchy/commit/15760ef))
