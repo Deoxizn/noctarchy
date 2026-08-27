@@ -33,9 +33,9 @@
 <a id="read-this-first"></a>
 
 ```
-▄▖     ▌ ▖ ▌ ▘   ▖▘    ▗
-▘█▌▀▌▛▌ ▐ ▛▌▛▘ ▙▖▛▘▛▘▜▘
-▙▖█▌▙▌ ▐ ▌▌▄▌ ▌ ▌ ▄▌▐▖
+▄▖     ▌ ▄▖▌ ▘   ▄▖▘    ▗
+▙▘█▌▀▌▛▌ ▐ ▛▌▌▛▘ ▙▖▌▛▘▛▘▜▘
+▌▌▙▖█▌▙▌ ▐ ▌▌▌▄▌ ▌ ▌▌ ▄▌▐▖
 ```
 
 **This is not a theme or a plugin — it is a shell replacement.** It removes
@@ -94,8 +94,8 @@ Honest list of the remaining gaps:
 
 ```
 ▄▖    ▗   ▜ ▜   ▗ ▘
-▐ ▛▘▜▘▀▌▐ ▐ ▀▌▜▘▛▘▛▘
-▟▖▌▄▌▐▖█▌▐▖▐▖█▌▙▌▌▌
+▐ ▛▌▛▘▜▘▀▌▐ ▐ ▀▌▜▘▌▛▌▛▌
+▟▖▌▌▄▌▐▖█▌▐▖▐▖█▌▐▖▌▙▌▌▌
 ```
 
 ```bash
@@ -148,8 +148,8 @@ systemctl --user start noctalia.service           # bring the shell back now
 
 ```
 ▖▖         ▌▘
-▌▘▛▘▛▘▛▘▀▘▛▘▌▛▘▛▘
-▘▙▙▘▌ █▘▌▘▌▙▘
+▌▌▛▌▛▌▛▘▀▌▛▌▌▛▌▛▌
+▙▌▙▌▙▌▌ █▌▙▌▌▌▌▙▌
   ▌ ▄▌         ▄▌
 ```
 
@@ -165,8 +165,8 @@ Your configs stay yours — KDL/TOML updates merge in, conflicts never touch you
 
 ```
 ▄        ▌▘
-▘▛▘▀▌▛▘▛▘▌▛▘▛▘
-▘▌ █▌▌▘▙▌▌▘▌▙▘
+▙▘▛▘▀▌▛▌▛▌▌▛▌▛▌
+▙▘▌ █▌▌▌▙▌▌▌▌▙▌
              ▄▌
 ```
 
@@ -185,8 +185,8 @@ The remux ships its own identity on top of Omarchy. What lands where:
 
 ```
 ▖▖    ▌ ▘   ▌
-▘█▌▌▘▛▘▛▘▛▘▛▘
-▙▖▙▘▙▌▌▘▌▙▘▄▘
+▙▘█▌▌▌▛▌▌▛▌▛▌▛▘
+▌▌▙▖▙▌▙▌▌▌▌▙▌▄▌
     ▄▌
 ```
 
@@ -234,8 +234,8 @@ All Niri keybindings are defined in `~/.config/niri/config.kdl`. Run
 
 ```
 ▖  ▖       ▄▖  ▘▗
-▛▖▞▘█▘▛▘▌▘ ▚ ▌▌▌▜▘█▌
-▘▝ ▌▙▖▌▘▙▘ ▄▘▙▌▌▐▖▙▖
+▛▖▞▌█▌▛▌▌▌ ▚ ▌▌▌▜▘█▌
+▌▝ ▌▙▖▌▌▙▌ ▄▌▙▌▌▐▖▙▖
 ```
 
 The omarchy-shell menus are recreated as standalone fuzzel scripts in
@@ -293,8 +293,8 @@ switch. Esc navigates back one menu level.
 
 ```
 ▖▖  ▘    ▗   ▜ ▜
-▌▘▛▘▛▘▛▘▜▘▀▘▐ ▐
-▘▌▌▘▄▘▐▖█▘▐▖▐▖
+▌▌▛▌▌▛▌▛▘▜▘▀▌▐ ▐
+▙▌▌▌▌▌▌▄▌▐▖█▌▐▖▐▖
 ```
 
 ```bash
