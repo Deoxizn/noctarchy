@@ -152,7 +152,6 @@ if [[ -f "$GUARD_SRC" && -f "$HOOK_SRC" ]]; then
   copy_if_changed "$GUARD_SRC" /usr/local/bin/noctarchy-guard-restart-shell.sh "guard script"
   chmod +x /usr/local/bin/noctarchy-guard-restart-shell.sh 2>/dev/null || true
   copy_if_changed "$HOOK_SRC" /usr/share/libalpm/hooks/noctarchy-restart-shell-guard.hook "libalpm hook"
-  /usr/local/bin/noctarchy-guard-restart-shell.sh 2>/dev/null || true
 fi
 
 # ──────────────────────────────────────────────
