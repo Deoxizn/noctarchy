@@ -6,6 +6,7 @@
 
 ## 2026-08-27
 
+- Fix `noctarchy-update` "Noctarchy" entry opening a terminal and closing instantly: `noctarchy-terminal` now launches commands via `xdg-terminal-exec` (resolves your real default terminal — kitty, or foot on default Omarchy — and passes the command with correct per-terminal syntax) instead of a hardcoded list + bare positional args
 - Rewrite `noctarchy-update` as a menu matching Stellarchy: Noctarchy (omarchy-update), Channel picker, Extra themes, Hardware, Firmware, plus a new Repo sync entry (was the inline repo pull); drop Hyprsunset (Hyprland-only) ([`noctarchy-repo-sync`](https://github.com/deoxizn/noctarchy/scripts/noctarchy-repo-sync))
 - Rewrite `HiddenCommands.md` to mirror Stellarchy's curated list, filtered for Niri/Noctalia: drop Hyprland-only and Omarchy-shell-dependent commands, add newer compatible ones (capture-text/qr, Taildrop send/receive, toggle, reinstall) ([`643a5d2`](https://github.com/deoxizn/noctarchy/commit/643a5d2))
 - Add `System` and `Trigger` submenus to the root menu: `System` opens Config/Defaults/Kernel/Splash, `Trigger` opens Hardware/Speed Test (port of Stellarchy's stub submenus)

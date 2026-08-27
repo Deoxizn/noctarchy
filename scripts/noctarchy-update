@@ -18,10 +18,10 @@ choice=$(
 choice=${choice%' >'}
 
 case "$choice" in
-  Noctarchy)      exec omarchy-launch-or-focus-tui --app-id=TUI.float omarchy-update ;;
-  "Extra themes") exec omarchy-launch-or-focus-tui --app-id=TUI.float omarchy-theme-update ;;
+  Noctarchy)      exec "$SCRIPT_DIR/noctarchy-terminal" omarchy-update ;;
+  "Extra themes") exec "$SCRIPT_DIR/noctarchy-terminal" omarchy-theme-update ;;
   Hardware)       exec "$SCRIPT_DIR/noctarchy-update-hardware" ;;
-  Firmware)       exec omarchy-launch-or-focus-tui --app-id=TUI.float omarchy-update-firmware ;;
+  Firmware)       exec "$SCRIPT_DIR/noctarchy-terminal" omarchy-update-firmware ;;
   "Repo sync")    exec "$SCRIPT_DIR/noctarchy-repo-sync" ;;
   Channel*) ;;
   *) exit 0 ;;
@@ -35,4 +35,4 @@ chan_choice=$(
 ) || exec "$SCRIPT_DIR/noctarchy-update"   # Esc = back to Update menu
 
 channel=${chan_choice#✓ }
-[[ -n $channel ]] && exec omarchy-launch-or-focus-tui --app-id=TUI.float omarchy-channel-set "$channel"
+[[ -n $channel ]] && exec "$SCRIPT_DIR/noctarchy-terminal" omarchy-channel-set "$channel"
