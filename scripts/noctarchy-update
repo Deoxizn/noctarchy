@@ -1,38 +1,38 @@
 #!/bin/bash
-# noctarchy:update=system-updater
-# noctarchy:summary=System update — omarchy-update + noctarchy repo check
+# noctarchy:summary=Update menu: system, channel, themes, restarts, firmware, repo sync.
 set -euo pipefail
 
-notify() {
-    notify-send "Noctarchy Update" "$1"
-}
-
-notify "Starting system update..."
-
-# Run omarchy-update if available
-if command -v omarchy-update &>/dev/null; then
-    omarchy-update || notify "omarchy-update encountered errors"
-fi
-
-# Check noctarchy repo for updates
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-REPO_DIR="$(dirname "$SCRIPT_DIR")"
 
-if [[ -d "$REPO_DIR/.git" ]]; then
-    git -C "$REPO_DIR" fetch --quiet 2>/dev/null || true
-    LOCAL=$(git -C "$REPO_DIR" rev-parse HEAD)
-    REMOTE=$(git -C "$REPO_DIR" rev-parse '@{u}' 2>/dev/null || echo "$LOCAL")
+current=$(omarchy channel current 2>/dev/null)
 
-    if [[ "$LOCAL" != "$REMOTE" ]]; then
-        result=$(printf '%s\n' "Pull now" "Later" | "$(dirname "$SCRIPT_DIR")/scripts/noctarchy-fuzzel" \
-            --dmenu --prompt='Noctarchy update available: ' --width=32 --lines=2)
-        if [[ "$result" == "Pull now" ]]; then
-            git -C "$REPO_DIR" pull --rebase && notify "Noctarchy updated" \
-                || notify "Failed to pull Noctarchy update"
-        fi
-    else
-        notify "Noctarchy is up to date"
-    fi
-fi
+# Rows ending in ">" drill into another picker; bare rows act immediately.
+entries=("Noctarchy" "Channel${current:+ ($current)} >")
+omarchy-theme-extras >/dev/null 2>&1 && entries+=('Extra themes')
+entries+=('Hardware >' 'Firmware' 'Repo sync')
 
-notify "Update complete"
+choice=$(
+  printf '%s\n' "${entries[@]}" |
+    "$SCRIPT_DIR/noctarchy-fuzzel" --dmenu --prompt='Update: ' --width=30 --lines=${#entries[@]}
+) || exec "$SCRIPT_DIR/noctarchy-menu"   # Esc = back to root menu
+choice=${choice%' >'}
+
+case "$choice" in
+  Noctarchy)      exec omarchy-launch-or-focus-tui --app-id=TUI.float omarchy-update ;;
+  "Extra themes") exec omarchy-launch-or-focus-tui --app-id=TUI.float omarchy-theme-update ;;
+  Hardware)       exec "$SCRIPT_DIR/noctarchy-update-hardware" ;;
+  Firmware)       exec omarchy-launch-or-focus-tui --app-id=TUI.float omarchy-update-firmware ;;
+  "Repo sync")    exec "$SCRIPT_DIR/noctarchy-repo-sync" ;;
+  Channel*) ;;
+  *) exit 0 ;;
+esac
+
+# Channel picker; switching needs sudo, so run it in a terminal.
+chan_choice=$(
+  printf '%s\n' stable rc edge dev |
+    awk -v cur="$current" '$0 == cur { print "✓ " $0; next } { print }' |
+    "$SCRIPT_DIR/noctarchy-fuzzel" --dmenu --prompt='Channel: ' --width=22 --lines=4
+) || exec "$SCRIPT_DIR/noctarchy-update"   # Esc = back to Update menu
+
+channel=${chan_choice#✓ }
+[[ -n $channel ]] && exec omarchy-launch-or-focus-tui --app-id=TUI.float omarchy-channel-set "$channel"

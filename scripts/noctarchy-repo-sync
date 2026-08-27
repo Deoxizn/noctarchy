@@ -1,0 +1,33 @@
+#!/bin/bash
+# noctarchy:summary=Pull latest Noctarchy repo (sync.sh, scripts, hooks, config).
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_DIR="$(dirname "$SCRIPT_DIR")"
+fuzzel="$SCRIPT_DIR/noctarchy-fuzzel"
+
+if [[ ! -d "$REPO_DIR/.git" ]]; then
+    echo "No git repo at $REPO_DIR"
+    exit 1
+fi
+
+git -C "$REPO_DIR" fetch --quiet || true
+LOCAL=$(git -C "$REPO_DIR" rev-parse HEAD)
+REMOTE=$(git -C "$REPO_DIR" rev-parse '@{u}' 2>/dev/null || echo "$LOCAL")
+
+if [[ "$LOCAL" == "$REMOTE" ]]; then
+    notify-send "Noctarchy" "Repo is up to date"
+    exit 0
+fi
+
+result=$(printf '%s\n' "Pull now" "Later" | "$fuzzel" \
+    --dmenu --prompt='Noctarchy update available: ' --width=32 --lines=2) || exit 0
+
+if [[ "$result" == "Pull now" ]]; then
+    if git -C "$REPO_DIR" pull --rebase; then
+        notify-send "Noctarchy" "Repo updated"
+        "$REPO_DIR/sync.sh" 2>/dev/null || true
+    else
+        notify-send "Noctarchy" "Failed to pull Noctarchy update"
+    fi
+fi
