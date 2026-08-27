@@ -226,6 +226,7 @@ The remux ships its own identity on top of Omarchy. What lands where:
 | `SUPER+D` | Noctalia launcher (full) |
 | `SUPER+Alt+Space` | Noctarchy root menu |
 | `SUPER+Enter` | Terminal |
+| `SUPER+grave` | Agent (default coding agent, e.g. opencode) |
 | `SUPER+Shift+B` | Browser |
 | `SUPER+Shift+E` | Editor (nvim) |
 | `SUPER+Shift+F` | File manager |
