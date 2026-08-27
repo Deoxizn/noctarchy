@@ -7,7 +7,10 @@ f=/usr/share/omarchy/bin/omarchy-restart-shell
 [[ -f $f ]] || exit 0
 grep -q 'noctarchy' "$f" && exit 0
 
-sudo python3 - "$f" <<'PYEOF'
+tmpf=$(mktemp)
+cp "$f" "$tmpf"
+
+python3 - "$tmpf" <<'PYEOF'
 import sys
 
 p = sys.argv[1]
@@ -23,5 +26,8 @@ guard = (
 )
 s = s.replace("#!/bin/bash\n", guard, 1)
 open(p, "w").write(s)
-print("guard applied to", p)
 PYEOF
+
+sudo cp "$tmpf" "$f"
+rm -f "$tmpf"
+echo "guard applied to $f"
