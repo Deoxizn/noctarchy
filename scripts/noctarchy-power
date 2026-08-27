@@ -24,7 +24,7 @@ confirm() {
 
 do_action() {
     case "$choice" in
-        Lock)         niri msg action lock 2>/dev/null || loginctl lock-session ;;
+        Lock)         bash ~/.config/niri/scripts/lock.sh & ;;
         Logout)       niri msg action quit ;;
         Suspend)      systemctl suspend ;;
         Hibernate)    systemctl hibernate ;;
