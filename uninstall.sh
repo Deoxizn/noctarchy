@@ -163,15 +163,28 @@ rm -f /usr/share/libalpm/hooks/noctarchy-restart-shell-guard.hook 2>/dev/null ||
 # Revert guard patch from omarchy-restart-shell
 F=/usr/share/omarchy/bin/omarchy-restart-shell
 if [[ -f "$F" ]] && grep -q 'noctarchy' "$F" 2>/dev/null; then
-  sudo python3 - "$F" <<'PYEOF'
+  GUARD_REVERT=$(mktemp /tmp/noctarchy-guard-revert.XXXXXX.py)
+  cat > "$GUARD_REVERT" << 'PYEOF'
 import sys
 p = sys.argv[1]
-s = open(p).read()
-lines = s.split("\n")
-new_lines = [l for l in lines if "noctarchy" not in l and "Noctalia handles the shell" not in l and "pgrep -x noctalia" not in l and "Noctalia active" not in l]
-open(p, "w").write("\n".join(new_lines))
+with open(p) as f:
+    lines = f.readlines()
+result = []
+for i, l in enumerate(lines):
+    stripped = l.strip()
+    if stripped == "exit 0" and i + 1 < len(lines) and lines[i+1].strip() == "fi":
+        continue
+    if stripped == "fi" and i > 0 and lines[i-1].strip() == "exit 0":
+        continue
+    if "noctarchy" in l or "Noctalia handles the shell" in l or "pgrep -x noctalia" in l or "Noctalia active" in l:
+        continue
+    result.append(l)
+with open(p, "w") as f:
+    f.writelines(result)
 print("guard reverted")
 PYEOF
+  sudo python3 "$GUARD_REVERT" "$F"
+  rm -f "$GUARD_REVERT"
   ok "  Reverted guard patch from omarchy-restart-shell"
 fi
 ok "  libalpm guard removed"
