@@ -20,6 +20,8 @@
 - Website: clean up keybinds table, remove duplicate sections ([`53bfc26`](https://github.com/deoxizn/noctarchy/commit/53bfc26))
 - Install: remove `omarchy.desktop` after installing niri session so `uwsm stop` defaults to Niri on first logout ([`15760ef`](https://github.com/deoxizn/noctarchy/commit/15760ef))
 - Install: show `uwsm stop` command in summary so users know how to start Niri ([`795ac4b`](https://github.com/deoxizn/noctarchy/commit/795ac4b))
+- Fix noctalia service crash loop: skip start when already running via uwsm session ([`42f5056`](https://github.com/deoxizn/noctarchy/commit/42f5056))
+- Restore palette source toggle in themes menu (switch between custom palette and Material You) ([`2164942`](https://github.com/deoxizn/noctarchy/commit/2164942))
 
 - Fix `noctarchy-fuzzel`: remove `--inner-border-width` (not supported in fuzzel 1.14) ([`56cd0ac`](https://github.com/deoxizn/noctarchy/commit/56cd0ac))
 - Fix `sync.sh`: skip SDDM, UWSM and Plymouth sections gracefully when sudo unavailable (no TTY) ([`8001eec`](https://github.com/deoxizn/noctarchy/commit/8001eec))
