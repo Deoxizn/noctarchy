@@ -154,15 +154,6 @@ if [[ -f "$HOME/.config/omarchy/hooks/theme-set.d/noctalia-sync.sh" ]]; then
 fi
 
 # ──────────────────────────────────────────────
-# Remove Stellarchy leftovers
-# ──────────────────────────────────────────────
-
-if [[ -f "$HOME/.config/omarchy/hooks/post-update.d/stellarchy-repo-sync.sh" ]]; then
-  rm "$HOME/.config/omarchy/hooks/post-update.d/stellarchy-repo-sync.sh"
-  ok "  Removed leftover Stellarchy hook"
-fi
-
-# ──────────────────────────────────────────────
 # Remove libalpm guard
 # ──────────────────────────────────────────────
 
