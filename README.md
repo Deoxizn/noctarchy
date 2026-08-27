@@ -144,6 +144,36 @@ systemctl --user start noctalia.service           # bring the shell back now
 
 <br><br>
 
+### CachyOS kernel (opt-in, post-install)
+
+Kernel and splash live in the menus: **System → Kernel** (CachyOS opt-in, boot-entry status & repair) and **System → Splash** (adopt/refresh the boot splash) under `SUPER+Alt+Space` — plain scripts (`noctarchy-kernel`, `noctarchy-splash`) if you prefer a terminal.
+
+Kernel variants (Kernel menu), all prebuilt from chaotic-aur:
+
+| Variant | Package | One-liner |
+|---|---|---|
+| `default` | `linux-cachyos` | EEVDF scheduler + CachyOS optimizations — the balanced choice |
+| `bore` | `linux-cachyos-bore` | BORE scheduler — lowest latency under load; the gaming pick |
+| `eevdf` | `linux-cachyos-eevdf` | Explicit EEVDF build (no CachyOS scheduler extras) |
+| `lts` | `linux-cachyos-lts` | Long-term support kernel — fewest surprises |
+| `rt-bore` | `linux-cachyos-rt-bore` | Real-time patches + BORE |
+
+CachyOS kernels tune CPU scheduling — BORE for lowest latency under load (the
+gaming pick), EEVDF default, plus LTS and real-time variants. Prebuilt from
+[chaotic-aur](https://aur.chaotic.cx), so nothing compiles.
+
+Pick a variant in the Kernel menu (or `noctarchy-kernel run <variant>`):
+`default | bore | eevdf | lts | rt-bore`.
+
+Adds `[chaotic-aur]` to `pacman.conf` (backed up first) and installs the
+chosen kernel + headers (DKMS modules like NVIDIA rebuild automatically).
+Limine's path-based `default_entry:` header follows the kernel by name, so it
+survives snapshot churn. The stock Arch kernel is never removed — revert any
+time via the Limine menu + one `default_entry:` edit. Full opt-out: remove the
+`[chaotic-aur]` block from `/etc/pacman.conf`.
+
+<br><br>
+
 <a id="upgrading-an-existing-install"></a>
 
 ```

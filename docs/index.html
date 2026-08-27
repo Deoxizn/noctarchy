@@ -3,21 +3,48 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Noctarchy — Night Rule</title>
-<meta name="description" content="Niri + Noctalia on Omarchy. A scrollable-tiling shell replacement with live theme bridging and a self-updating sync hook.">
-<meta name="keywords" content="Noctarchy, Omarchy, Niri, Noctalia, Wayland, Arch Linux, shell replacement, tiling window manager, fuzzel, scrollable tiling">
+<title>Noctarchy — Niri + Noctalia Shell Replacement for Omarchy | Arch Linux</title>
+<meta name="description" content="Noctarchy replaces Hyprland and omarchy-shell on Omarchy with Niri scrollable tiling and the Noctalia desktop shell. Live theme bridging, CachyOS kernel menu, self-updating sync, and a preflight safety net — one command to install.">
+<meta name="keywords" content="Noctarchy, Omarchy, Niri, Noctalia, Wayland, Arch Linux, shell replacement, tiling window manager, scrollable tiling, CachyOS kernel, desktop shell, Hyprland replacement, Niri config, Noctalia shell, Omarchy remux, Linux rice, dwm, sway, fuzzel, plymouth, boot splash">
+<meta name="author" content="Deoxizn">
+<meta name="robots" content="index, follow">
 <link rel="canonical" href="https://noctarchy.dirty.pizza/">
 <meta name="theme-color" content="#0a0a14">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Noctarchy">
 <meta property="og:url" content="https://noctarchy.dirty.pizza/">
-<meta property="og:title" content="Noctarchy — Night Rule">
-<meta property="og:description" content="Niri + Noctalia on Omarchy. A scrollable-tiling shell replacement with live theme bridging and a self-updating sync hook.">
+<meta property="og:title" content="Noctarchy — Niri + Noctalia Shell Replacement for Omarchy">
+<meta property="og:description" content="Replace Hyprland with Niri scrollable tiling and Noctalia on Omarchy. Live theme bridging, CachyOS kernels, self-updating sync, and a safety net installer.">
 <meta property="og:image" content="https://noctarchy.dirty.pizza/branding/noctarchy.png">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Noctarchy — Night Rule">
-<meta name="twitter:description" content="Niri + Noctalia on Omarchy. A scrollable-tiling shell replacement with live theme bridging and a self-updating sync hook.">
+<meta property="og:image:alt" content="Noctarchy — a dark Wayland shell with blue and pink accents">
+<meta property="og:locale" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Noctarchy — Niri + Noctalia Shell Replacement for Omarchy">
+<meta name="twitter:description" content="Replace Hyprland with Niri scrollable tiling and Noctalia on Omarchy. Live theme bridging, CachyOS kernels, self-updating sync, and a safety net installer.">
 <meta name="twitter:image" content="https://noctarchy.dirty.pizza/branding/noctarchy.png">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Noctarchy",
+  "description": "Niri + Noctalia shell replacement for Omarchy — scrollable tiling, live theme bridging, CachyOS kernel menu, self-updating sync hook, and a preflight safety net.",
+  "url": "https://noctarchy.dirty.pizza/",
+  "applicationCategory": "DeveloperApplication",
+  "operatingSystem": "Arch Linux",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  },
+  "softwareVersion": "latest",
+  "downloadUrl": "https://github.com/deoxizn/noctarchy",
+  "screenshot": "https://noctarchy.dirty.pizza/branding/noctarchy.png",
+  "author": {
+    "@type": "Person",
+    "name": "Deoxizn"
+  }
+}
+</script>
 <link rel="icon" type="image/png" href="branding/noctarchy.png">
 <style>
   :root {
@@ -153,9 +180,9 @@
 <body>
 
 <header class="wrap">
-  <img src="branding/noctarchy.png" alt="Noctarchy logo" class="logo">
+  <img src="branding/noctarchy.png" alt="Noctarchy logo — dark Wayland desktop shell with crescent moon and blue-pink gradient" class="logo">
   <h1>☽ Noctarchy ✦</h1>
-  <p class="tagline"><b>Omarchy × Niri × Noctalia</b></p>
+  <p class="tagline"><b>Niri + Noctalia</b> shell replacement for <b>Omarchy</b></p>
   <nav class="cta-row">
     <a class="btn btn-pink" href="#install">Install the remux</a>
     <a class="btn btn-ghost" href="https://github.com/deoxizn/noctarchy/blob/master/CHANGELOG.md" target="_blank" rel="noopener">Changelog</a>
@@ -165,7 +192,8 @@
 
 <section class="wrap">
   <div class="callout">
-    <b>This is not a theme or a plugin — it is a shell replacement.</b>
+    <b>This is not a theme or a plugin — it is a complete shell replacement for Omarchy.</b>
+    Replaces Hyprland and omarchy-shell with Niri scrollable tiling and the Noctalia desktop shell.
     <a href="#limits">Read before installing</a>.
   </div>
 </section>
@@ -173,20 +201,20 @@
 <section class="wrap" id="features">
   <h2>What you get</h2>
   <div class="grid">
-    <div class="card"><h3>Niri scrollable tiling</h3><p>A column-based compositor where windows scroll vertically — no master/stack, no dwindle. Spring animations, gaps, shadows, and workspace tags out of the box.</p></div>
-    <div class="card"><h3>Noctalia shell</h3><p>Bar, notifications, OSD, launcher and lock screen — all native C++23, no Quickshell. A systemd user service that survives crashes and relogs.</p></div>
-    <div class="card"><h3>Theme bridge</h3><p><code>omarchy-theme-set</code> keeps working: a hook generates a Noctalia custom palette from each theme's <code>colors.toml</code>, patches Niri border colors live, and syncs the wallpaper. Toggle between palette-derived and wallpaper-generated bar colors from the themes menu.</p></div>
-    <div class="card"><h3>Fuzzel menu suite</h3><p>Root, power, keybinds, themes with previews, updates, config — all themed from the live Noctalia scheme via <code>noctarchy-fuzzel</code>.</p></div>
-    <div class="card"><h3>Self-updating</h3><p>Every system update also pulls the remux and re-syncs your install — configs merge in place, your edits always win. No manual upgrading, ever.</p></div>
+    <div class="card"><h3>Niri scrollable tiling</h3><p>A column-based Wayland compositor where windows scroll vertically — no master/stack, no dwindle. Spring animations, gaps, shadows, and named workspaces out of the box. Replaces Hyprland's dwindle layout.</p></div>
+    <div class="card"><h3>Noctalia desktop shell</h3><p>Bar, notifications, OSD, launcher, and lock screen — all native C++23, no Quickshell, no GTK, no Qt. A systemd user service that survives crashes and relogs. Replaces omarchy-shell.</p></div>
+    <div class="card"><h3>Live theme bridge</h3><p><code>omarchy-theme-set</code> keeps working: a hook generates a Noctalia custom palette from each theme's <code>colors.toml</code>, patches Niri border colors live, and syncs the wallpaper. Toggle between palette-derived and wallpaper-generated bar colors.</p></div>
+    <div class="card"><h3>Fuzzel menu suite</h3><p>Root, power, keybinds, themes with previews, updates, config — all themed from the live Noctalia scheme via <code>noctarchy-fuzzel</code>. Replaces omarchy-shell menus.</p></div>
+    <div class="card"><h3>Self-updating</h3><p>Every <code>omarchy-update</code> also pulls the remux and re-syncs your install — configs merge in place, your edits always win. No manual upgrading, ever. Libalpm hooks keep everything current.</p></div>
     <div class="card"><h3>Boot splash</h3><p>Opt-in Noctarchy plymouth theme, one menu entry away. A libalpm splash guard re-applies it to any kernel installed later — no more stock splash surprises.</p></div>
-    <div class="card"><h3>Opt-in CachyOS kernels</h3><p>Prebuilt via chaotic-aur — EEVDF, BORE, LTS or real-time, one menu away. Limine's default entry follows by name, immune to snapshot churn.</p></div>
-    <div class="card"><h3>Install safety net</h3><p>A preflight verifies the whole next-login chain before logout — any failure rolls everything back so your machine stays usable stock Omarchy.</p></div>
+    <div class="card"><h3>CachyOS kernels (opt-in)</h3><p>Prebuilt via chaotic-aur — EEVDF, BORE, LTS or real-time, one menu away. Limine's default entry follows by name, immune to snapshot churn. No compilation required.</p></div>
+    <div class="card"><h3>Install safety net</h3><p>A preflight verifies the whole next-login chain before logout — any failure rolls everything back to stock Omarchy. Never stuck in a broken session.</p></div>
   </div>
 </section>
 
 <section class="wrap" id="install">
-  <h2>Launch sequence</h2>
-  <p class="muted" style="margin-bottom:1rem;">Omarchy required:</p>
+  <h2>How to install Noctarchy</h2>
+  <p class="muted" style="margin-bottom:1rem;">Requires a working Omarchy installation:</p>
 <pre><span class="g">git clone</span> https://github.com/deoxizn/noctarchy.git ~/.local/opt/noctarchy
 <span class="g">cd</span> ~/.local/opt/noctarchy
 <span class="g">./install.sh</span>          <span class="c"># add -y to skip prompts, --dry-run to preview</span></pre>
@@ -196,7 +224,7 @@
 </section>
 
 <section class="wrap" id="keys">
-  <h2>The night shift</h2>
+  <h2>Noctarchy keybindings</h2>
   <table>
     <tr><th>Binding</th><th>Action</th></tr>
     <tr><td><kbd>SUPER+Enter</kbd></td><td>Terminal</td></tr>
@@ -249,7 +277,7 @@
 </section>
 
 <section class="wrap" id="limits">
-  <h2>Honest fine print</h2>
+  <h2>Stock Omarchy compatibility</h2>
   <ul class="nice">
     <li><b>Universal copy/paste works differently.</b> Omarchy/Hyprland intercepts <kbd>SUPER+C/V</kbd> and injects Ctrl+C/V into any focused window. Niri cannot do this — Noctarchy uses <code>wtype</code> to simulate the keypress instead. It works in most apps but may not work in every edge case.</li>
     <li><b>No quattro plugins.</b> Plugin support lives inside omarchy-shell, which this removes — bar widgets, panels, overlays, menus and services from <code>~/.config/omarchy/plugins/</code> silently disappear.</li>
