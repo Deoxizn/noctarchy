@@ -209,7 +209,24 @@ NOCTALIA_DST="$HOME/.config/noctalia/config.toml"
 info "Noctalia config:"
 
 if [[ -f $NOCTALIA_SRC ]]; then
-  copy_if_changed "$NOCTALIA_SRC" "$NOCTALIA_DST" "noctalia/config.toml"
+  if [[ -f $NOCTALIA_DST ]]; then
+    # Personal config — don't clobber user's customizations on update.
+    # Only warn if the repo template itself changed, so users know there
+    # are upstream changes to review.
+    if ! cmp -s "$NOCTALIA_SRC" "$NOCTALIA_DST"; then
+      warn "  config.toml already exists and differs from template — kept (preserving your bar/widget personalization)"
+      warn "    review: $NOCTALIA_SRC"
+    else
+      ok "  config.toml up to date (matches template)"
+    fi
+  elif $DRY_RUN; then
+    info "  [dry-run] would install noctalia/config.toml"
+  else
+    mkdir -p "$(dirname "$NOCTALIA_DST")"
+    install -m755 "$NOCTALIA_SRC" "$NOCTALIA_DST"
+    ok "  installed noctalia/config.toml"
+    changed=$((changed+1))
+  fi
 else
   warn "  repo config.toml not found — skipping"
 fi
