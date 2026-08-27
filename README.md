@@ -19,13 +19,14 @@
 </p>
 
 <p align="center">
-  <img src="desktop.png" alt="Desktop" width="1280">
+  <img src="docs/preview1.png" alt="Preview 1" width="1280">
 </p>
 <p align="center">
-  <img src="lockscreen2.png" alt="Lock screen" width="1280">
+  <img src="docs/preview2.png" alt="Preview 2" width="1280">
 </p>
-
-[Preview video](previewvideo.mp4)
+<p align="center">
+  <img src="docs/preview3.png" alt="Preview 3" width="1280">
+</p>
 
 <br><br>
 
