@@ -25,7 +25,7 @@ confirm() {
 
 do_action() {
     case "$choice" in
-        Screensaver)  niri msg action power-off-monitors 2>/dev/null || true ;;
+        Screensaver)  alacritty -e bash ~/.config/niri/scripts/screensaver.sh &
         Lock)         niri msg action lock 2>/dev/null || loginctl lock-session ;;
         Logout)       niri msg action quit ;;
         Suspend)      systemctl suspend ;;
