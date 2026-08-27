@@ -7,7 +7,7 @@ f=/usr/share/omarchy/bin/omarchy-restart-shell
 [[ -f $f ]] || exit 0
 grep -q 'noctarchy' "$f" && exit 0
 
-python3 - "$f" <<'PYEOF'
+sudo python3 - "$f" <<'PYEOF'
 import sys
 
 p = sys.argv[1]
