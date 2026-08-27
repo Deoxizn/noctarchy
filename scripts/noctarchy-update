@@ -18,7 +18,7 @@ choice=$(
 choice=${choice%' >'}
 
 case "$choice" in
-  Noctarchy)      exec "$SCRIPT_DIR/noctarchy-terminal" omarchy-update ;;
+  Noctarchy)      exec "$SCRIPT_DIR/noctarchy-terminal" "$SCRIPT_DIR/noctarchy-update-run" ;;
   "Extra themes") exec "$SCRIPT_DIR/noctarchy-terminal" omarchy-theme-update ;;
   Hardware)       exec "$SCRIPT_DIR/noctarchy-update-hardware" ;;
   Firmware)       exec "$SCRIPT_DIR/noctarchy-terminal" omarchy-update-firmware ;;

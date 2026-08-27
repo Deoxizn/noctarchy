@@ -1,0 +1,55 @@
+#!/bin/bash
+# noctarchy:summary=Run a Noctarchy system update (native; no Omarchy lock/script re-exec)
+# noctarchy:requires-sudo=true
+
+# Runs the same safe update primitives as omarchy-update, but resolves the
+# two failure modes that broke it when launched from the Noctarchy menu:
+#   - no `script` re-exec (keeps the real terminal/TTY, so gum prompts work)
+#   - no `omarchy-update-lock` race (a second window no longer finds the lock
+#     held and dies instantly with "An Omarchy update is already running")
+# The fragile tail steps are skipped: `omarchy-update-status` calls
+# omarchy-shell and `omarchy-update-restart` checks for Hyprland. The Noctarchy
+# repo sync runs via the existing post-update hook.
+
+set -euo pipefail
+
+trap 'on_error' ERR
+on_error() {
+  echo
+  echo -e "\e[31mSomething went wrong during the update!\e[0m"
+  echo
+  echo "Review the output above, fix the error, and retry."
+}
+
+omarchy-update-requires-free-space
+
+if ! gum confirm "Continue with the update? You cannot stop it once it starts."; then
+  echo "Update cancelled"
+  exit 1
+fi
+
+# Before the snapshot: the cache is on the snapshotted subvolume, so pruning
+# after it frees nothing until that snapshot ages out.
+omarchy-update-pkg-prune
+
+# 127 means Snapper is deliberately absent; a missing snapshot is not worth
+# blocking an update over, but must not pass for one either.
+omarchy-snapshot create || (($? == 127)) ||
+  echo -e "\e[33mContinuing the update without a snapshot.\e[0m" >&2
+
+omarchy-update-stay-awake start
+trap 'omarchy-update-stay-awake stop' EXIT
+
+omarchy-update-dev
+omarchy-update-keyring
+omarchy-update-system-pkgs
+omarchy-migrate
+omarchy-hook post-update
+omarchy-update-aur-pkgs
+omarchy-update-mise
+omarchy-update-orphan-pkgs
+
+omarchy-update-analyze-logs
+
+omarchy-update-stay-awake stop
+trap - EXIT
