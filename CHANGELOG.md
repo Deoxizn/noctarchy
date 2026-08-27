@@ -6,6 +6,8 @@
 
 ## 2026-08-26
 
+- Swap screenshot bindings: `Ctrl+Print` saves to `~/Pictures`, `Alt+Print` copies to clipboard (easier to reach) ([`f9a1394`](https://github.com/deoxizn/noctarchy/commit/f9a1394))
+- Remove screensaver from power menu (Niri doesn't support per-output fullscreen launch)
 - Remove redundant notifications from auto-sync hook (terminal already shows status)
 - Uninstall: restore stock plymouth splash, remove SDDM theme, clean up theme bridge hook, offer to remove repo directory ([`2271d5b`](https://github.com/deoxizn/noctarchy/commit/2271d5b))
 - Uninstall: revert `omarchy-restart-shell` guard patch to restore stock shell behavior
