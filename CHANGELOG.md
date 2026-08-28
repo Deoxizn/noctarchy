@@ -4,6 +4,10 @@
      one bullet per change: - Description ([`short-hash`](commit-url)).
      Skip README rewordings, screenshots and demo videos. -->
 
+## 2026-08-28
+
+- `noctarchy-update-run` no longer auto-closes when done: it now offers a reboot prompt when the kernel was updated (mirroring `omarchy-update-restart`), and otherwise holds the terminal open with a "Press Enter to close the update window" prompt so the update output can be reviewed before the window closes ([`bea4387`](https://github.com/deoxizn/noctarchy/commit/bea4387))
+
 ## 2026-08-27
 
 - Make the Noctarchy Plymouth splash survive system updates: `omarchy-settings-dev` owns `/usr/share/plymouth/themes/omarchy/` and, on every `pacman -Syu` that upgrades it (including kernel updates), overwrites that theme dir and re-asserts `Theme=omarchy`, clobbering the adopt. Add a `post-update.d/noctarchy-splash.sh` hook that re-adopts the self-contained noctarchy theme after every update, and fix `noctarchy-splash` to resolve `branding/` via the `~/.local/state/noctarchy/repo-path` state file (so the installed `~/.local/bin` copy can find it).
