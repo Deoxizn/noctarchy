@@ -143,6 +143,28 @@ else
 fi
 
 # ──────────────────────────────────────────────
+# Splash re-adopt hook
+# ──────────────────────────────────────────────
+
+info "Splash re-adopt hook:"
+SPLASH_HOOK_SRC="$REPO_DIR/hooks/post-update.d/noctarchy-splash.sh"
+SPLASH_HOOK_DST="$HOME/.config/omarchy/hooks/post-update.d/noctarchy-splash.sh"
+if [[ -f "$SPLASH_HOOK_SRC" ]]; then
+  cp "$SPLASH_HOOK_SRC" "$SPLASH_HOOK_DST.tmp"
+  if [[ ! -f "$SPLASH_HOOK_DST" ]] || ! cmp -s "$SPLASH_HOOK_DST.tmp" "$SPLASH_HOOK_DST"; then
+    mv "$SPLASH_HOOK_DST.tmp" "$SPLASH_HOOK_DST"
+    chmod +x "$SPLASH_HOOK_DST"
+    ok "  installed noctarchy-splash.sh"
+  else
+    rm -f "$SPLASH_HOOK_DST.tmp"
+    ok "  noctarchy-splash.sh up to date"
+  fi
+  changed=$((changed+1))
+else
+  warn "  splash hook not found — skipping"
+fi
+
+# ──────────────────────────────────────────────
 # Libalpm guard — installed by install.sh (needs root)
 # ──────────────────────────────────────────────
 

@@ -329,6 +329,21 @@ fi
 ok "Auto-sync hook installed"
 
 # ──────────────────────────────────────────────
+# Install splash re-adopt hook
+# ──────────────────────────────────────────────
+
+info "Installing plymouth splash re-adopt hook..."
+
+HOOK_DIR="$HOME/.config/omarchy/hooks/post-update.d"
+if ! $DRY_RUN; then
+  mkdir -p "$HOOK_DIR"
+  cp "$REPO_DIR/hooks/post-update.d/noctarchy-splash.sh" \
+    "$HOOK_DIR/noctarchy-splash.sh"
+  chmod +x "$HOOK_DIR/noctarchy-splash.sh"
+fi
+ok "Splash re-adopt hook installed"
+
+# ──────────────────────────────────────────────
 # Write state file
 # ──────────────────────────────────────────────
 

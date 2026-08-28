@@ -8,7 +8,16 @@ ok()   { echo -e "${GREEN}[noctarchy]${NC} $*"; }
 warn() { echo -e "${YELLOW}[noctarchy]${NC} $*"; }
 err()  { echo -e "${RED}[noctarchy]${NC} $*" >&2; }
 
-PLYMOUTH_SRC="$(cd "$(dirname "$0")" && pwd)/../branding/plymouth"
+# Resolve the repo root so branding is found whether this runs from the repo
+# (scripts/) or from an installed ~/.local/bin copy without branding/.
+REPO_PATH_FILE="$HOME/.local/state/noctarchy/repo-path"
+REPO_PATH=""
+[[ -r $REPO_PATH_FILE ]] && REPO_PATH=$(<"$REPO_PATH_FILE")
+if [[ -d $REPO_PATH/branding/plymouth ]]; then
+  PLYMOUTH_SRC="$REPO_PATH/branding/plymouth"
+else
+  PLYMOUTH_SRC="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/../branding/plymouth"
+fi
 PLYMOUTH_DST="/usr/share/plymouth/themes/noctarchy"
 OMARCHY_PLY="/usr/share/plymouth/themes/omarchy"
 
