@@ -53,3 +53,30 @@ omarchy-update-analyze-logs
 
 omarchy-update-stay-awake stop
 trap - EXIT
+
+# ── Review + acknowledge ─────────────────────
+echo
+echo -e "\e[32mUpdate complete.\e[0m"
+
+# Offer a reboot if the kernel was updated (mirrors omarchy-update-restart).
+running_kernel=$(uname -r)
+kernel_updated=false
+for kernel in /usr/lib/modules/*/vmlinuz; do
+  if [[ -f $kernel ]] && pacman -Qo "$kernel" &>/dev/null; then
+    if [[ $(basename "$(dirname "$kernel")") == $running_kernel ]]; then
+      kernel_updated=false
+      break
+    fi
+    kernel_updated=true
+  fi
+done
+
+if [[ $kernel_updated == true ]] && gum confirm "Linux kernel was updated. Reboot?"; then
+  omarchy-system-reboot
+  exit 0
+fi
+
+# Hold the terminal open so the output can be reviewed before it closes.
+echo
+read -rsp "Press Enter to close the update window." -n1 key
+echo
