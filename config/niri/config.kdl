@@ -50,6 +50,7 @@ input {
             layout "us"                      // Keyboard layout (us, gb, de, etc.)
             // options "ctrl:nocaps"          // Uncomment to make CapsLock act as Ctrl
         }
+        // numlock                           // Uncomment to enable Num Lock on startup (since Niri 25.05)
     }
 
     touchpad {
