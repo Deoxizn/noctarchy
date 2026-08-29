@@ -4,11 +4,14 @@
      one bullet per change: - Description ([`short-hash`](commit-url)).
      Skip README rewordings, screenshots and demo videos. -->
 
-## 2026-08-28
+## 2026-08-29
 
 - mpv now opens as a floating window by default, matching Hyprland behavior. No fixed size is applied — mpv requests its own size based on the video's native resolution (4K plays at 4K, 1080p at 1080p, etc.). The `open-on-workspace "media"` rule still applies so mpv opens on the correct workspace
 - Add beginner-friendly inline comments to the Niri config: every setting now has a short explanation of what it does and how to customize it, covering environment variables, cursor, input, layout, animations, keybindings, window rules, layer rules, startup commands, blur, clipboard, screenshots, and CSD
 - Add `TUI.float` Niri window rule: apps launched with `--app-id=TUI.float` (noctarchy-install, noctarchy-themes, noctarchy-remove, noctarchy-network) now float at 1000×720 centered, matching the Hyprland `TUI.float` behavior
+
+## 2026-08-28
+
 - `theme-set.d/noctalia-sync.sh` no longer maps Noctalia's panel/menu/launcher surfaces (`mSurfaceVariant`, `mHover`, `mShadow`) to the theme's `selection` color, which could be light/near-white (e.g. `neo-eldritch`) and render the launcher and widget backgrounds white. It now derives those surfaces from the theme's dark background tones (`lighter_bg`, `dark_bg`, `darker_bg`) with sensible fallbacks, keeping `selection` only as the true selection color
 - `noctarchy-update-run` no longer auto-closes when done: it now offers a reboot prompt when the kernel was updated (mirroring `omarchy-update-restart`), and otherwise holds the terminal open with a "Press Enter to close the update window" prompt so the update output can be reviewed before the window closes ([`bea4387`](https://github.com/deoxizn/noctarchy/commit/bea4387))
 - `post-update.d/noctarchy-splash.sh` now only re-adopts the Plymouth splash when a **kernel package** (linux/linux-cachyos/linux-zen/… or their `-headers`) was part of that transaction, instead of rebuilding the initramfs on every update. Reads `/var/log/pacman.log` from the start of the latest transaction and matches kernel packages while excluding `linux-firmware*`
