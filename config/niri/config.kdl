@@ -363,6 +363,14 @@ window-rule {
     open-floating true
 }
 
+// Media player — float at 1000x720, centered
+window-rule {
+    match app-id="mpv"                      // Video player
+    open-floating true
+    default-column-width { fixed 1000; }
+    default-window-height { fixed 720; }
+}
+
 // Default terminal — opens at half screen width
 window-rule {
     match app-id="Alacritty"
