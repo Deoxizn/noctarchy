@@ -4,121 +4,136 @@
 // Based on Omarchy keybind conventions adapted for Niri's scrollable tiling.
 // This file is managed by noctarchy — personal edits go in a separate include
 // or above the managed sections.
+//
+// Niri uses KDL format. Each section controls a different part of the desktop.
+// Comments start with // — uncomment a line to enable it, add // to disable it.
+// After editing, run: niri msg action load-config-file  (or reload from Noctalia)
 
 // ──────────────────────────────────────────────
-// Environment
+// Environment variables
+// These are passed to every app you launch. They tell Qt, Electron, Java, GTK,
+// Firefox, etc. to use Wayland instead of falling back to X11.
 // ──────────────────────────────────────────────
 
 environment {
-    QT_QPA_PLATFORM "wayland;xcb"
-    QT_WAYLAND_DISABLE_WINDOWDECORATION "1"
-    DISPLAY null
-    ELECTRON_OZONE_PLATFORM_HINT "auto"
-    _JAVA_AWT_WM_NONREPARENTING "1"
-    XDG_CURRENT_DESKTOP "niri"
-    XDG_SESSION_TYPE "wayland"
-    MOZ_ENABLE_WAYLAND "1"
-    CLUTTER_BACKEND "wayland"
-    SDL_VIDEODRIVER "wayland"
-    GDK_BACKEND "wayland,x11"
+    QT_QPA_PLATFORM "wayland;xcb"               // Qt apps: prefer Wayland, fall back to X11
+    QT_WAYLAND_DISABLE_WINDOWDECORATION "1"     // Qt apps: disable client-side decorations
+    DISPLAY null                                // Disable X11 DISPLAY (pure Wayland)
+    ELECTRON_OZONE_PLATFORM_HINT "auto"         // Electron apps (VS Code, Discord): auto-detect Wayland
+    _JAVA_AWT_WM_NONREPARENTING "1"            // Java AWT apps: work correctly on Wayland
+    XDG_CURRENT_DESKTOP "niri"                  // Tells apps which desktop environment is running
+    XDG_SESSION_TYPE "wayland"                  // Tells apps this is a Wayland session
+    MOZ_ENABLE_WAYLAND "1"                      // Firefox: use native Wayland
+    CLUTTER_BACKEND "wayland"                   // Clutter apps: use Wayland backend
+    SDL_VIDEODRIVER "wayland"                   // SDL apps (games): use Wayland backend
+    GDK_BACKEND "wayland,x11"                   // GTK apps: prefer Wayland, fall back to X11
 }
 
 // ──────────────────────────────────────────────
-// Cursor
+// Cursor settings
 // ──────────────────────────────────────────────
 
 cursor {
-    xcursor-theme "breeze_cursors"
-    xcursor-size 24
-    hide-when-typing
-    hide-after-inactive-ms 1000
+    xcursor-theme "breeze_cursors"    // Cursor theme name (change to match your installed theme)
+    xcursor-size 24                   // Cursor size in pixels
+    hide-when-typing                  // Hide cursor while typing
+    hide-after-inactive-ms 1000       // Hide cursor after 1 second of inactivity
 }
 
 // ──────────────────────────────────────────────
-// Input
+// Input device settings
 // ──────────────────────────────────────────────
 
 input {
     keyboard {
         xkb {
-            layout "us"
-            // options "ctrl:nocaps"
+            layout "us"                      // Keyboard layout (us, gb, de, etc.)
+            // options "ctrl:nocaps"          // Uncomment to make CapsLock act as Ctrl
         }
     }
 
     touchpad {
-        tap
-        natural-scroll
+        tap                                 // Enable tap-to-click
+        natural-scroll                      // Scroll direction matches content movement
         // disabled-while-typing is on by default
     }
 
     mouse {
-        // natural-scroll
+        // natural-scroll                   // Uncomment to reverse scroll direction on mouse
     }
 
-    // focus-follows-mouse
-    // focus-follows-mouse-delay 250
-    // scroll-factor 3
+    // focus-follows-mouse                  // Uncomment: focus windows just by hovering over them
+    // focus-follows-mouse-delay 250        // Delay before focusing (ms) — only works with focus-follows-mouse
+    // scroll-factor 3                      // Multiply scroll speed (useful for touchpads)
 }
 
 // ──────────────────────────────────────────────
 // Layout
+// Controls spacing, borders, shadows, and how windows are arranged.
 // ──────────────────────────────────────────────
 
 layout {
-    gaps 16
-    center-focused-column "on-overflow"
+    gaps 16                                 // Pixel gap between windows
+    center-focused-column "on-overflow"     // Center the focused column when it overflows the screen
 
+    // Preset column widths you can cycle through with Mod+R
     preset-column-widths {
-        proportion 0.33333
-        proportion 0.5
-        proportion 0.66667
+        proportion 0.33333                  // 1/3 of screen width
+        proportion 0.5                      // 1/2 of screen width
+        proportion 0.66667                  // 2/3 of screen width
     }
 
-    default-column-width { proportion 0.5; }
+    default-column-width { proportion 0.5; }  // New windows open at half screen width
 
+    // Focus ring — thin highlight around the active window
     focus-ring {
         width 4
-        active-color "#f472b6"
-        inactive-color "#1a1a2e"
+        active-color "#f472b6"              // Color of the focused window's ring
+        inactive-color "#1a1a2e"            // Color of unfocused windows' ring
     }
 
+    // Border — thicker outline around all windows
     border {
-        on
+        on                                  // Enable borders (set to "off" to disable)
         width 2
-        active-color "#60a5fa"
-        inactive-color "#1a1a2e"
-        urgent-color "#f87171"
+        active-color "#60a5fa"              // Focused window border color
+        inactive-color "#1a1a2e"            // Unfocused window border color
+        urgent-color "#f87171"              // Urgent window border color (e.g. notification)
     }
 
+    // Drop shadow behind windows
     shadow {
-        on
-        softness 30
-        spread 5
-        offset x=0 y=5
-        color "#0007"
+        on                                  // Enable shadows (set to "off" to disable)
+        softness 30                         // Shadow blur radius
+        spread 5                            // How far the shadow extends
+        offset x=0 y=5                      // Shadow offset (x=horizontal, y=vertical)
+        color "#0007"                       // Shadow color with alpha (0007 = semi-transparent black)
     }
 
     struts {
-        // left 64
-        // right 64
-        // top 64
-        // bottom 64
+        // left 64                          // Space reserved on left edge (for panels/bars)
+        // right 64                         // Space reserved on right edge
+        // top 64                           // Space reserved on top edge
+        // bottom 64                        // Space reserved on bottom edge
     }
 }
 
 // ──────────────────────────────────────────────
 // Animations
+// Controls how windows move, open, close, and switch.
+// "spring" = physics-based (bouncy feel). "duration-ms" = fixed time.
+// damping-ratio: 1.0 = no bounce, <1.0 = bouncy, >1.0 = overdamped
+// stiffness: higher = faster/snappier
 // ──────────────────────────────────────────────
 
 animations {
     workspace-switch {
-        spring damping-ratio=1.0 stiffness=1000 epsilon=0.0001
+        spring damping-ratio=1.0 stiffness=1000 epsilon=0.0001    // Snappy, no bounce
     }
 
     window-open {
         duration-ms 150
-        curve "ease-out-expo"
+        curve "ease-out-expo"               // Fast start, slows down at end
     }
 
     window-close {
@@ -149,16 +164,19 @@ animations {
 }
 
 // ──────────────────────────────────────────────
-// Overview
+// Overview (Mod+O)
+// Shows a zoomed-out view of all your workspaces.
 // ──────────────────────────────────────────────
 
 overview {
-    zoom 0.5
-    backdrop-color "#262626"
+    zoom 0.5                                // How much to zoom out (0.5 = half size)
+    backdrop-color "#262626"                // Background color behind workspaces
 }
 
 // ──────────────────────────────────────────────
 // Named workspaces
+// Give workspaces names so you can reference them in rules and keybinds.
+// Useful for always sending certain apps to specific workspaces.
 // ──────────────────────────────────────────────
 
 workspace "browser"
@@ -168,51 +186,53 @@ workspace "media"
 
 // ──────────────────────────────────────────────
 // Keybindings
-// Niri has NO default binds — you must define ALL of them.
-// Mirrors Omarchy conventions where possible (SUPER = Mod).
+// Niri has NO default binds — you must define ALL of them yourself.
+// "Mod" = Super/Windows key. Mirrors Omarchy conventions where possible.
+// Format: Mod+Key { action; }
 // ──────────────────────────────────────────────
 
 binds {
     // ── Launcher & menus ──
-    Mod+Space { spawn "noctarchy-fuzzel"; }
-    Mod+D { spawn "noctalia" "msg" "panel-toggle" "launcher"; }
-    Mod+Alt+Space { spawn "noctarchy-menu"; }
-    Mod+K { spawn "noctarchy-keybinds"; }
+    Mod+Space { spawn "noctarchy-fuzzel"; }                     // App launcher (fuzzel)
+    Mod+D { spawn "noctalia" "msg" "panel-toggle" "launcher"; } // Noctalia launcher panel
+    Mod+Alt+Space { spawn "noctarchy-menu"; }                    // Noctarchy root menu
+    Mod+K { spawn "noctarchy-keybinds"; }                        // Show keybinding reference
 
     // ── Terminal ──
-    Mod+Return { spawn "xdg-terminal-exec"; }
+    Mod+Return { spawn "xdg-terminal-exec"; }                   // Open default terminal
 
     // ── Apps (matches Omarchy conventions) ──
-    Mod+Shift+B { spawn "xdg-open" "https://"; }
-    Mod+Shift+E { spawn "xdg-terminal-exec" "-e" "nvim"; }
-    Mod+Shift+F { spawn "nautilus"; }
+    Mod+Shift+B { spawn "xdg-open" "https://"; }               // Open browser
+    Mod+Shift+E { spawn "xdg-terminal-exec" "-e" "nvim"; }     // Open terminal with Neovim
+    Mod+Shift+F { spawn "nautilus"; }                            // Open file manager
 
     // ── Close & quit ──
-    Mod+Q { close-window; }
+    Mod+Q { close-window; }                                     // Close focused window
 
     // ── Focus (arrow keys) ──
-    Mod+Left { focus-column-left; }
-    Mod+Right { focus-column-right; }
-    Mod+Down { focus-window-down; }
-    Mod+Up { focus-window-up; }
+    Mod+Left { focus-column-left; }                             // Focus window to the left
+    Mod+Right { focus-column-right; }                           // Focus window to the right
+    Mod+Down { focus-window-down; }                             // Focus window below
+    Mod+Up { focus-window-up; }                                 // Focus window above
 
     // ── Move (arrow keys) ──
-    Mod+Ctrl+Left { move-column-left; }
-    Mod+Ctrl+Right { move-column-right; }
-    Mod+Ctrl+Down { move-window-down; }
-    Mod+Ctrl+Up { move-window-up; }
+    Mod+Ctrl+Left { move-column-left; }                         // Move window left
+    Mod+Ctrl+Right { move-column-right; }                       // Move window right
+    Mod+Ctrl+Down { move-window-down; }                         // Move window down
+    Mod+Ctrl+Up { move-window-up; }                             // Move window up
 
     // ── Focus (vim-style) ──
-    Mod+H { focus-column-left; }
-    Mod+L { focus-column-right; }
-    Mod+J { focus-window-down; }
+    Mod+H { focus-column-left; }                                // Focus left (H key)
+    Mod+L { focus-column-right; }                               // Focus right (L key)
+    Mod+J { focus-window-down; }                                // Focus down (J key)
 
     // ── Move (vim-style) ──
-    Mod+Ctrl+H { move-column-left; }
-    Mod+Ctrl+J { move-window-down; }
-    Mod+Ctrl+K { move-window-up; }
+    Mod+Ctrl+H { move-column-left; }                            // Move left (H key)
+    Mod+Ctrl+J { move-window-down; }                            // Move down (J key)
+    Mod+Ctrl+K { move-window-up; }                              // Move up (K key)
 
     // ── Workspaces ──
+    // Switch to workspace 1-9 by pressing Mod+1-9
     Mod+1 { focus-workspace 1; }
     Mod+2 { focus-workspace 2; }
     Mod+3 { focus-workspace 3; }
@@ -222,8 +242,9 @@ binds {
     Mod+7 { focus-workspace 7; }
     Mod+8 { focus-workspace 8; }
     Mod+9 { focus-workspace 9; }
-    Mod+0 { focus-workspace "browser"; }
+    Mod+0 { focus-workspace "browser"; }                        // Mod+0 → named workspace
 
+    // Move current window to workspace 1-9 with Mod+Shift+1-9
     Mod+Shift+1 { move-column-to-workspace 1; }
     Mod+Shift+2 { move-column-to-workspace 2; }
     Mod+Shift+3 { move-column-to-workspace 3; }
@@ -233,130 +254,136 @@ binds {
     Mod+Shift+7 { move-column-to-workspace 7; }
     Mod+Shift+8 { move-column-to-workspace 8; }
     Mod+Shift+9 { move-column-to-workspace 9; }
-    Mod+Shift+0 { move-column-to-workspace "browser"; }
+    Mod+Shift+0 { move-column-to-workspace "browser"; }         // Move to named workspace
 
     // ── Workspace navigation ──
-    Mod+U { focus-workspace-down; }
-    Mod+I { focus-workspace-up; }
-    Mod+WheelScrollDown cooldown-ms=150 { focus-workspace-down; }
-    Mod+WheelScrollUp cooldown-ms=150 { focus-workspace-up; }
+    Mod+U { focus-workspace-down; }                             // Go to workspace below
+    Mod+I { focus-workspace-up; }                               // Go to workspace above
+    Mod+WheelScrollDown cooldown-ms=150 { focus-workspace-down; }  // Scroll to workspace below
+    Mod+WheelScrollUp cooldown-ms=150 { focus-workspace-up; }      // Scroll to workspace above
 
     // ── Column management ──
-    Mod+BracketLeft { consume-window-into-column; }
-    Mod+BracketRight { expel-window-from-column; }
-    Mod+F { maximize-column; }
-    Mod+Ctrl+F { fullscreen-window; }
-    Mod+R { switch-preset-column-width; }
-    Mod+Shift+R { toggle-column-tabbed-display; }
+    Mod+BracketLeft { consume-window-into-column; }             // Pull window into adjacent column
+    Mod+BracketRight { expel-window-from-column; }              // Push window out of column
+    Mod+F { maximize-column; }                                  // Maximize column to fill screen
+    Mod+Ctrl+F { fullscreen-window; }                           // Fullscreen the window
+    Mod+R { switch-preset-column-width; }                       // Cycle column width (1/3 → 1/2 → 2/3)
+    Mod+Shift+R { toggle-column-tabbed-display; }               // Toggle tabbed view in column
 
     // ── Floating ──
-    Mod+Shift+Space { toggle-window-floating; }
-    Mod+P { focus-floating; }
-    Mod+Shift+P { focus-tiling; }
+    Mod+Shift+Space { toggle-window-floating; }                 // Toggle window between tiled/floating
+    Mod+P { focus-floating; }                                   // Jump focus to floating window
+    Mod+Shift+P { focus-tiling; }                               // Jump focus back to tiled window
 
     // ── Screenshots ──
-    Mod+Print { spawn-sh "grim -g \"$(slurp)\" - | wl-copy"; }
-    Ctrl+Print { spawn-sh "grim - | wl-copy"; }
-    Alt+Print { spawn-sh "grim -g \"$(slurp)\" ~/Pictures/Screenshots/\"$(date +%Y-%m-%d_%H-%M-%S).png\""; }
+    Mod+Print { spawn-sh "grim -g \"$(slurp)\" - | wl-copy"; }          // Screenshot region → clipboard
+    Ctrl+Print { spawn-sh "grim - | wl-copy"; }                         // Screenshot full screen → clipboard
+    Alt+Print { spawn-sh "grim -g \"$(slurp)\" ~/Pictures/Screenshots/\"$(date +%Y-%m-%d_%H-%M-%S).png\""; }  // Screenshot region → save file
 
     // ── Clipboard (wtype for GUI apps, terminals use Shift+Ctrl+C/V) ──
-    Mod+C { spawn-sh "wtype -M ctrl -k c"; }
-    Mod+V { spawn-sh "wtype -M ctrl -k v"; }
-    Mod+X { spawn-sh "wtype -M ctrl -k x"; }
+    Mod+C { spawn-sh "wtype -M ctrl -k c"; }                    // Copy (works in GUI apps)
+    Mod+V { spawn-sh "wtype -M ctrl -k v"; }                    // Paste (works in GUI apps)
+    Mod+X { spawn-sh "wtype -M ctrl -k x"; }                    // Cut (works in GUI apps)
 
     // ── Media keys ──
-    XF86AudioRaiseVolume allow-when-locked=true { spawn-sh "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+"; }
-    XF86AudioLowerVolume allow-when-locked=true { spawn-sh "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"; }
-    XF86AudioMute allow-when-locked=true { spawn-sh "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"; }
-    XF86AudioMicMute allow-when-locked=true { spawn-sh "wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"; }
-    XF86AudioPlay allow-when-locked=true { spawn "playerctl" "play-pause"; }
-    XF86AudioPrev allow-when-locked=true { spawn "playerctl" "previous"; }
-    XF86AudioNext allow-when-locked=true { spawn "playerctl" "next"; }
+    XF86AudioRaiseVolume allow-when-locked=true { spawn-sh "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+"; }    // Volume up
+    XF86AudioLowerVolume allow-when-locked=true { spawn-sh "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"; }    // Volume down
+    XF86AudioMute allow-when-locked=true { spawn-sh "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"; }           // Mute/unmute
+    XF86AudioMicMute allow-when-locked=true { spawn-sh "wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"; }     // Mute/unmute mic
+    XF86AudioPlay allow-when-locked=true { spawn "playerctl" "play-pause"; }                                   // Play/pause media
+    XF86AudioPrev allow-when-locked=true { spawn "playerctl" "previous"; }                                     // Previous track
+    XF86AudioNext allow-when-locked=true { spawn "playerctl" "next"; }                                         // Next track
 
     // ── Brightness ──
-    XF86MonBrightnessUp allow-when-locked=true { spawn "brightnessctl" "set" "5%+"; }
-    XF86MonBrightnessDown allow-when-locked=true { spawn "brightnessctl" "set" "5%-"; }
+    XF86MonBrightnessUp allow-when-locked=true { spawn "brightnessctl" "set" "5%+"; }     // Brightness up
+    XF86MonBrightnessDown allow-when-locked=true { spawn "brightnessctl" "set" "5%-"; }   // Brightness down
 
     // ── Lock ──
-    Mod+Ctrl+L { spawn "noctalia" "msg" "session" "lock"; }
+    Mod+Ctrl+L { spawn "noctalia" "msg" "session" "lock"; }    // Lock screen via Noctalia
 
-    // ── Clipboard ──
-    Mod+Ctrl+V { spawn "noctalia" "msg" "clipboard-toggle"; }
+    // ── Clipboard history ──
+    Mod+Ctrl+V { spawn "noctalia" "msg" "clipboard-toggle"; }   // Toggle clipboard history
 
     // ── Notifications ──
-    Mod+Comma { spawn "noctalia" "msg" "notification-clear-active"; }
+    Mod+Comma { spawn "noctalia" "msg" "notification-clear-active"; }   // Clear active notifications
 
     // ── Overview ──
-    Mod+O { toggle-overview; }
+    Mod+O { toggle-overview; }                                  // Toggle workspace overview
 
     // ── Power menu ──
-    Mod+Escape { spawn "noctarchy-power"; }
+    Mod+Escape { spawn "noctarchy-power"; }                     // Open power menu
 
     // ── Noctalia-specific ──
-    Mod+N { spawn "noctalia" "msg" "panel-toggle" "notifications"; }
+    Mod+N { spawn "noctalia" "msg" "panel-toggle" "notifications"; }   // Toggle notification panel
 }
 
 // ──────────────────────────────────────────────
 // Window rules
+// Each rule matches a window by app-id and applies behavior.
+// Rules are processed in order — put specific rules before general ones.
+// "open-floating true" = window opens as a floating popup (not tiled)
+// "open-maximized true" = window opens filling its column
+// "open-on-workspace" = send window to a specific workspace on open
 // ──────────────────────────────────────────────
 
-// Floating dialogs
+// Floating dialogs — these apps always open as floating popups
 window-rule {
-    match app-id="pavucontrol"
+    match app-id="pavucontrol"              // PulseAudio volume control
     open-floating true
 }
 
 window-rule {
-    match app-id="nm-connection-editor"
+    match app-id="nm-connection-editor"     // Network Manager connection editor
     open-floating true
 }
 
 window-rule {
-    match app-id="blueman-manager"
+    match app-id="blueman-manager"          // Bluetooth manager
     open-floating true
 }
 
 window-rule {
-    match app-id="org.gnome.Calculator"
+    match app-id="org.gnome.Calculator"     // GNOME Calculator
     open-floating true
 }
 
 window-rule {
-    match app-id="org.gnome.Settings"
+    match app-id="org.gnome.Settings"       // GNOME Settings
     open-floating true
 }
 
 window-rule {
-    match app-id="feh"
+    match app-id="feh"                      // Image viewer
     open-floating true
 }
 
 window-rule {
-    match app-id="imv"
+    match app-id="imv"                      // Image viewer (wayland-native)
     open-floating true
 }
 
-// Default terminal
+// Default terminal — opens at half screen width
 window-rule {
     match app-id="Alacritty"
     default-column-width { proportion 0.5; }
 }
 
 // TUI apps — float at 1000x720, centered
+// Used by noctarchy-install, noctarchy-themes, noctarchy-remove, etc.
 window-rule {
-    match app-id="TUI\\.float"
+    match app-id="TUI\\.float"             // Matches apps launched with --app-id=TUI.float
     open-floating true
-    default-column-width { fixed 1000; }
-    default-window-height { fixed 720; }
+    default-column-width { fixed 1000; }    // Fixed width in pixels
+    default-window-height { fixed 720; }    // Fixed height in pixels
 }
 
-// File manager
+// File manager — opens as floating window
 window-rule {
     match app-id="org.gnome.Nautilus"
     open-floating true
 }
 
-// Browser — send to browser workspace
+// Browser — always opens on the "browser" named workspace
 window-rule {
     match app-id="firefox"
     open-on-workspace "browser"
@@ -372,44 +399,49 @@ window-rule {
     open-on-workspace "browser"
 }
 
-// Code editors — send to code workspace
+// Code editors — always opens on the "code" named workspace
 window-rule {
-    match app-id="code"
+    match app-id="code"                     // VS Code
     open-on-workspace "code"
 }
 
 window-rule {
-    match app-id="jetbrains-*"
+    match app-id="jetbrains-*"             // JetBrains IDEs (IntelliJ, PyCharm, etc.)
     open-on-workspace "code"
 }
 
-// Media
+// Media — always opens on the "media" named workspace
 window-rule {
-    match app-id="mpv"
+    match app-id="mpv"                      // Video player
     open-on-workspace "media"
 }
 
-// Chat
+// Chat apps — always opens on the "chat" named workspace
 window-rule {
     match app-id="discord"
     open-on-workspace "chat"
 }
 
 window-rule {
-    match app-id="org.telegram.desktop"
+    match app-id="org.telegram.desktop"     // Telegram
     open-on-workspace "chat"
 }
 
-// Layer rules — blur background for bars/overlays
+// ──────────────────────────────────────────────
+// Layer rules
+// Apply effects to layer-shell surfaces (panels, overlays, launchers).
+// "blur true" makes the background see-through with a blur effect.
+// ──────────────────────────────────────────────
+
 layer-rule {
-    match namespace="fuzzel"
+    match namespace="fuzzel"                // Fuzzel app launcher
     background-effect {
         blur true
     }
 }
 
 layer-rule {
-    match namespace="noctalia"
+    match namespace="noctalia"              // Noctalia shell (bar, launcher, etc.)
     background-effect {
         blur true
     }
@@ -417,59 +449,72 @@ layer-rule {
 
 // ──────────────────────────────────────────────
 // Spawn at startup
+// Programs that start automatically when you log in.
 // ──────────────────────────────────────────────
 
-spawn-at-startup "noctalia"
-spawn-at-startup "swayidle" "-w" "timeout" "600" "niri msg action power-off-monitors"
-spawn-sh-at-startup "systemctl --user import-environment $(env | cut -d= -f1) && dbus-update-activation-environment --systemd --all"
+spawn-at-startup "noctalia"                 // Noctalia shell (bar, notifications, etc.)
+spawn-at-startup "swayidle" "-w" "timeout" "600" "niri msg action power-off-monitors"   // Lock screen after 10 min idle
+spawn-sh-at-startup "systemctl --user import-environment $(env | cut -d= -f1) && dbus-update-activation-environment --systemd --all"   // Import env into systemd/dbus
 
 // ──────────────────────────────────────────────
 // Xwayland
+// Runs X11 apps under Wayland via xwayland-satellite.
+// Needed for older apps that don't support Wayland natively.
 // ──────────────────────────────────────────────
 
 xwayland-satellite { path "xwayland-satellite"; }
 
 // ──────────────────────────────────────────────
 // Clipboard
+// Disables the X11 primary selection (middle-click paste).
+// Only Ctrl+C/V/X clipboard works.
 // ──────────────────────────────────────────────
 
 clipboard { disable-primary; }
 
 // ──────────────────────────────────────────────
-// Blur
+// Blur settings
+// Controls the blur effect applied by layer rules above.
+// Higher passes = stronger blur. Higher offset = more spread.
 // ──────────────────────────────────────────────
 
 blur {
-    passes 3
-    offset 3.0
-    noise 0.02
-    saturation 1.5
+    passes 3                                // Number of blur passes (more = stronger blur)
+    offset 3.0                              // Blur spread distance
+    noise 0.02                              // Subtle noise texture
+    saturation 1.5                          // Color saturation boost
 }
 
 // ──────────────────────────────────────────────
 // Hotkey overlay
+// The "Important Hotkeys" popup that shows on startup.
 // ──────────────────────────────────────────────
 
 hotkey-overlay {
-    hide-not-bound
+    hide-not-bound                          // Hide keybinds that aren't bound to any key
 }
 
 // ──────────────────────────────────────────────
 // Config notification
+// Shows a notification when the config fails to load.
 // ──────────────────────────────────────────────
 
 config-notification {
-    // disable-failed
+    // disable-failed                       // Uncomment to suppress config error notifications
 }
 
 // ──────────────────────────────────────────────
 // Screenshot path
+// Where screenshots are saved when using Ctrl+Print or Alt+Print.
+// %Y-%m-%d %H-%M-%S is replaced with the current date/time.
 // ──────────────────────────────────────────────
 
 screenshot-path "~/Pictures/Screenshots/Screenshot from %Y-%m-%d %H-%M-%S.png"
 
 // ──────────────────────────────────────────────
 // Prefer no CSD
+// Ask apps to not draw their own title bar decorations.
+// Niri will draw server-side decorations instead.
 // ──────────────────────────────────────────────
 
 prefer-no-csd

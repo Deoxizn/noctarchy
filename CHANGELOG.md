@@ -6,6 +6,7 @@
 
 ## 2026-08-28
 
+- Add beginner-friendly inline comments to the Niri config: every setting now has a short explanation of what it does and how to customize it, covering environment variables, cursor, input, layout, animations, keybindings, window rules, layer rules, startup commands, blur, clipboard, screenshots, and CSD
 - Add `TUI.float` Niri window rule: apps launched with `--app-id=TUI.float` (noctarchy-install, noctarchy-themes, noctarchy-remove, noctarchy-network) now float at 1000×720 centered, matching the Hyprland `TUI.float` behavior
 - `theme-set.d/noctalia-sync.sh` no longer maps Noctalia's panel/menu/launcher surfaces (`mSurfaceVariant`, `mHover`, `mShadow`) to the theme's `selection` color, which could be light/near-white (e.g. `neo-eldritch`) and render the launcher and widget backgrounds white. It now derives those surfaces from the theme's dark background tones (`lighter_bg`, `dark_bg`, `darker_bg`) with sensible fallbacks, keeping `selection` only as the true selection color
 - `noctarchy-update-run` no longer auto-closes when done: it now offers a reboot prompt when the kernel was updated (mirroring `omarchy-update-restart`), and otherwise holds the terminal open with a "Press Enter to close the update window" prompt so the update output can be reviewed before the window closes ([`bea4387`](https://github.com/deoxizn/noctarchy/commit/bea4387))
