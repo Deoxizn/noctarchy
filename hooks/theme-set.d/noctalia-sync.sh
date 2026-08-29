@@ -60,6 +60,9 @@ def hex_color(key, fallback):
 accent          = hex_color("accent",           "7c3aed")
 background      = hex_color("background",       "1a1a2e")
 dark_background = hex_color("dark_background",  "11111b")
+dark_bg         = hex_color("dark_bg",          "15181a")
+darker_bg       = hex_color("darker_bg",        "0e1012")
+lighter_bg      = hex_color("lighter_bg",       "333639")
 foreground      = hex_color("foreground",       "c0d0e0")
 muted           = hex_color("muted",            "586070")
 bright_fg       = hex_color("bright_foreground", "eeeeee")
@@ -84,11 +87,11 @@ palette = {
         "mOnError": background,
         "mSurface": dark_background,
         "mOnSurface": foreground,
-        "mSurfaceVariant": selection,
-        "mOnSurfaceVariant": muted,
+        "mSurfaceVariant": lighter_bg,
+        "mOnSurfaceVariant": foreground,
         "mOutline": muted,
-        "mShadow": dark_background,
-        "mHover": selection,
+        "mShadow": darker_bg,
+        "mHover": darker_bg,
         "mOnHover": foreground,
         "terminal": {
             "background": background,
