@@ -6,6 +6,7 @@
 
 ## 2026-08-28
 
+- mpv now opens as a floating window by default, matching Hyprland behavior. No fixed size is applied — mpv requests its own size based on the video's native resolution (4K plays at 4K, 1080p at 1080p, etc.). The `open-on-workspace "media"` rule still applies so mpv opens on the correct workspace
 - Add beginner-friendly inline comments to the Niri config: every setting now has a short explanation of what it does and how to customize it, covering environment variables, cursor, input, layout, animations, keybindings, window rules, layer rules, startup commands, blur, clipboard, screenshots, and CSD
 - Add `TUI.float` Niri window rule: apps launched with `--app-id=TUI.float` (noctarchy-install, noctarchy-themes, noctarchy-remove, noctarchy-network) now float at 1000×720 centered, matching the Hyprland `TUI.float` behavior
 - `theme-set.d/noctalia-sync.sh` no longer maps Noctalia's panel/menu/launcher surfaces (`mSurfaceVariant`, `mHover`, `mShadow`) to the theme's `selection` color, which could be light/near-white (e.g. `neo-eldritch`) and render the launcher and widget backgrounds white. It now derives those surfaces from the theme's dark background tones (`lighter_bg`, `dark_bg`, `darker_bg`) with sensible fallbacks, keeping `selection` only as the true selection color
