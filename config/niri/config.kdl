@@ -342,6 +342,14 @@ window-rule {
     default-column-width { proportion 0.5; }
 }
 
+// TUI apps — float at 1000x720, centered
+window-rule {
+    match app-id="TUI\\.float"
+    open-floating true
+    default-column-width { fixed 1000; }
+    default-window-height { fixed 720; }
+}
+
 // File manager
 window-rule {
     match app-id="org.gnome.Nautilus"
