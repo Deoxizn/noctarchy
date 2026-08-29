@@ -7,6 +7,7 @@
 ## 2026-08-28
 
 - `noctarchy-update-run` no longer auto-closes when done: it now offers a reboot prompt when the kernel was updated (mirroring `omarchy-update-restart`), and otherwise holds the terminal open with a "Press Enter to close the update window" prompt so the update output can be reviewed before the window closes ([`bea4387`](https://github.com/deoxizn/noctarchy/commit/bea4387))
+- `post-update.d/noctarchy-splash.sh` now only re-adopts the Plymouth splash when a **kernel package** (linux/linux-cachyos/linux-zen/… or their `-headers`) was part of that transaction, instead of rebuilding the initramfs on every update. Reads `/var/log/pacman.log` from the start of the latest transaction and matches kernel packages while excluding `linux-firmware*`
 
 ## 2026-08-27
 
