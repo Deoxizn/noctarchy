@@ -14,7 +14,7 @@ choice=$(
 ) || exec "$SCRIPT_DIR/noctarchy-menu"
 
 case "$choice" in
-  "Network download") exec xdg-terminal-exec --app-id=TUI.float -e omarchy-network-speedtest down ;;
-  "Network upload")   exec xdg-terminal-exec --app-id=TUI.float -e omarchy-network-speedtest up ;;
+  "Network download") exec omarchy-launch-webapp 'https://fast.com' ;;
+  "Network upload")   exec omarchy-launch-webapp 'https://fast.com' ;;
   Disk)               exec xdg-terminal-exec --app-id=TUI.float -e omarchy-disk-speedtest ;;
 esac

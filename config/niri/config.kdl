@@ -372,6 +372,14 @@ window-rule {
     default-window-height { fixed 700; }
 }
 
+// Speedtest (fast.com) — floating for gauges
+window-rule {
+    match app-id=".*fast\\.com.*"
+    open-floating true
+    default-column-width { fixed 1100; }
+    default-window-height { fixed 700; }
+}
+
 // Media player — floating (sizing handled by mpv config)
 window-rule {
     match app-id="mpv"                      // Video player
