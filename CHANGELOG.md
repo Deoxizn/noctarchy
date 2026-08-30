@@ -8,6 +8,7 @@
 
 - Fix `post-update.d/noctarchy-splash.sh` plymouth hook: handle `linux-omarchy-bore` (and any `linux-*` variant) and correctly skip initramfs rebuild when no kernel was updated — previously the deployed hook lacked the kernel gate and rebuilt on every `omarchy-settings-dev` update, and the work hook's regex missed `linux-omarchy-bore`
 - Add `noctarchy-share` as top-level Share menu: share clipboard, file, folder, or receive via LocalSend (`omarchy-menu-share` + `localsend --headless`), matching Omarchy's share menu but working on Niri; add Niri window rule for LocalSend/Share at 1100×700 floating (matching Hyprland `localsend.lua`); move Share from Trigger → top-level
+- Make disk/network speed tests work on Niri: `noctarchy-speedtest` now uses `TUI.float` (1000×720 floating) instead of `noctarchy-terminal`, matching Hyprland's floating window; re-added Speed Test to Trigger menu
 - Trigger menu: remove Speed Test (terminal fallback `omarchy-network-speedtest`/`omarchy-disk-speedtest` didn't match Hyprland's overlay dials; per request, removed from menu — scripts remain for manual use)
 - `HiddenCommands.md`: add `omarchy-windows-key` (print OEM Windows key), update Share section to document `noctarchy-share`
 
