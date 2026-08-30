@@ -9,18 +9,18 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 choice=$(
   printf '%s\n' \
     'Config >' \
-    'Defaults >' \
+    'Default Apps >' \
     'Kernel >' \
-    'Splash >' \
-    'Update >' |
+    'Boot Splash >' \
+    'Maintenance >' |
     "$SCRIPT_DIR/noctarchy-fuzzel" --dmenu --prompt='System: ' --width=26 --lines=5
 ) || exec "$SCRIPT_DIR/noctarchy-menu"   # Esc = back to root menu
 choice=${choice%' >'}
 
 case "$choice" in
-  Config)   exec "$SCRIPT_DIR/noctarchy-config" ;;
-  Defaults) exec "$SCRIPT_DIR/noctarchy-defaults" ;;
-  Kernel)   exec "$SCRIPT_DIR/noctarchy-kernel" ;;
-  Splash)   exec "$SCRIPT_DIR/noctarchy-splash" ;;
-  Update)   exec "$SCRIPT_DIR/noctarchy-system-update" ;;
+  Config)        exec "$SCRIPT_DIR/noctarchy-config" ;;
+  "Default Apps") exec "$SCRIPT_DIR/noctarchy-defaults" ;;
+  Kernel)        exec "$SCRIPT_DIR/noctarchy-kernel" ;;
+  "Boot Splash")  exec "$SCRIPT_DIR/noctarchy-splash" ;;
+  Maintenance)   exec "$SCRIPT_DIR/noctarchy-system-update" ;;
 esac

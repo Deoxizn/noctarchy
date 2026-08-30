@@ -9,29 +9,27 @@ choice=$(
   printf '%s\n' \
     'Capture >' \
     'Packages >' \
-    'Config >' \
     'Reminders >' \
     'Restart >' \
     'Setup >' \
     'Share >' \
     'System >' \
     'Themes >' \
-    'Trigger >' \
-    'Update >' |
-    "$SCRIPT_DIR/noctarchy-fuzzel" --dmenu --prompt='☽ Noctarchy ✦ ' --width=28 --lines=11
+    'Hardware >' \
+    'System Update >' |
+    "$SCRIPT_DIR/noctarchy-fuzzel" --dmenu --prompt='☽ Noctarchy ✦ ' --width=28 --lines=10
 ) || exit 0
 choice=${choice%' >'}
 
 case "$choice" in
-  Capture)   exec "$SCRIPT_DIR/noctarchy-capture" ;;
-  Packages) exec "$SCRIPT_DIR/noctarchy-packages" ;;
-  Config)   exec "$SCRIPT_DIR/noctarchy-config" ;;
-  Reminders) exec "$SCRIPT_DIR/noctarchy-reminders" ;;
-  Restart)  exec "$SCRIPT_DIR/noctarchy-restart" ;;
-  Setup)    exec "$SCRIPT_DIR/noctarchy-setup" ;;
-  Share)    exec "$SCRIPT_DIR/noctarchy-share" ;;
-  System)   exec "$SCRIPT_DIR/noctarchy-system" ;;
-  Themes)   exec "$SCRIPT_DIR/noctarchy-themes" ;;
-  Trigger)  exec "$SCRIPT_DIR/noctarchy-trigger" ;;
-  Update)   exec "$SCRIPT_DIR/noctarchy-update" ;;
+  Capture)       exec "$SCRIPT_DIR/noctarchy-capture" ;;
+  Packages)     exec "$SCRIPT_DIR/noctarchy-packages" ;;
+  Reminders)     exec "$SCRIPT_DIR/noctarchy-reminders" ;;
+  Restart)      exec "$SCRIPT_DIR/noctarchy-restart" ;;
+  Setup)        exec "$SCRIPT_DIR/noctarchy-setup" ;;
+  Share)        exec "$SCRIPT_DIR/noctarchy-share" ;;
+  System)       exec "$SCRIPT_DIR/noctarchy-system" ;;
+  Themes)       exec "$SCRIPT_DIR/noctarchy-themes" ;;
+  Hardware)     exec "$SCRIPT_DIR/noctarchy-trigger" ;;
+  "System Update") exec "$SCRIPT_DIR/noctarchy-update" ;;
 esac
