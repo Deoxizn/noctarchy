@@ -1,0 +1,20 @@
+#!/bin/bash
+# noctarchy:menu=reminders
+# noctarchy:summary=Reminders submenu: set, quick, clear
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+choice=$(
+  printf '%s\n' \
+    'Set a reminder' \
+    'Quick reminder' \
+    'Clear all' |
+    "$SCRIPT_DIR/noctarchy-fuzzel" --dmenu --prompt='Reminders: ' --width=32 --lines=3
+) || exec "$SCRIPT_DIR/noctarchy-menu"   # Esc = back to root menu
+
+case "$choice" in
+  "Set a reminder") exec xdg-terminal-exec --app-id=TUI.float -e omarchy-reminder -i ;;
+  "Quick reminder") exec xdg-terminal-exec --app-id=TUI.float -e bash -c 'read -rp "Reminder (e.g. 30 \"Check the oven\"): " input; omarchy-reminder $input; echo "Done. Press Enter to close."; read' ;;
+  "Clear all")      exec xdg-terminal-exec --app-id=TUI.float -e omarchy-reminder clear ;;
+esac
