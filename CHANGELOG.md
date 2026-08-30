@@ -6,6 +6,7 @@
 
 ## 2026-08-30
 
+- Add System → Update submenu: drive encryption password, user password, sync system clock, reset Plymouth config, reset tmux config (from HiddenCommands Update section) — all via `TUI.float` terminal at 1000×720
 - Fix `post-update.d/noctarchy-splash.sh` plymouth hook: handle `linux-omarchy-bore` (and any `linux-*` variant) and correctly skip initramfs rebuild when no kernel was updated — previously the deployed hook lacked the kernel gate and rebuilt on every `omarchy-settings-dev` update, and the work hook's regex missed `linux-omarchy-bore`
 - Add `noctarchy-share` as top-level Share menu: share clipboard, file, folder, or receive via LocalSend (`omarchy-menu-share` + `localsend --headless`), matching Omarchy's share menu but working on Niri; add Niri window rule for LocalSend/Share at 1100×700 floating (matching Hyprland `localsend.lua`); move Share from Trigger → top-level
 - Make disk/network speed tests work on Niri: network tests open `https://fast.com` via `omarchy-launch-webapp` (default browser app window, 1100×700 floating with fast.com gauges), disk test uses `TUI.float` terminal at 1000×720 — functional on Niri, not the Omarchy shell overlay

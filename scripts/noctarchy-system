@@ -11,8 +11,9 @@ choice=$(
     'Config >' \
     'Defaults >' \
     'Kernel >' \
-    'Splash >' |
-    "$SCRIPT_DIR/noctarchy-fuzzel" --dmenu --prompt='System: ' --width=26 --lines=4
+    'Splash >' \
+    'Update >' |
+    "$SCRIPT_DIR/noctarchy-fuzzel" --dmenu --prompt='System: ' --width=26 --lines=5
 ) || exec "$SCRIPT_DIR/noctarchy-menu"   # Esc = back to root menu
 choice=${choice%' >'}
 
@@ -21,4 +22,5 @@ case "$choice" in
   Defaults) exec "$SCRIPT_DIR/noctarchy-defaults" ;;
   Kernel)   exec "$SCRIPT_DIR/noctarchy-kernel" ;;
   Splash)   exec "$SCRIPT_DIR/noctarchy-splash" ;;
+  Update)   exec "$SCRIPT_DIR/noctarchy-system-update" ;;
 esac
