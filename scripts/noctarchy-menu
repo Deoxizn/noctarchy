@@ -11,11 +11,12 @@ choice=$(
     'Config >' \
     'Restart >' \
     'Setup >' \
+    'Share >' \
     'System >' \
     'Themes >' \
     'Trigger >' \
     'Update >' |
-    "$SCRIPT_DIR/noctarchy-fuzzel" --dmenu --prompt='☽ Noctarchy ✦ ' --width=28 --lines=8
+    "$SCRIPT_DIR/noctarchy-fuzzel" --dmenu --prompt='☽ Noctarchy ✦ ' --width=28 --lines=9
 ) || exit 0
 choice=${choice%' >'}
 
@@ -24,6 +25,7 @@ case "$choice" in
   Config)   exec "$SCRIPT_DIR/noctarchy-config" ;;
   Restart)  exec "$SCRIPT_DIR/noctarchy-restart" ;;
   Setup)    exec "$SCRIPT_DIR/noctarchy-setup" ;;
+  Share)    exec "$SCRIPT_DIR/noctarchy-share" ;;
   System)   exec "$SCRIPT_DIR/noctarchy-system" ;;
   Themes)   exec "$SCRIPT_DIR/noctarchy-themes" ;;
   Trigger)  exec "$SCRIPT_DIR/noctarchy-trigger" ;;

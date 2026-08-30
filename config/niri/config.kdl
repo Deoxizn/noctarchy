@@ -363,6 +363,15 @@ window-rule {
     open-floating true
 }
 
+// LocalSend — floating at 1100x700 (matching Hyprland localsend.lua)
+window-rule {
+    match app-id="localsend"
+    match title="Share"
+    open-floating true
+    default-column-width { fixed 1100; }
+    default-window-height { fixed 700; }
+}
+
 // Media player — floating (sizing handled by mpv config)
 window-rule {
     match app-id="mpv"                      // Video player
