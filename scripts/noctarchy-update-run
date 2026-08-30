@@ -23,7 +23,7 @@ on_error() {
 
 omarchy-update-requires-free-space
 
-if ! gum confirm "Continue with the update? You cannot stop it once it starts."; then
+if ! gum confirm "Continue with the update? You cannot stop it once it starts." </dev/tty >/dev/tty 2>&1; then
   echo "Update cancelled"
   exit 1
 fi
@@ -71,7 +71,7 @@ for kernel in /usr/lib/modules/*/vmlinuz; do
   fi
 done
 
-if [[ $kernel_updated == true ]] && gum confirm "Linux kernel was updated. Reboot?"; then
+if [[ $kernel_updated == true ]] && gum confirm "Linux kernel was updated. Reboot?" </dev/tty >/dev/tty 2>&1; then
   omarchy-system-reboot
   exit 0
 fi
