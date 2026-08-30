@@ -19,15 +19,15 @@ if [[ -z $SPLASH_BIN ]]; then
   exit 0
 fi
 
-# Kernel packages (and their matching -headers), excluding linux-firmware*.
-# Matches: linux, linux-{lts,zen,hardened,rt,rt-lts}, linux-cachyos{-lts,-rt,-rt-lts},
-# plus each with a -headers suffix. Followed by a space or '(' in the pacman log.
-KERNEL_RE='\[ALPM\] (upgraded|installed|downgraded|reinstalled) (linux-cachyos(-lts|-rt|-rt-lts)?|linux(-lts|-zen|-hardened|-rt|-rt-lts)?)(-headers)?([ (])'
+# Kernel packages (and their matching -headers), excluding linux-firmware* and linux-api-headers.
+# Matches: linux, linux-{lts,zen,hardened,rt,rt-lts,omarchy-bore,cachyos-bore,...} and variants.
+# Uses a generic match for any linux-* kernel, then filters out firmware/api-headers.
+KERNEL_RE='\[ALPM\] (upgraded|installed|downgraded|reinstalled) linux(-[a-z0-9-]+)?(-headers)?([ (])'
 
 tx_start=$(awk '/\[ALPM\] transaction started/{n=NR} END{print n}' /var/log/pacman.log 2>/dev/null)
 [[ $tx_start =~ ^[0-9]+$ ]] || tx_start=1
 
-if ! awk "NR>$tx_start" /var/log/pacman.log 2>/dev/null | grep -qE "$KERNEL_RE"; then
+if ! awk "NR>$tx_start" /var/log/pacman.log 2>/dev/null | grep -E "$KERNEL_RE" | grep -vE "linux-(firmware|api-headers)" | grep -q .; then
   echo "[noctarchy-splash] no kernel update in this transaction, skipping (no initramfs rebuild needed)"
   exit 0
 fi

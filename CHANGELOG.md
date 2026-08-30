@@ -4,6 +4,13 @@
      one bullet per change: - Description ([`short-hash`](commit-url)).
      Skip README rewordings, screenshots and demo videos. -->
 
+## 2026-08-30
+
+- Fix `post-update.d/noctarchy-splash.sh` plymouth hook: handle `linux-omarchy-bore` (and any `linux-*` variant) and correctly skip initramfs rebuild when no kernel was updated — previously the deployed hook lacked the kernel gate and rebuilt on every `omarchy-settings-dev` update, and the work hook's regex missed `linux-omarchy-bore`
+- Add `noctarchy-share` (Trigger → Share): share clipboard, file, folder, or receive via LocalSend (`omarchy-menu-share` + `localsend --headless`), matching Omarchy's share menu but working on Niri
+- Trigger menu: remove Speed Test (terminal fallback `omarchy-network-speedtest`/`omarchy-disk-speedtest` didn't match Hyprland's overlay dials; per request, removed from menu — scripts remain for manual use)
+- `HiddenCommands.md`: add `omarchy-windows-key` (print OEM Windows key), update Share section to document `noctarchy-share`
+
 ## 2026-08-29
 
 - mpv now opens as a floating window by default, matching Hyprland behavior. No fixed size is applied — mpv requests its own size based on the video's native resolution (4K plays at 4K, 1080p at 1080p, etc.). The `open-on-workspace "media"` rule still applies so mpv opens on the correct workspace

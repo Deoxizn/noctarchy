@@ -54,12 +54,10 @@ terminal, or bind your favorites in `~/.config/niri/config.kdl`.
 
 | | |
 |---|---|
+| Share via LocalSend | `noctarchy-share` (clipboard/file/folder/receive via `omarchy-menu-share` + LocalSend) |
 | Receive (LocalSend) | `uwsm-app -- localsend` |
 | Send via Taildrop | `omarchy-tailscale-send` |
 | Receive via Taildrop | `omarchy-tailscale-receive` |
-
-(`omarchy-menu-share clipboard|file|folder` uses the Omarchy shell modal, so it's
-left out here.)
 
 <br><br>
 
@@ -224,6 +222,7 @@ remux**. Know what you're doing.
 |---|---|
 | TUI apps | `omarchy-tui-install` |
 | Windows VM | `omarchy-windows-vm install` |
+| Windows product key | `omarchy-windows-key` |
 | Removed defaults back | `omarchy-install-preinstalls` |
 | Reinstall Omarchy (packages + configs) | `omarchy-reinstall` |
 

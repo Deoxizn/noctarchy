@@ -1,0 +1,23 @@
+#!/bin/bash
+# noctarchy:menu=share
+# noctarchy:summary=Share via LocalSend: clipboard, file, folder, or receive
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+choice=$(
+  printf '%s\n' \
+    'Clipboard' \
+    'File' \
+    'Folder' \
+    'Receive' |
+    "$SCRIPT_DIR/noctarchy-fuzzel" --dmenu --prompt='Share: ' --width=28 --lines=4
+) || exec "$SCRIPT_DIR/noctarchy-trigger"   # Esc = back to trigger menu
+choice=${choice%' >'}
+
+case "$choice" in
+  "Clipboard") exec omarchy-menu-share clipboard ;;
+  "File")      exec omarchy-menu-share file ;;
+  "Folder")    exec omarchy-menu-share folder ;;
+  "Receive")   exec uwsm-app -- localsend 2>/dev/null || exec localsend ;;
+esac
