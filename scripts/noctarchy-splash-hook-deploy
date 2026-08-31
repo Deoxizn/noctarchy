@@ -1,0 +1,23 @@
+#!/bin/bash
+# noctarchy:deploy-plymouth-hook
+# Deploys the noctarchy-splash libalpm hook to /etc/pacman.d/hooks/
+# This ensures Noctarchy's Plymouth theme is re-applied after ANY kernel
+# install/upgrade, regardless of method (omarchy-update, manual pacman, etc.)
+# Requires sudo. Run once per machine.
+set -euo pipefail
+
+HOOK_SRC="${BASH_SOURCE[0]%/*}/../hooks/libalpm/noctarchy-splash.hook"
+HOOK_DST="/etc/pacman.d/hooks/noctarchy-splash.hook"
+
+if [[ ! -f "$HOOK_SRC" ]]; then
+  echo "[noctarchy-splash-hook] source hook not found: $HOOK_SRC" >&2
+  exit 1
+fi
+
+if [[ -f "$HOOK_DST" ]] && diff -q "$HOOK_SRC" "$HOOK_DST" >/dev/null 2>&1; then
+  echo "[noctarchy-splash-hook] hook already up to date at $HOOK_DST"
+  exit 0
+fi
+
+sudo install -Dm644 "$HOOK_SRC" "$HOOK_DST"
+echo "[noctarchy-splash-hook] installed to $HOOK_DST"

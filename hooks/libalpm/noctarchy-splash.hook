@@ -1,0 +1,22 @@
+[Trigger]
+Operation = Install
+Operation = Upgrade
+Type = Package
+Target = linux*
+Target = linux-*-headers
+
+[Action]
+Description = noctarchy: re-apply Plymouth boot splash after kernel update
+When = PostTransaction
+Exec = /bin/bash -c '
+  # Skip if theme is already noctarchy
+  grep -q "^Theme=noctarchy" /etc/plymouth/plymouthd.conf 2>/dev/null && exit 0
+  # Find noctarchy-splash
+  for bin in /usr/local/bin/noctarchy-splash "$HOME/.local/bin/noctarchy-splash" "$(command -v noctarchy-splash 2>/dev/null)"; do
+    if [[ -x "$bin" ]]; then
+      "$bin" run adopt
+      exit $?
+    fi
+  done
+  echo "[noctarchy-splash] noctarchy-splash not found — run: noctarchy-splash" >&2
+'
