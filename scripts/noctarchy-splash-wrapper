@@ -1,0 +1,25 @@
+#!/bin/bash
+# System-wide wrapper for noctarchy-splash hook
+# Checks if theme is already noctarchy, then finds and calls user's script
+set -euo pipefail
+
+# Skip if theme is already noctarchy
+grep -q "^Theme=noctarchy" /etc/plymouth/plymouthd.conf 2>/dev/null && exit 0
+
+# Find noctarchy-splash for the invoking user
+for user_home in /home/*; do
+  SPLASH_BIN="$user_home/.local/bin/noctarchy-splash"
+  if [[ -x "$SPLASH_BIN" ]]; then
+    "$SPLASH_BIN" run adopt
+    exit $?
+  fi
+done
+
+# Check /usr/local/bin as fallback
+if [[ -x /usr/local/bin/noctarchy-splash ]]; then
+  /usr/local/bin/noctarchy-splash run adopt
+  exit $?
+fi
+
+echo "[noctarchy-splash] noctarchy-splash not found for any user" >&2
+exit 1

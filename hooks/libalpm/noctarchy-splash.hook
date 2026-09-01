@@ -8,4 +8,4 @@ Target = linux-*-headers
 [Action]
 Description = noctarchy: re-apply Plymouth boot splash after kernel update
 When = PostTransaction
-Exec = /bin/bash -c 'grep -q "^Theme=noctarchy" /etc/plymouth/plymouthd.conf 2>/dev/null && exit 0; SPLASH_BIN="/home/${SUDO_USER:-$(logname)}/.local/bin/noctarchy-splash"; [ -x "$SPLASH_BIN" ] && "$SPLASH_BIN" run adopt || echo "[noctarchy-splash] not found for user ${SUDO_USER:-$(logname)}" >&2'
+Exec = /usr/local/bin/noctarchy-splash
