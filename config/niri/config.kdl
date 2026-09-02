@@ -74,7 +74,7 @@ input {
 // ──────────────────────────────────────────────
 
 layout {
-    gaps 16                                 // Pixel gap between windows
+    gaps 0                                  // Pixel gap between windows
     center-focused-column "on-overflow"     // Center the focused column when it overflows the screen
 
     // Preset column widths you can cycle through with Mod+R
@@ -88,17 +88,17 @@ layout {
 
     // Focus ring — thin highlight around the active window
     focus-ring {
-        width 4
-        active-color "#f472b6"              // Color of the focused window's ring
-        inactive-color "#1a1a2e"            // Color of unfocused windows' ring
+        width 2
+        active-color "#b59790"              // Color of the focused window's ring
+        inactive-color "#584e51"            // Color of unfocused windows' ring
     }
 
     // Border — thicker outline around all windows
     border {
         on                                  // Enable borders (set to "off" to disable)
-        width 2
-        active-color "#60a5fa"              // Focused window border color
-        inactive-color "#1a1a2e"            // Unfocused window border color
+        width 1
+        active-color "#b59790"              // Focused window border color
+        inactive-color "#584e51"            // Unfocused window border color
         urgent-color "#f87171"              // Urgent window border color (e.g. notification)
     }
 
@@ -205,7 +205,8 @@ binds {
     // ── Apps (matches Omarchy conventions) ──
     Mod+Shift+B { spawn "xdg-open" "https://"; }               // Open browser
     Mod+Shift+E { spawn "xdg-terminal-exec" "-e" "nvim"; }     // Open terminal with Neovim
-    Mod+Shift+F { spawn "nautilus"; }                            // Open file manager
+    Mod+Shift+F { spawn "strata"; }                              // Open file manager (Strata)
+    Mod+Alt+Shift+F { spawn-sh "strata \"$(omarchy-cmd-terminal-cwd)\""; } // Open file manager at terminal cwd (Strata)
 
     // ── Close & quit ──
     Mod+Q { close-window; }                                     // Close focused window
@@ -401,10 +402,11 @@ window-rule {
     default-window-height { fixed 720; }    // Fixed height in pixels
 }
 
-// File manager — opens as floating window
+// File manager — always opens on workspace 2, maximized (Strata)
 window-rule {
-    match app-id="org.gnome.Nautilus"
-    open-floating true
+    match app-id="io.github.lgse.Strata"
+    open-on-workspace "2"
+    open-maximized true
 }
 
 // Browser — always opens on the "browser" named workspace

@@ -8,7 +8,7 @@
 [general]
 terminal = "alacritty"
 launcher = "fuzzel"
-file_manager = "nautilus"
+file_manager = "strata"
 browser = "firefox"
 
 # ──────────────────────────────────────────────
