@@ -8,19 +8,23 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # Rows ending in ">" open a submenu.
 choice=$(
   printf '%s\n' \
+    'Boot Splash >' \
+    'Cleaner' \
     'Config >' \
     'Default Apps >' \
     'Kernel >' \
-    'Boot Splash >' \
-    'Maintenance >' |
-    "$SCRIPT_DIR/noctarchy-fuzzel" --dmenu --prompt='System: ' --width=26 --lines=5
+    'Maintenance >' \
+    'Snapshots' |
+    "$SCRIPT_DIR/noctarchy-fuzzel" --dmenu --prompt='System: ' --width=26 --lines=7
 ) || exec "$SCRIPT_DIR/noctarchy-menu"   # Esc = back to root menu
 choice=${choice%' >'}
 
 case "$choice" in
+  "Boot Splash")  exec "$SCRIPT_DIR/noctarchy-splash" ;;
+  Cleaner)       exec "$SCRIPT_DIR/noctarchy-cleaner" ;;
   Config)        exec "$SCRIPT_DIR/noctarchy-config" ;;
   "Default Apps") exec "$SCRIPT_DIR/noctarchy-defaults" ;;
   Kernel)        exec "$SCRIPT_DIR/noctarchy-kernel" ;;
-  "Boot Splash")  exec "$SCRIPT_DIR/noctarchy-splash" ;;
   Maintenance)   exec "$SCRIPT_DIR/noctarchy-system-update" ;;
+  Snapshots)     exec "$SCRIPT_DIR/noctarchy-snapshots" ;;
 esac

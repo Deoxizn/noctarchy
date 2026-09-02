@@ -402,6 +402,13 @@ window-rule {
     default-window-height { fixed 720; }    // Fixed height in pixels
 }
 
+window-rule {
+    match app-id="TUI\\.snaptui"           // SnaptUI snapshot manager
+    open-floating true
+    default-column-width { fixed 1000; }
+    default-window-height { fixed 720; }
+}
+
 // File manager — opens as floating window
 window-rule {
     match app-id="org.gnome.Nautilus"

@@ -1,0 +1,17 @@
+#!/bin/bash
+# noctarchy:menu=snapshots
+# noctarchy:summary=Snapshot manager (snaptui) — list/create/delete btrfs snapshots
+set -euo pipefail
+
+if ! command -v snaptui >/dev/null 2>&1 && [[ ! -x "$HOME/.local/bin/snaptui" ]]; then
+  notify-send "snaptui not installed" "Run ~/Work/snaptui/install.sh or install from https://github.com/deoxizn/snaptui" 2>/dev/null || true
+  echo "[noctarchy] snaptui not installed — run ~/Work/snaptui/install.sh" >&2
+  exit 1
+fi
+
+# snaptui desktop uses TUI.snaptui app-id for window rule
+if command -v omarchy-launch-or-focus-tui >/dev/null 2>&1; then
+  exec omarchy-launch-or-focus-tui --app-id=TUI.snaptui snaptui
+else
+  exec xdg-terminal-exec -e snaptui
+fi

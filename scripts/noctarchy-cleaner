@@ -1,0 +1,17 @@
+#!/bin/bash
+# noctarchy:menu=cleaner
+# noctarchy:summary=Remove preinstalled apps selectively (omacleaner)
+set -euo pipefail
+
+if ! command -v omacleaner >/dev/null 2>&1 && [[ ! -x "$HOME/.local/bin/omacleaner" ]]; then
+  notify-send "omacleaner not installed" "Run ~/Work/omacleaner/install.sh" 2>/dev/null || true
+  echo "[noctarchy] omacleaner not installed — run ~/Work/omacleaner/install.sh" >&2
+  exit 1
+fi
+
+# omacleaner is a gum TUI — launch in floating terminal (TUI.float)
+if command -v omarchy-launch-or-focus-tui >/dev/null 2>&1; then
+  exec omarchy-launch-or-focus-tui --app-id=TUI.float omacleaner
+else
+  exec xdg-terminal-exec -e omacleaner
+fi
