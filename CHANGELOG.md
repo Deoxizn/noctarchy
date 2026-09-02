@@ -4,6 +4,19 @@
      one bullet per change: - Description ([`short-hash`](commit-url)).
      Skip README rewordings, screenshots and demo videos. -->
 
+## 2026-09-02
+
+- Add System → Snapshots and Cleaner launchers: non-interfering wrappers for `snaptui` (btrfs snapshot TUI, `TUI.snaptui` 1000×720) and `omacleaner` (selective preinstall remover, `TUI.float` 1000×720); only launch if binary exists, otherwise notify — installs stay via `~/Work/snaptui/install.sh` and `~/Work/omacleaner/install.sh` ([`ea57bf7`](https://github.com/deoxizn/noctarchy/commit/ea57bf7))
+- Fix lock screen 20s monitor power-off shipping: `scripts/lock.sh` → `scripts/noctarchy-lock` (`~/.local/bin/noctarchy-lock`) so `install.sh`/`sync.sh` deploy it (was skipped as non-`noctarchy-*`); `Mod+Ctrl+L` now spawns `noctarchy-lock`, `noctarchy-power` Lock uses it, `swayidle` adds `resume power-on-monitors` — fixes GF PC where lock never powered off ([`def5bb1`](https://github.com/deoxizn/noctarchy/commit/def5bb1))
+- Add `Mod+grave` (`` ` ``) agent binding to repo `config/niri/config.kdl` (`omarchy-agent`) — was only in personal dotfiles, now in noctarchy; docs already listed it ([`def5bb1`](https://github.com/deoxizn/noctarchy/commit/def5bb1))
+- Update website footer and README stellarchy link: `omartia-dots-remux` → `stellarchy` (`https://github.com/deoxizn/stellarchy`) ([`def5bb1`](https://github.com/deoxizn/noctarchy/commit/def5bb1))
+
+## 2026-08-31
+
+- Plymouth: add `libalpm` hook (`/etc/pacman.d/hooks/noctarchy-splash.hook`) that re-applies the Noctarchy splash on any `linux*` install/upgrade regardless of method (`omarchy-update`, `noctarchy-update-run`, or manual `pacman -U`); fixes hook never firing on direct `pacman -U` (previously only `post-update.d` via `omarchy-hook`). Removes redundant `post-update.d/noctarchy-splash.sh` and uses system-wide wrapper `/usr/local/bin/noctarchy-splash` for multi-user portability ([`e86fdd7`](https://github.com/deoxizn/noctarchy/commit/e86fdd7), [`5d0e08b`](https://github.com/deoxizn/noctarchy/commit/5d0e08b), [`e0d97c3`](https://github.com/deoxizn/noctarchy/commit/e0d97c3), [`4f6cec9`](https://github.com/deoxizn/noctarchy/commit/4f6cec9))
+- Menu: alphabetize root menu (Capture, Hardware, Packages, Reminders, Restart, Share, Setup, System, System Update, Themes) and System submenu (Boot Splash, Config, Default Apps, Kernel, Maintenance) ([`316772e`](https://github.com/deoxizn/noctarchy/commit/316772e)); rename System items (Defaults→Default Apps, Splash→Boot Splash, Update→Maintenance) and root Trigger→Hardware, Update→System Update, remove duplicate Config ([`8fe98e2`](https://github.com/deoxizn/noctarchy/commit/8fe98e2))
+- `noctarchy-update-run`: handle `gum` without TTY for the plugin tee fix ([`e190324`](https://github.com/deoxizn/noctarchy/commit/e190324))
+
 ## 2026-08-30
 
 - Add Capture and Reminders as top-level menus: Capture (OCR text, QR decode, color picker, transcode) and Reminders (set/quick/clear) from HiddenCommands — all via `TUI.float` terminal, with color picker via `hyprpicker`
