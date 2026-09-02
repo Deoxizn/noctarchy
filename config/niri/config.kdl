@@ -205,8 +205,7 @@ binds {
     // ── Apps (matches Omarchy conventions) ──
     Mod+Shift+B { spawn "xdg-open" "https://"; }               // Open browser
     Mod+Shift+E { spawn "xdg-terminal-exec" "-e" "nvim"; }     // Open terminal with Neovim
-    Mod+Shift+F { spawn "strata"; }                              // Open file manager (Strata)
-    Mod+Alt+Shift+F { spawn-sh "strata \"$(omarchy-cmd-terminal-cwd)\""; } // Open file manager at terminal cwd (Strata)
+    Mod+Shift+F { spawn "nautilus"; }                            // Open file manager
 
     // ── Close & quit ──
     Mod+Q { close-window; }                                     // Close focused window
@@ -402,11 +401,10 @@ window-rule {
     default-window-height { fixed 720; }    // Fixed height in pixels
 }
 
-// File manager — always opens on workspace 2, maximized (Strata)
+// File manager — opens as floating window
 window-rule {
-    match app-id="io.github.lgse.Strata"
-    open-on-workspace "2"
-    open-maximized true
+    match app-id="org.gnome.Nautilus"
+    open-floating true
 }
 
 // Browser — always opens on the "browser" named workspace
