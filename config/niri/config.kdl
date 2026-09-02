@@ -201,6 +201,7 @@ binds {
 
     // ── Terminal ──
     Mod+Return { spawn "xdg-terminal-exec"; }                   // Open default terminal
+    Mod+grave { spawn "omarchy-agent"; }                         // Open coding agent (Super+`)
 
     // ── Apps (matches Omarchy conventions) ──
     Mod+Shift+B { spawn "xdg-open" "https://"; }               // Open browser
@@ -300,7 +301,7 @@ binds {
     XF86MonBrightnessDown allow-when-locked=true { spawn "brightnessctl" "set" "5%-"; }   // Brightness down
 
     // ── Lock ──
-    Mod+Ctrl+L { spawn "noctalia" "msg" "session" "lock"; }    // Lock screen via Noctalia
+    Mod+Ctrl+L { spawn "noctarchy-lock"; }                     // Lock screen + monitors off after 20s
 
     // ── Clipboard history ──
     Mod+Ctrl+V { spawn "noctalia" "msg" "clipboard-toggle"; }   // Toggle clipboard history
@@ -477,7 +478,7 @@ layer-rule {
 // ──────────────────────────────────────────────
 
 spawn-at-startup "noctalia"                 // Noctalia shell (bar, notifications, etc.)
-spawn-at-startup "swayidle" "-w" "timeout" "600" "niri msg action power-off-monitors"   // Lock screen after 10 min idle
+spawn-at-startup "swayidle" "-w" "timeout" "600" "niri msg action power-off-monitors" "resume" "niri msg action power-on-monitors"   // Auto-lock after 10 min idle, monitors off/on
 spawn-sh-at-startup "systemctl --user import-environment $(env | cut -d= -f1) && dbus-update-activation-environment --systemd --all"   // Import env into systemd/dbus
 
 // ──────────────────────────────────────────────

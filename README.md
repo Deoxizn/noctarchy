@@ -347,4 +347,4 @@ Restores all backed-up configs, stops and removes the Noctalia systemd service, 
 - [Omarchy](https://github.com/basecamp/omarchy) — window manager, theme system, keybindings
 - [Niri](https://github.com/niri-wm/niri) — scrollable-tiling Wayland compositor
 - [Noctalia](https://github.com/noctalia-dev/noctalia) — desktop shell, lock screen, launcher
-- [Stellarchy](https://github.com/deoxizn/omartia-dots-remux) — architecture inspiration
+- [Stellarchy](https://github.com/deoxizn/stellarchy) — architecture inspiration

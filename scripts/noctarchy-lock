@@ -1,0 +1,10 @@
+#!/bin/bash
+# noctarchy:lock=session-lock
+# noctarchy:summary=Lock screen + power off monitors after 20s if still locked
+# noctarchy-lock — lock screen + power off monitors after 20s
+
+noctalia msg session lock 2>/dev/null || niri msg action power-off-monitors 2>/dev/null
+
+# Power off monitors after 20s (swayidle handles idle timeout separately)
+sleep 20
+niri msg action power-off-monitors 2>/dev/null
