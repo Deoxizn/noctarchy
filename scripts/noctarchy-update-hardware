@@ -5,6 +5,10 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
+if [[ $# -gt 0 ]]; then
+  # Direct dispatch from menu search
+  choice="$*"
+else
 choice=$(
   printf '%s\n' \
     'Audio' \
@@ -13,6 +17,7 @@ choice=$(
     'Trackpad' |
     "$SCRIPT_DIR/noctarchy-fuzzel" --dmenu --prompt='Restart: ' --width=26 --lines=4
 ) || exec "$SCRIPT_DIR/noctarchy-update"
+fi
 
 case "$choice" in
   Audio)     exec "$SCRIPT_DIR/noctarchy-terminal" omarchy-restart-audio ;;

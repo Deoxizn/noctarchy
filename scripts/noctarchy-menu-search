@@ -1,24 +1,17 @@
 #!/bin/bash
 # noctarchy:menu-search=global-search
-# noctarchy:summary=Search every menu entry from one picker (Super+Alt+/)
+# noctarchy:summary=Search every menu action from one picker (Super+Alt+/)
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
+# Actions-only index: every row DOES something (or opens a dynamic picker
+# whose contents can't be indexed, like font/theme lists). Container-only
+# drills are deliberately excluded — hierarchy lives in noctarchy-menu.
+# When adding a submenu entry, add its row here too.
 declare -A cmd_for=()
 menu=""
 add() { cmd_for[$1]="$2"; menu+="$1"$'\n'; }
-
-# ── Top level ──
-add 'Capture >'       'noctarchy-capture'
-add 'Hardware >'      'noctarchy-trigger'
-add 'Packages >'      'noctarchy-packages'
-add 'Reminders >'     'noctarchy-reminders'
-add 'Restart >'       'noctarchy-restart'
-add 'Share >'         'noctarchy-share'
-add 'System >'        'noctarchy-system'
-add 'System Update >' 'noctarchy-update'
-add 'Themes >'        'noctarchy-themes'
 
 # ── Capture ──
 add 'Capture › OCR text from region' 'noctarchy-capture "OCR text from region"'
@@ -26,15 +19,13 @@ add 'Capture › Decode QR from region' 'noctarchy-capture "Decode QR from regio
 add 'Capture › Color picker' 'noctarchy-capture "Color picker"'
 add 'Capture › Transcode media' 'noctarchy-capture "Transcode media"'
 
-# ── Hardware (trigger) ──
-add 'Hardware › Hardware' 'noctarchy-hardware'
-add 'Hardware › Speed Test' 'noctarchy-speedtest'
+# ── Hardware ──
+add 'Hardware › Restart hardware' 'noctarchy-hardware'
 add 'Hardware › Speed Test › Network download' 'noctarchy-speedtest "Network download"'
 add 'Hardware › Speed Test › Network upload' 'noctarchy-speedtest "Network upload"'
 add 'Hardware › Speed Test › Disk' 'noctarchy-speedtest "Disk"'
 
 # ── Packages ──
-add 'Packages › Install' 'noctarchy-install'
 add 'Packages › Remove' 'noctarchy-remove'
 add 'Packages › Install › Package' 'noctarchy-install "Package"'
 add 'Packages › Install › AUR' 'noctarchy-install "AUR"'
@@ -57,16 +48,14 @@ add 'Share › Folder' 'noctarchy-share "Folder"'
 add 'Share › Receive' 'noctarchy-share "Receive"'
 
 # ── System ──
-add 'System › Boot Splash' 'noctarchy-splash'
 add 'System › Cleaner' 'noctarchy-cleaner'
-add 'System › Config' 'noctarchy-config'
-add 'System › Default Apps' 'noctarchy-defaults'
 add 'System › Fonts' 'noctarchy-fonts'
-add 'System › Kernel' 'noctarchy-kernel'
-add 'System › Maintenance' 'noctarchy-system-update'
 add 'System › Network' 'noctarchy-network'
 add 'System › Security' 'noctarchy-security'
 add 'System › Snapshots' 'noctarchy-snapshots'
+add 'System › Boot Splash › Adopt' 'noctarchy-terminal noctarchy-splash run adopt'
+add 'System › Boot Splash › Refresh' 'noctarchy-terminal noctarchy-splash run refresh'
+add 'System › Boot Splash › Status' 'noctarchy-terminal noctarchy-splash run status'
 add 'System › Config › Niri config' 'noctarchy-config "Niri config"'
 add 'System › Config › Noctalia config' 'noctarchy-config "Noctalia config"'
 add 'System › Config › Palettes' 'noctarchy-config "Palettes"'
@@ -76,6 +65,12 @@ add 'System › Default Apps › Browser' 'noctarchy-defaults "Browser"'
 add 'System › Default Apps › Editor' 'noctarchy-defaults "Editor"'
 add 'System › Default Apps › Terminal' 'noctarchy-defaults "Terminal"'
 add 'System › Default Apps › Agent' 'noctarchy-defaults "Agent"'
+add 'System › Kernel › Default (CachyOS)' 'noctarchy-terminal noctarchy-kernel run default'
+add 'System › Kernel › BORE (gaming)' 'noctarchy-terminal noctarchy-kernel run bore'
+add 'System › Kernel › EEVDF' 'noctarchy-terminal noctarchy-kernel run eevdf'
+add 'System › Kernel › LTS' 'noctarchy-terminal noctarchy-kernel run lts'
+add 'System › Kernel › Real-time BORE' 'noctarchy-terminal noctarchy-kernel run rt-bore'
+add 'System › Kernel › Status and repair' 'noctarchy-terminal noctarchy-kernel run status'
 add 'System › Maintenance › Drive encryption password' 'noctarchy-system-update "Drive encryption password"'
 add 'System › Maintenance › User password' 'noctarchy-system-update "User password"'
 add 'System › Maintenance › Sync system clock' 'noctarchy-system-update "Sync system clock"'
@@ -87,9 +82,12 @@ add 'System › Network › Wi-Fi QR Code' 'noctarchy-network "Wi-Fi QR Code"'
 add 'System Update › Noctarchy' 'noctarchy-update "Noctarchy"'
 add 'System Update › Channel' 'noctarchy-update "Channel"'
 add 'System Update › Extra themes' 'noctarchy-update "Extra themes"'
-add 'System Update › Hardware' 'noctarchy-update "Hardware"'
 add 'System Update › Firmware' 'noctarchy-update "Firmware"'
 add 'System Update › Repo sync' 'noctarchy-update "Repo sync"'
+add 'System Update › Restart Audio' 'noctarchy-update-hardware "Audio"'
+add 'System Update › Restart Wi-Fi' 'noctarchy-update-hardware "Wi-Fi"'
+add 'System Update › Restart Bluetooth' 'noctarchy-update-hardware "Bluetooth"'
+add 'System Update › Restart Trackpad' 'noctarchy-update-hardware "Trackpad"'
 
 # ── Themes ──
 add 'Themes › Theme list' 'noctarchy-themes-list'
