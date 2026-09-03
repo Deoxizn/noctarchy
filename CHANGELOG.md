@@ -4,6 +4,11 @@
      one bullet per change: - Description ([`short-hash`](commit-url)).
      Skip README rewordings, screenshots and demo videos. -->
 
+## 2026-09-03
+
+- Fix Firmware updater window closing instantly: the Update menu's Firmware entry now wraps `omarchy-update-firmware` with a Press-Enter hold (exit code preserved), so results stay visible instead of vanishing when fwupd exits ([`1003248`](https://github.com/deoxizn/noctarchy/commit/1003248))
+- Fix double-Enter when running `noctarchy-update-run` from the Noctalia arch-updater widget: the script now only shows its Press-Enter hold when stdout is a TTY — the widget pipes runs through tee with its own press-key hold + `::EXIT` marker, so the old unconditional hold forced a second Enter ([`1003248`](https://github.com/deoxizn/noctarchy/commit/1003248))
+
 ## 2026-09-02
 
 - Add System → Snapshots and Cleaner launchers: non-interfering wrappers for `snaptui` (btrfs snapshot TUI, `TUI.snaptui` 1000×720) and `omacleaner` (selective preinstall remover, `TUI.float` 1000×720); only launch if binary exists, otherwise notify — installs stay via `~/Work/snaptui/install.sh` and `~/Work/omacleaner/install.sh` ([`ea57bf7`](https://github.com/deoxizn/noctarchy/commit/ea57bf7))
