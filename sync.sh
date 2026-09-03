@@ -132,6 +132,32 @@ shopt -u nullglob
 echo ""
 
 # ──────────────────────────────────────────────
+# Hide redundant launchers — snaptui/omacleaner live in the Maintenance
+# menu, so hide their app-launcher entries (their installers restore the
+# files; NoDisplay survives that since we re-apply it every sync)
+# ──────────────────────────────────────────────
+
+info "Launcher dedup:"
+for desk in omacleaner.desktop snaptui.desktop; do
+  f="$HOME/.local/share/applications/$desk"
+  if [[ ! -f $f ]]; then
+    ok "  $desk absent — nothing to hide"
+  elif grep -q '^NoDisplay=true' "$f"; then
+    ok "  $desk already hidden"
+  elif $DRY_RUN; then
+    info "  [dry-run] would hide $desk (NoDisplay=true)"
+  else
+    # Insert into [Desktop Entry] group (file may have trailing Action groups)
+    sed -i '/^\[Desktop Entry\]/a NoDisplay=true' "$f"
+    ok "  hid $desk (NoDisplay=true)"
+    changed=$((changed+1))
+  fi
+done
+update-desktop-database "$HOME/.local/share/applications" 2>/dev/null || true
+
+echo ""
+
+# ──────────────────────────────────────────────
 # Theme bridge hook
 # ──────────────────────────────────────────────
 
