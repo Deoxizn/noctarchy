@@ -3,12 +3,24 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-REPO_DIR="$(dirname "$SCRIPT_DIR")"
 fuzzel="$SCRIPT_DIR/noctarchy-fuzzel"
 
-if [[ ! -d "$REPO_DIR/.git" ]]; then
-    echo "No git repo at $REPO_DIR"
+fail() {
+    notify-send "Noctarchy" "$1" 2>/dev/null || true
+    echo "[noctarchy] $1" >&2
     exit 1
+}
+
+# Resolve the repo: installed copies live in ~/.local/bin (whose parent has
+# no .git), so prefer the state file written by install.sh/sync.sh.
+REPO_DIR=""
+STATE_FILE="$HOME/.local/state/noctarchy/repo-path"
+[[ -r $STATE_FILE ]] && REPO_DIR=$(<"$STATE_FILE")
+if [[ ! -d "$REPO_DIR/.git" ]]; then
+    REPO_DIR="$(dirname "$SCRIPT_DIR")"
+fi
+if [[ ! -d "$REPO_DIR/.git" ]]; then
+    fail "No noctarchy repo found (state: ${REPO_DIR:-unset}). Clone it, then run ./install.sh or ./sync.sh."
 fi
 
 git -C "$REPO_DIR" fetch --quiet || true
