@@ -77,6 +77,11 @@ if [[ $kernel_updated == true ]] && gum confirm "Linux kernel was updated. Reboo
 fi
 
 # Hold the terminal open so the output can be reviewed before it closes.
-echo
-read -rsp "Press Enter to close the update window." -n1 key
-echo
+# Skip when stdout isn't a TTY (e.g. Noctalia arch-updater pipes the run
+# through tee and adds its own "press key" hold + ::EXIT marker — a second
+# hold here would demand a second Enter).
+if [[ -t 1 ]]; then
+  echo
+  read -rsp "Press Enter to close the update window." -n1 key
+  echo
+fi
