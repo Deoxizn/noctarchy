@@ -6,7 +6,7 @@
 
 ## 2026-09-03
 
-- Root menu (`Super+Alt+Space`) is now a searchable flat index (67 rows): top-level drills plus `Parent › Child` direct jumps across all submenus including static third-level entries (Config children, Maintenance tasks, Speed Test, Install targets). Twelve submenus accept the choice as `$1` so dispatch stays in one place ([`7e6d6d3`](https://github.com/deoxizn/noctarchy/commit/7e6d6d3))
+- Root menu (`Super+Alt+Space`) briefly became a 67-row searchable flat index — reverted, it mixed submenu items into the top level and hurt navigation. Back to hierarchical drills; submenus keep their `$1` direct-dispatch support ([`7e6d6d3`](https://github.com/deoxizn/noctarchy/commit/7e6d6d3), [`81e8982`](https://github.com/deoxizn/noctarchy/commit/81e8982))
 - Fix `sync.sh`/`install.sh` overwriting customized `fastfetch/config.jsonc` with stock on every run: only stock or already-branded configs are re-branded now; user-customized configs are detected and left untouched ([`7e6d6d3`](https://github.com/deoxizn/noctarchy/commit/7e6d6d3))
 - Fold Setup into System and add a Fonts picker: `noctarchy-setup` deleted (its Defaults duplicated System → Default Apps; Hardware reachable via root Hardware; Network/Security moved to System). Root menu drops Setup; System gains Fonts, Network, Security. New `noctarchy-fonts` adapts `omarchy-font-set` (same terminal + fontconfig writes, foot keeps `:size`, no shell restart, `notify-send`) with a fuzzel picker marking the current font ([`efb37bb`](https://github.com/deoxizn/noctarchy/commit/efb37bb))
 
