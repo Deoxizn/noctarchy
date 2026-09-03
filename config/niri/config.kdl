@@ -278,7 +278,7 @@ binds {
     Mod+Shift+P { focus-tiling; }                               // Jump focus back to tiled window
 
     // ── Screenshots & recording ──
-    // (region select via slurp is dead on Niri — fullscreen + recording only)
+    Mod+Print { screenshot; }                                           // Interactive select: drag region or click window (file + clipboard)
     Ctrl+Print { spawn-sh "grim - | wl-copy"; }                         // Screenshot full screen → clipboard
     Alt+Print { spawn "noctarchy-screenrecord"; }                       // Toggle screen recording (matches Omarchy)
 

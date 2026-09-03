@@ -24,6 +24,7 @@ declare -A DESCRIPTIONS=(
     ["focus-floating"]="Focus floating"
     ["focus-tiling"]="Focus tiling"
     ["toggle-overview"]="Overview"
+    ["screenshot"]="Select region/window"
     ["show-hotkey-overlay"]="Show all keybinds"
     ["consume-window-into-column"]="Join into column"
     ["expel-window-from-column"]="Expel from column"
