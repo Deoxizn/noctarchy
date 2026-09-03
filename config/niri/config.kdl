@@ -197,6 +197,7 @@ binds {
     Mod+Space { spawn "noctarchy-fuzzel"; }                     // App launcher (fuzzel)
     Mod+D { spawn "noctalia" "msg" "panel-toggle" "launcher"; } // Noctalia launcher panel
     Mod+Alt+Space { spawn "noctarchy-menu"; }                    // Noctarchy root menu
+    Mod+Alt+Slash { spawn "noctarchy-menu-search"; }             // Search every menu entry
     Mod+K { spawn "noctarchy-keybinds"; }                        // Show keybinding reference
 
     // ── Terminal ──

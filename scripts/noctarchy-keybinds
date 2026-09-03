@@ -34,6 +34,7 @@ declare -A DESCRIPTIONS=(
 declare -A SPAWN_DESCRIPTIONS=(
     ["noctarchy-fuzzel"]="App launcher"
     ["noctarchy-menu"]="Noctarchy menu"
+    ["noctarchy-menu-search"]="Menu search"
     ["noctarchy-keybinds"]="Keybinding list"
     ["noctarchy-power"]="Power menu"
     ["xdg-terminal-exec"]="Terminal"

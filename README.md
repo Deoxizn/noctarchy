@@ -232,6 +232,7 @@ The remux ships its own identity on top of Omarchy. What lands where:
 | `SUPER+Space` | Fuzzel launcher (quick) |
 | `SUPER+D` | Noctalia launcher (full) |
 | `SUPER+Alt+Space` | Noctarchy root menu |
+| `SUPER+Alt+/` | Search every menu entry |
 | `SUPER+Enter` | Terminal |
 | `SUPER+grave` | Agent (default coding agent, e.g. opencode) |
 | `SUPER+Shift+B` | Browser |
