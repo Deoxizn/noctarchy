@@ -8,6 +8,7 @@
 
 - Fix Firmware updater window closing instantly: the Update menu's Firmware entry now wraps `omarchy-update-firmware` with a Press-Enter hold (exit code preserved), so results stay visible instead of vanishing when fwupd exits ([`1003248`](https://github.com/deoxizn/noctarchy/commit/1003248))
 - Fix double-Enter when running `noctarchy-update-run` from the Noctalia arch-updater widget: the script now only shows its Press-Enter hold when stdout is a TTY — the widget pipes runs through tee with its own press-key hold + `::EXIT` marker, so the old unconditional hold forced a second Enter ([`1003248`](https://github.com/deoxizn/noctarchy/commit/1003248))
+- Fix splash wrapper failing under the pacman hook (`cp: cannot stat .../branding/plymouth/noctarchy-logo.png`): hooks run as root (`$HOME=/root`), so `noctarchy-splash` never saw `$HOME/.local/state/noctarchy/repo-path` and fell back to a bogus relative path. The wrapper now exports the matched user's `HOME` before calling the script ([`6591324`](https://github.com/deoxizn/noctarchy/commit/6591324))
 
 ## 2026-09-02
 
