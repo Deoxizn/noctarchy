@@ -77,10 +77,12 @@ if [[ $kernel_updated == true ]] && gum confirm "Linux kernel was updated. Reboo
 fi
 
 # Hold the terminal open so the output can be reviewed before it closes.
-# Skip when stdout isn't a TTY (e.g. Noctalia arch-updater pipes the run
-# through tee and adds its own "press key" hold + ::EXIT marker — a second
-# hold here would demand a second Enter).
-if [[ -t 1 ]]; then
+# Skipped when stdout isn't a TTY (piped/logged callers hold the window
+# themselves) or when running under script(1): the Noctalia arch-updater
+# wraps runs as `script -qec ... | tee` (pty for gum) with its own press-key
+# hold, so a second hold here would demand a second Enter.
+under_script() { [[ $(ps -o comm= -p $PPID 2>/dev/null || true) == script ]]; }
+if [[ -t 1 ]] && ! under_script; then
   echo
   read -rsp "Press Enter to close the update window." -n1 key
   echo
