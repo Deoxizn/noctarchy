@@ -1,6 +1,6 @@
 #!/bin/bash
 # noctarchy:menu=system
-# noctarchy:summary=System submenu: config editor, default apps, kernel and boot splash.
+# noctarchy:summary=System submenu: config, apps, fonts, network, security, kernel, splash, maintenance.
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -12,10 +12,13 @@ choice=$(
     'Cleaner' \
     'Config >' \
     'Default Apps >' \
+    'Fonts' \
     'Kernel >' \
     'Maintenance >' \
+    'Network >' \
+    'Security >' \
     'Snapshots' |
-    "$SCRIPT_DIR/noctarchy-fuzzel" --dmenu --prompt='System: ' --width=26 --lines=7
+    "$SCRIPT_DIR/noctarchy-fuzzel" --dmenu --prompt='System: ' --width=26 --lines=10
 ) || exec "$SCRIPT_DIR/noctarchy-menu"   # Esc = back to root menu
 choice=${choice%' >'}
 
@@ -24,7 +27,10 @@ case "$choice" in
   Cleaner)       exec "$SCRIPT_DIR/noctarchy-cleaner" ;;
   Config)        exec "$SCRIPT_DIR/noctarchy-config" ;;
   "Default Apps") exec "$SCRIPT_DIR/noctarchy-defaults" ;;
+  Fonts)         exec "$SCRIPT_DIR/noctarchy-fonts" ;;
   Kernel)        exec "$SCRIPT_DIR/noctarchy-kernel" ;;
   Maintenance)   exec "$SCRIPT_DIR/noctarchy-system-update" ;;
+  Network)       exec "$SCRIPT_DIR/noctarchy-network" ;;
+  Security)      exec "$SCRIPT_DIR/noctarchy-security" ;;
   Snapshots)     exec "$SCRIPT_DIR/noctarchy-snapshots" ;;
 esac

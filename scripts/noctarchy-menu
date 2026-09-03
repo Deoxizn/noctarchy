@@ -13,11 +13,10 @@ choice=$(
     'Reminders >' \
     'Restart >' \
     'Share >' \
-    'Setup >' \
     'System >' \
     'System Update >' \
     'Themes >' |
-    "$SCRIPT_DIR/noctarchy-fuzzel" --dmenu --prompt='☽ Noctarchy ✦ ' --width=28 --lines=10
+    "$SCRIPT_DIR/noctarchy-fuzzel" --dmenu --prompt='☽ Noctarchy ✦ ' --width=28 --lines=9
 ) || exit 0
 choice=${choice%' >'}
 
@@ -28,7 +27,6 @@ case "$choice" in
   Reminders)     exec "$SCRIPT_DIR/noctarchy-reminders" ;;
   Restart)      exec "$SCRIPT_DIR/noctarchy-restart" ;;
   Share)        exec "$SCRIPT_DIR/noctarchy-share" ;;
-  Setup)        exec "$SCRIPT_DIR/noctarchy-setup" ;;
   System)       exec "$SCRIPT_DIR/noctarchy-system" ;;
   "System Update") exec "$SCRIPT_DIR/noctarchy-update" ;;
   Themes)       exec "$SCRIPT_DIR/noctarchy-themes" ;;

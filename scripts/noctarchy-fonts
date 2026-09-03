@@ -1,0 +1,74 @@
+#!/bin/bash
+# noctarchy:menu=fonts
+# noctarchy:summary=System monospace font picker
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# Adapted from stock omarchy-font-set for Niri/Noctalia:
+# - same terminal configs (alacritty/kitty/ghostty/foot) + fontconfig as source of truth
+# - foot keeps your existing :size (stock resets it to :size=9)
+# - omarchy-restart-shell skipped (Noctalia reads fontconfig live; nothing to restart)
+# - notify-send instead of omarchy-notification-send (needs omarchy-shell)
+# - omarchy-hook font-set kept as the stock extension point
+set_font() {
+  local font_name="$1"
+
+  if ! fc-list | grep -Fqi -- "$font_name"; then
+    notify-send "Noctarchy" "Font '$font_name' not found" 2>/dev/null || true
+    echo "Font '$font_name' not found." >&2
+    exit 1
+  fi
+
+  if [[ -f ~/.config/alacritty/alacritty.toml ]]; then
+    sed -i "s/family = \".*\"/family = \"$font_name\"/g" ~/.config/alacritty/alacritty.toml
+  fi
+
+  if [[ -f ~/.config/kitty/kitty.conf ]]; then
+    sed -i "s/^font_family .*/font_family $font_name/g" ~/.config/kitty/kitty.conf
+    pkill -USR1 kitty 2>/dev/null || true
+  fi
+
+  if [[ -f ~/.config/ghostty/config ]]; then
+    sed -i "s/font-family = \".*\"/font-family = \"$font_name\"/g" ~/.config/ghostty/config
+    pkill -SIGUSR2 ghostty 2>/dev/null || true
+  fi
+
+  if [[ -f ~/.config/foot/foot.ini ]]; then
+    sed -i -E "s/^(font=)[^:]*/\1$font_name/" ~/.config/foot/foot.ini
+  fi
+
+  local fontconfig_file="$HOME/.config/fontconfig/fonts.conf"
+  mkdir -p "$(dirname "$fontconfig_file")"
+  cat >"$fontconfig_file" <<XML
+<?xml version="1.0"?>
+<!DOCTYPE fontconfig SYSTEM "fonts.dtd">
+<fontconfig>
+  <match target="pattern">
+    <test name="family" qual="any">
+      <string>monospace</string>
+    </test>
+    <edit name="family" mode="prepend_first" binding="strong">
+      <string>$font_name</string>
+    </edit>
+  </match>
+</fontconfig>
+XML
+
+  omarchy-hook font-set "$font_name" 2>/dev/null || true
+  notify-send "Noctarchy" "Font set to $font_name" 2>/dev/null || true
+  if pgrep -x ghostty >/dev/null 2>&1 || pgrep -x foot >/dev/null 2>&1; then
+    notify-send "Noctarchy" "Restart Ghostty/Foot to see the font change" 2>/dev/null || true
+  fi
+}
+
+current=$(omarchy-font-current 2>/dev/null || true)
+
+choice=$(
+  omarchy-font-list 2>/dev/null |
+    awk -v cur="$current" '$0 == cur { print "✓ " $0; next } { print }' |
+    "$SCRIPT_DIR/noctarchy-fuzzel" --dmenu --prompt='Font: ' --width=36 --lines=18
+) || exec "$SCRIPT_DIR/noctarchy-system"   # Esc = back to System menu
+
+font=${choice#✓ }
+[[ -n $font ]] && set_font "$font"

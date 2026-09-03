@@ -24,7 +24,7 @@ add 'Passwordless Sudo' ''                     "$SCRIPT_DIR/noctarchy-terminal" 
 choice=$(
   printf '%s' "$menu" |
     "$SCRIPT_DIR/noctarchy-fuzzel" --dmenu --prompt='Security: ' --width=30 --lines=${#cmd_for[@]}
-) || exec "$SCRIPT_DIR/noctarchy-setup"
+) || exec "$SCRIPT_DIR/noctarchy-system"
 
 cmd=${cmd_for[$choice]:-}
 [[ -n $cmd ]] && eval exec "$cmd"

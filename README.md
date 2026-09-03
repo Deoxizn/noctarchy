@@ -283,10 +283,10 @@ switch. Esc navigates back one menu level.
 
 | Script | Purpose |
 |---|---|
-| `noctarchy-menu` | Root menu (alphabetized): Config, Packages, Restart, Setup, System, Themes, Trigger, Update |
+| `noctarchy-menu` | Root menu (alphabetized): Capture, Hardware, Packages, Reminders, Restart, Share, System, System Update, Themes |
 | `noctarchy-trigger` / `noctarchy-hardware` / `noctarchy-speedtest` | Hardware toggles gated on detected hardware (laptop display, hybrid GPU, touchpad...) + network/disk speed tests |
-| `noctarchy-setup` / `noctarchy-network` / `noctarchy-security` | DNS picker + Wi-Fi QR code, and security setup (fingerprint/FIDO2/sshd/sudo) |
-| `noctarchy-system` | Config editor, default app pickers, and the Kernel / Splash submenus |
+| `noctarchy-network` / `noctarchy-security` | DNS picker + Wi-Fi QR code, and security setup (fingerprint/FIDO2/sshd/sudo) — under System |
+| `noctarchy-system` | Config editor, default app pickers, fonts, network, security, and the Kernel / Splash / Maintenance / Snapshots / Cleaner submenus |
 | `noctarchy-kernel` | Opt into a prebuilt CachyOS kernel (default/bore/eevdf/lts/rt-bore) via chaotic-aur; Limine `default_entry:` follows by name — plus boot-entry status & repair |
 | `noctarchy-splash` | Adopt or refresh the Noctarchy boot splash (verifies the theme is self-contained before any initramfs rebuild) |
 | `noctarchy-power` | Lock, logout, suspend, hibernate, reboot, shutdown (destructive actions require Confirm) |

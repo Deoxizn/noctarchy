@@ -11,7 +11,7 @@ entries=('DNS >')
 choice=$(
   printf '%s\n' "${entries[@]}" |
     "$SCRIPT_DIR/noctarchy-fuzzel" --dmenu --prompt='Network: ' --width=26 --lines=${#entries[@]}
-) || exec "$SCRIPT_DIR/noctarchy-setup"
+) || exec "$SCRIPT_DIR/noctarchy-system"
 choice=${choice%' >'}
 
 case "$choice" in

@@ -12,7 +12,7 @@ choice=$(
     'Terminal' \
     'Agent' |
     "$SCRIPT_DIR/noctarchy-fuzzel" --dmenu --prompt='Defaults: ' --width=24 --lines=4
-) || exec "$SCRIPT_DIR/noctarchy-setup"
+) || exec "$SCRIPT_DIR/noctarchy-system"
 
 case "$choice" in
   Browser)  type="browser" ;;
