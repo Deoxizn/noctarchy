@@ -103,9 +103,29 @@ fi
 for src in "${repo_scripts[@]}"; do
   copy_if_changed "$src" "$HOME/.local/bin/$(basename "$src")" "$(basename "$src")"
 done
-# Scripts removed upstream but still installed locally
+# Scripts removed upstream but still installed locally — auto-remove so
+# renames (e.g. noctarchy-splash-wrapper → noctarchy-splash-hook) don't linger
 for dst in "$HOME/.local/bin/"noctarchy-*; do
-  [[ -f "$REPO_DIR/scripts/$(basename "$dst")" ]] || warn "  $(basename "$dst") no longer in repo — left in place, remove manually if unwanted"
+  [[ "$dst" == *.bak.* ]] && continue  # handled by the backup cleanup below
+  if [[ ! -e "$REPO_DIR/scripts/$(basename "$dst")" ]]; then
+    if $DRY_RUN; then
+      info "  [dry-run] would remove stale $(basename "$dst")"
+    else
+      rm -f "$dst"
+      ok "  removed stale $(basename "$dst") (no longer in repo)"
+    fi
+    changed=$((changed+1))
+  fi
+done
+# Timestamped backups of managed scripts (e.g. noctarchy-update-run.bak.123) — clean up
+for bak in "$HOME/.local/bin/"noctarchy-*.bak.*; do
+  if $DRY_RUN; then
+    info "  [dry-run] would remove backup $(basename "$bak")"
+  else
+    rm -f "$bak"
+    ok "  removed backup $(basename "$bak")"
+  fi
+  changed=$((changed+1))
 done
 shopt -u nullglob
 
