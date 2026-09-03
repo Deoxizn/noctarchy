@@ -11,6 +11,7 @@
 - Fix splash wrapper failing under the pacman hook (`cp: cannot stat .../branding/plymouth/noctarchy-logo.png`): hooks run as root (`$HOME=/root`), so `noctarchy-splash` never saw `$HOME/.local/state/noctarchy/repo-path` and fell back to a bogus relative path. The wrapper now exports the matched user's `HOME` before calling the script ([`6591324`](https://github.com/deoxizn/noctarchy/commit/6591324))
 - Fix hook wrapper shadowing the interactive script: `/usr/local/bin/noctarchy-splash` hid `~/.local/bin/noctarchy-splash` in PATH, so `noctarchy-splash run refresh` silently no-op'd. Renamed to `/usr/local/bin/noctarchy-splash-hook`, hook Exec updated ([`2d1c456`](https://github.com/deoxizn/noctarchy/commit/2d1c456))
 - Bump Plymouth logo 280×302 → 400×432 (regenerated from the 604px `branding/noctarchy.png` master; Stellarchy renders 360×384 — the script draws native pixels, no scaling — so 280px looked tiny on HiDPI) ([`a4c4489`](https://github.com/deoxizn/noctarchy/commit/a4c4489))
+- Automate splash kernel hook deployment: `install.sh` and `sync.sh` now install `/usr/local/bin/noctarchy-splash-hook` + `/etc/pacman.d/hooks/noctarchy-splash.hook` (and clean up the pre-rename wrapper + old post-update.d hook) — no manual `sudo install` per machine. Also fixes both scripts referencing the deleted `post-update.d/noctarchy-splash.sh` ([`336052c`](https://github.com/deoxizn/noctarchy/commit/336052c))
 
 ## 2026-09-02
 
