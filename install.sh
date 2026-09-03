@@ -329,19 +329,24 @@ fi
 ok "Auto-sync hook installed"
 
 # ──────────────────────────────────────────────
-# Install splash re-adopt hook
+# Install splash kernel hook (libalpm) — re-adopt plymouth theme on any
+# kernel install/upgrade, regardless of method (omarchy-update, manual
+# pacman, noctarchy-update-run)
 # ──────────────────────────────────────────────
 
-info "Installing plymouth splash re-adopt hook..."
+info "Installing plymouth splash kernel hook..."
 
-HOOK_DIR="$HOME/.config/omarchy/hooks/post-update.d"
 if ! $DRY_RUN; then
-  mkdir -p "$HOOK_DIR"
-  cp "$REPO_DIR/hooks/post-update.d/noctarchy-splash.sh" \
-    "$HOOK_DIR/noctarchy-splash.sh"
-  chmod +x "$HOOK_DIR/noctarchy-splash.sh"
+  run_sudo install -Dm755 "$REPO_DIR/scripts/noctarchy-splash-hook" /usr/local/bin/noctarchy-splash-hook
+  run_sudo install -Dm644 "$REPO_DIR/hooks/libalpm/noctarchy-splash.hook" /etc/pacman.d/hooks/noctarchy-splash.hook
+  # Cleanup: pre-rename wrapper shadowed the interactive noctarchy-splash script
+  if [[ -f /usr/local/bin/noctarchy-splash ]]; then
+    run_sudo rm -f /usr/local/bin/noctarchy-splash
+  fi
+  # Cleanup: old post-update.d hook (only ran via omarchy-hook, missed direct pacman)
+  rm -f "$HOME/.config/omarchy/hooks/post-update.d/noctarchy-splash.sh"
 fi
-ok "Splash re-adopt hook installed"
+ok "Splash kernel hook installed (re-applies theme on any kernel install)"
 
 # ──────────────────────────────────────────────
 # Write state file

@@ -143,25 +143,43 @@ else
 fi
 
 # ──────────────────────────────────────────────
-# Splash re-adopt hook
+# Splash kernel hook (libalpm) — re-adopt plymouth theme on any kernel
+# install/upgrade. Needs root; skipped when sudo is unavailable (e.g. run
+# from the non-interactive post-update hook) — install.sh covers fresh
+# installs, and the next interactive sync picks up drift.
 # ──────────────────────────────────────────────
 
-info "Splash re-adopt hook:"
-SPLASH_HOOK_SRC="$REPO_DIR/hooks/post-update.d/noctarchy-splash.sh"
-SPLASH_HOOK_DST="$HOME/.config/omarchy/hooks/post-update.d/noctarchy-splash.sh"
-if [[ -f "$SPLASH_HOOK_SRC" ]]; then
-  cp "$SPLASH_HOOK_SRC" "$SPLASH_HOOK_DST.tmp"
-  if [[ ! -f "$SPLASH_HOOK_DST" ]] || ! cmp -s "$SPLASH_HOOK_DST.tmp" "$SPLASH_HOOK_DST"; then
-    mv "$SPLASH_HOOK_DST.tmp" "$SPLASH_HOOK_DST"
-    chmod +x "$SPLASH_HOOK_DST"
-    ok "  installed noctarchy-splash.sh"
+info "Splash kernel hook:"
+if ! sudo -n true 2>/dev/null; then
+  warn "  sudo not available — skipping (re-run ./sync.sh in a terminal to deploy)"
+elif ! $DRY_RUN; then
+  if [[ ! -f /usr/local/bin/noctarchy-splash-hook ]] || ! cmp -s "$REPO_DIR/scripts/noctarchy-splash-hook" /usr/local/bin/noctarchy-splash-hook; then
+    sudo install -m755 "$REPO_DIR/scripts/noctarchy-splash-hook" /usr/local/bin/noctarchy-splash-hook
+    ok "  installed noctarchy-splash-hook"
+    changed=$((changed+1))
   else
-    rm -f "$SPLASH_HOOK_DST.tmp"
-    ok "  noctarchy-splash.sh up to date"
+    ok "  noctarchy-splash-hook up to date"
   fi
-  changed=$((changed+1))
+  if [[ ! -f /etc/pacman.d/hooks/noctarchy-splash.hook ]] || ! cmp -s "$REPO_DIR/hooks/libalpm/noctarchy-splash.hook" /etc/pacman.d/hooks/noctarchy-splash.hook; then
+    sudo install -Dm644 "$REPO_DIR/hooks/libalpm/noctarchy-splash.hook" /etc/pacman.d/hooks/noctarchy-splash.hook
+    ok "  installed noctarchy-splash.hook"
+    changed=$((changed+1))
+  else
+    ok "  noctarchy-splash.hook up to date"
+  fi
+  # Cleanup: pre-rename wrapper (shadowed interactive script) + old post-update.d hook
+  if [[ -f /usr/local/bin/noctarchy-splash ]]; then
+    sudo rm -f /usr/local/bin/noctarchy-splash
+    ok "  removed stale /usr/local/bin/noctarchy-splash"
+    changed=$((changed+1))
+  fi
+  if [[ -f "$HOME/.config/omarchy/hooks/post-update.d/noctarchy-splash.sh" ]]; then
+    rm -f "$HOME/.config/omarchy/hooks/post-update.d/noctarchy-splash.sh"
+    ok "  removed stale post-update.d splash hook"
+    changed=$((changed+1))
+  fi
 else
-  warn "  splash hook not found — skipping"
+  info "  [dry-run] would sync splash kernel hook"
 fi
 
 # ──────────────────────────────────────────────
