@@ -277,10 +277,10 @@ binds {
     Mod+P { focus-floating; }                                   // Jump focus to floating window
     Mod+Shift+P { focus-tiling; }                               // Jump focus back to tiled window
 
-    // ── Screenshots ──
-    Mod+Print { spawn-sh "grim -g \"$(slurp)\" - | wl-copy"; }          // Screenshot region → clipboard
+    // ── Screenshots & recording ──
+    // (region select via slurp is dead on Niri — fullscreen + recording only)
     Ctrl+Print { spawn-sh "grim - | wl-copy"; }                         // Screenshot full screen → clipboard
-    Alt+Print { spawn-sh "grim -g \"$(slurp)\" ~/Pictures/Screenshots/\"$(date +%Y-%m-%d_%H-%M-%S).png\""; }  // Screenshot region → save file
+    Alt+Print { spawn "noctarchy-screenrecord"; }                       // Toggle screen recording (matches Omarchy)
 
     // ── Clipboard (wtype for GUI apps, terminals use Shift+Ctrl+C/V) ──
     Mod+C { spawn-sh "wtype -M ctrl -k c"; }                    // Copy (works in GUI apps)
@@ -384,6 +384,12 @@ window-rule {
 // Media player — floating (sizing handled by mpv config)
 window-rule {
     match app-id="mpv"                      // Video player
+    open-floating true
+}
+
+// Webcam overlay — floating (noctarchy-screenrecord --with-webcam)
+window-rule {
+    match app-id="WebcamOverlay"
     open-floating true
 }
 

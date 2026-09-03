@@ -259,9 +259,8 @@ The remux ships its own identity on top of Omarchy. What lands where:
 | `SUPER+Ctrl+V` | Clipboard history (Noctalia) |
 | `SUPER+C/V/X` | Copy/paste/cut via wtype |
 | `Media keys` | Play/pause, next, previous — any MPRIS player |
-| `SUPER+Print` | Screenshot region to clipboard |
-| `Ctrl+Print` | Screenshot region to file |
-| `Alt+Print` | Screenshot fullscreen to clipboard |
+| `Ctrl+Print` | Screenshot fullscreen to clipboard |
+| `Alt+Print` | Toggle screen recording |
 
 All Niri keybindings are defined in `~/.config/niri/config.kdl`. Run
 `niri msg --json event-stream` to debug bindings live.

@@ -1,6 +1,6 @@
 #!/bin/bash
 # noctarchy:menu=capture
-# noctarchy:summary=Capture submenu: OCR, QR, color picker, transcode
+# noctarchy:summary=Capture submenu: screen recording, OCR, QR, color picker, transcode
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -11,15 +11,17 @@ if [[ $# -gt 0 ]]; then
 else
 choice=$(
   printf '%s\n' \
+    'Screen recording' \
     'OCR text from region' \
     'Decode QR from region' \
     'Color picker' \
     'Transcode media' |
-    "$SCRIPT_DIR/noctarchy-fuzzel" --dmenu --prompt='Capture: ' --width=32 --lines=4
+    "$SCRIPT_DIR/noctarchy-fuzzel" --dmenu --prompt='Capture: ' --width=32 --lines=5
 ) || exec "$SCRIPT_DIR/noctarchy-menu"   # Esc = back to root menu
 fi
 
 case "$choice" in
+  "Screen recording")      exec "$SCRIPT_DIR/noctarchy-screenrecord" ;;
   "OCR text from region")  exec xdg-terminal-exec --app-id=TUI.float -e omarchy-capture-text ;;
   "Decode QR from region") exec xdg-terminal-exec --app-id=TUI.float -e omarchy-capture-qr ;;
   "Color picker")          exec bash -c 'pkill hyprpicker || hyprpicker -a' ;;
