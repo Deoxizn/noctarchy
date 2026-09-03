@@ -30,6 +30,10 @@
 <p align="center">
   <img src="preview4.png" alt="Preview 4" width="1280">
 </p>
+<p align="center">
+  <img src="preview5.png" alt="Preview 5" width="1280">
+</p>
+
 
 <br><br>
 
