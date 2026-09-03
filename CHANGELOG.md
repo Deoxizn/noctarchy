@@ -12,6 +12,8 @@
 - Fix hook wrapper shadowing the interactive script: `/usr/local/bin/noctarchy-splash` hid `~/.local/bin/noctarchy-splash` in PATH, so `noctarchy-splash run refresh` silently no-op'd. Renamed to `/usr/local/bin/noctarchy-splash-hook`, hook Exec updated ([`2d1c456`](https://github.com/deoxizn/noctarchy/commit/2d1c456))
 - Bump Plymouth logo 280×302 → 400×432 (regenerated from the 604px `branding/noctarchy.png` master; Stellarchy renders 360×384 — the script draws native pixels, no scaling — so 280px looked tiny on HiDPI) ([`a4c4489`](https://github.com/deoxizn/noctarchy/commit/a4c4489))
 - Automate splash kernel hook deployment: `install.sh` and `sync.sh` now install `/usr/local/bin/noctarchy-splash-hook` + `/etc/pacman.d/hooks/noctarchy-splash.hook` (and clean up the pre-rename wrapper + old post-update.d hook) — no manual `sudo install` per machine. Also fixes both scripts referencing the deleted `post-update.d/noctarchy-splash.sh` ([`336052c`](https://github.com/deoxizn/noctarchy/commit/336052c))
+- Fix `noctarchy-repo-sync` silently doing nothing on machines without a repo checkout at the script location (e.g. FW13): it now resolves the repo via `~/.local/state/noctarchy/repo-path` first and sends a notification instead of exiting invisibly ([`e356361`](https://github.com/deoxizn/noctarchy/commit/e356361))
+- `sync.sh` now auto-removes `~/.local/bin` scripts no longer in the repo (renames left orphans with only a warning before) plus timestamped `noctarchy-*.bak.*` backups ([`7280e54`](https://github.com/deoxizn/noctarchy/commit/7280e54))
 
 ## 2026-09-02
 
