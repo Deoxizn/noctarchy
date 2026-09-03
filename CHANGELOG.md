@@ -9,6 +9,8 @@
 - Fix Firmware updater window closing instantly: the Update menu's Firmware entry now wraps `omarchy-update-firmware` with a Press-Enter hold (exit code preserved), so results stay visible instead of vanishing when fwupd exits ([`1003248`](https://github.com/deoxizn/noctarchy/commit/1003248))
 - Fix double-Enter when running `noctarchy-update-run` from the Noctalia arch-updater widget: the script now only shows its Press-Enter hold when stdout is a TTY — the widget pipes runs through tee with its own press-key hold + `::EXIT` marker, so the old unconditional hold forced a second Enter ([`1003248`](https://github.com/deoxizn/noctarchy/commit/1003248))
 - Fix splash wrapper failing under the pacman hook (`cp: cannot stat .../branding/plymouth/noctarchy-logo.png`): hooks run as root (`$HOME=/root`), so `noctarchy-splash` never saw `$HOME/.local/state/noctarchy/repo-path` and fell back to a bogus relative path. The wrapper now exports the matched user's `HOME` before calling the script ([`6591324`](https://github.com/deoxizn/noctarchy/commit/6591324))
+- Fix hook wrapper shadowing the interactive script: `/usr/local/bin/noctarchy-splash` hid `~/.local/bin/noctarchy-splash` in PATH, so `noctarchy-splash run refresh` silently no-op'd. Renamed to `/usr/local/bin/noctarchy-splash-hook`, hook Exec updated ([`2d1c456`](https://github.com/deoxizn/noctarchy/commit/2d1c456))
+- Bump Plymouth logo 280×302 → 400×432 (regenerated from the 604px `branding/noctarchy.png` master; Stellarchy renders 360×384 — the script draws native pixels, no scaling — so 280px looked tiny on HiDPI) ([`a4c4489`](https://github.com/deoxizn/noctarchy/commit/a4c4489))
 
 ## 2026-09-02
 
