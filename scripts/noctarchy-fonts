@@ -14,7 +14,13 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 set_font() {
   local font_name="$1"
 
-  if ! fc-list | grep -Fqi -- "$font_name"; then
+  # Trim round-trip whitespace (fuzzel/marker handling can add stray spaces)
+  font_name="$(printf '%s' "$font_name" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')"
+
+  # Validate against the same source the picker lists; fall back to an
+  # fc-list substring match (family names vary across files/styles).
+  if ! omarchy-font-list 2>/dev/null | grep -Fxi -- "$font_name" \
+    && ! fc-list | grep -Fqi -- "$font_name"; then
     notify-send "Noctarchy" "Font '$font_name' not found" 2>/dev/null || true
     echo "Font '$font_name' not found." >&2
     exit 1
@@ -66,7 +72,7 @@ current=$(omarchy-font-current 2>/dev/null || true)
 
 choice=$(
   omarchy-font-list 2>/dev/null |
-    awk -v cur="$current" '$0 == cur { print "✓ " $0; next } { print }' |
+    awk -v cur="$current" '$0 == cur { print "✓ "$0; next } { print }' |
     "$SCRIPT_DIR/noctarchy-fuzzel" --dmenu --prompt='Font: ' --width=36 --lines=18
 ) || exec "$SCRIPT_DIR/noctarchy-system"   # Esc = back to System menu
 
