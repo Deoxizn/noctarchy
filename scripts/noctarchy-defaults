@@ -5,6 +5,10 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
+if [[ $# -gt 0 ]]; then
+  # Direct dispatch from menu search
+  choice="$*"
+else
 choice=$(
   printf '%s\n' \
     'Browser' \
@@ -13,6 +17,7 @@ choice=$(
     'Agent' |
     "$SCRIPT_DIR/noctarchy-fuzzel" --dmenu --prompt='Defaults: ' --width=24 --lines=4
 ) || exec "$SCRIPT_DIR/noctarchy-system"
+fi
 
 case "$choice" in
   Browser)  type="browser" ;;

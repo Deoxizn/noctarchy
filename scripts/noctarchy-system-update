@@ -5,6 +5,10 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
+if [[ $# -gt 0 ]]; then
+  # Direct dispatch from menu search
+  choice="$*"
+else
 choice=$(
   printf '%s\n' \
     'Drive encryption password' \
@@ -14,6 +18,7 @@ choice=$(
     'Reset tmux config' |
     "$SCRIPT_DIR/noctarchy-fuzzel" --dmenu --prompt='Update: ' --width=32 --lines=5
 ) || exec "$SCRIPT_DIR/noctarchy-system"   # Esc = back to System menu
+fi
 
 case "$choice" in
   "Drive encryption password") exec xdg-terminal-exec --app-id=TUI.float -e omarchy-drive-password ;;

@@ -1,33 +1,109 @@
 #!/bin/bash
 # noctarchy:menu=root
-# noctarchy:summary=Root application menu — dispatches to sub-menus
+# noctarchy:summary=Root application menu — searchable index over all submenus
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-choice=$(
-  printf '%s\n' \
-    'Capture >' \
-    'Hardware >' \
-    'Packages >' \
-    'Reminders >' \
-    'Restart >' \
-    'Share >' \
-    'System >' \
-    'System Update >' \
-    'Themes >' |
-    "$SCRIPT_DIR/noctarchy-fuzzel" --dmenu --prompt='☽ Noctarchy ✦ ' --width=28 --lines=9
-) || exit 0
-choice=${choice%' >'}
+# Flat searchable index: top-level entries drill into submenus (" >"),
+# "Parent › Child" rows jump straight to the action (submenus accept the
+# choice as $1). Dynamic pickers (font/theme lists, keybinds) stay drill-only.
+# When adding a submenu entry, add its row here too.
+declare -A cmd_for=()
+menu=""
+add() { cmd_for[$1]="$2"; menu+="$1"$'\n'; }
 
-case "$choice" in
-  Capture)       exec "$SCRIPT_DIR/noctarchy-capture" ;;
-  Hardware)     exec "$SCRIPT_DIR/noctarchy-trigger" ;;
-  Packages)     exec "$SCRIPT_DIR/noctarchy-packages" ;;
-  Reminders)     exec "$SCRIPT_DIR/noctarchy-reminders" ;;
-  Restart)      exec "$SCRIPT_DIR/noctarchy-restart" ;;
-  Share)        exec "$SCRIPT_DIR/noctarchy-share" ;;
-  System)       exec "$SCRIPT_DIR/noctarchy-system" ;;
-  "System Update") exec "$SCRIPT_DIR/noctarchy-update" ;;
-  Themes)       exec "$SCRIPT_DIR/noctarchy-themes" ;;
-esac
+# ── Top level ──
+add 'Capture >'       'noctarchy-capture'
+add 'Hardware >'      'noctarchy-trigger'
+add 'Packages >'      'noctarchy-packages'
+add 'Reminders >'     'noctarchy-reminders'
+add 'Restart >'       'noctarchy-restart'
+add 'Share >'         'noctarchy-share'
+add 'System >'        'noctarchy-system'
+add 'System Update >' 'noctarchy-update'
+add 'Themes >'        'noctarchy-themes'
+
+# ── Capture ──
+add 'Capture › OCR text from region' 'noctarchy-capture "OCR text from region"'
+add 'Capture › Decode QR from region' 'noctarchy-capture "Decode QR from region"'
+add 'Capture › Color picker' 'noctarchy-capture "Color picker"'
+add 'Capture › Transcode media' 'noctarchy-capture "Transcode media"'
+
+# ── Hardware (trigger) ──
+add 'Hardware › Hardware' 'noctarchy-hardware'
+add 'Hardware › Speed Test' 'noctarchy-speedtest'
+add 'Hardware › Speed Test › Network download' 'noctarchy-speedtest "Network download"'
+add 'Hardware › Speed Test › Network upload' 'noctarchy-speedtest "Network upload"'
+add 'Hardware › Speed Test › Disk' 'noctarchy-speedtest "Disk"'
+
+# ── Packages ──
+add 'Packages › Install' 'noctarchy-install'
+add 'Packages › Remove' 'noctarchy-remove'
+add 'Packages › Install › Package' 'noctarchy-install "Package"'
+add 'Packages › Install › AUR' 'noctarchy-install "AUR"'
+add 'Packages › Install › Web App' 'noctarchy-install "Web App"'
+
+# ── Reminders ──
+add 'Reminders › Set a reminder' 'noctarchy-reminders "Set a reminder"'
+add 'Reminders › Quick reminder' 'noctarchy-reminders "Quick reminder"'
+add 'Reminders › Clear all' 'noctarchy-reminders "Clear all"'
+
+# ── Restart ──
+add 'Restart › Reload Niri' 'noctarchy-restart "Reload Niri"'
+add 'Restart › Restart Noctalia' 'noctarchy-restart "Restart Noctalia"'
+add 'Restart › Refresh theme' 'noctarchy-restart "Refresh theme"'
+
+# ── Share ──
+add 'Share › Clipboard' 'noctarchy-share "Clipboard"'
+add 'Share › File' 'noctarchy-share "File"'
+add 'Share › Folder' 'noctarchy-share "Folder"'
+add 'Share › Receive' 'noctarchy-share "Receive"'
+
+# ── System ──
+add 'System › Boot Splash' 'noctarchy-splash'
+add 'System › Cleaner' 'noctarchy-cleaner'
+add 'System › Config' 'noctarchy-config'
+add 'System › Default Apps' 'noctarchy-defaults'
+add 'System › Fonts' 'noctarchy-fonts'
+add 'System › Kernel' 'noctarchy-kernel'
+add 'System › Maintenance' 'noctarchy-system-update'
+add 'System › Network' 'noctarchy-network'
+add 'System › Security' 'noctarchy-security'
+add 'System › Snapshots' 'noctarchy-snapshots'
+add 'System › Config › Niri config' 'noctarchy-config "Niri config"'
+add 'System › Config › Noctalia config' 'noctarchy-config "Noctalia config"'
+add 'System › Config › Palettes' 'noctarchy-config "Palettes"'
+add 'System › Config › Hooks' 'noctarchy-config "Hooks"'
+add 'System › Config › Scripts' 'noctarchy-config "Scripts"'
+add 'System › Default Apps › Browser' 'noctarchy-defaults "Browser"'
+add 'System › Default Apps › Editor' 'noctarchy-defaults "Editor"'
+add 'System › Default Apps › Terminal' 'noctarchy-defaults "Terminal"'
+add 'System › Default Apps › Agent' 'noctarchy-defaults "Agent"'
+add 'System › Maintenance › Drive encryption password' 'noctarchy-system-update "Drive encryption password"'
+add 'System › Maintenance › User password' 'noctarchy-system-update "User password"'
+add 'System › Maintenance › Sync system clock' 'noctarchy-system-update "Sync system clock"'
+add 'System › Maintenance › Reset Plymouth config' 'noctarchy-system-update "Reset Plymouth config"'
+add 'System › Maintenance › Reset tmux config' 'noctarchy-system-update "Reset tmux config"'
+add 'System › Network › Wi-Fi QR Code' 'noctarchy-network "Wi-Fi QR Code"'
+
+# ── System Update ──
+add 'System Update › Noctarchy' 'noctarchy-update "Noctarchy"'
+add 'System Update › Channel' 'noctarchy-update "Channel"'
+add 'System Update › Extra themes' 'noctarchy-update "Extra themes"'
+add 'System Update › Hardware' 'noctarchy-update "Hardware"'
+add 'System Update › Firmware' 'noctarchy-update "Firmware"'
+add 'System Update › Repo sync' 'noctarchy-update "Repo sync"'
+
+# ── Themes ──
+add 'Themes › Theme list' 'noctarchy-themes-list'
+add 'Themes › Install theme' 'noctarchy-themes "Install theme"'
+add 'Themes › Palette source' 'noctarchy-themes "Palette source"'
+
+choice=$(
+  printf '%s' "$menu" |
+    "$SCRIPT_DIR/noctarchy-fuzzel" --dmenu --prompt='☽ Noctarchy ✦ ' --width=50 --lines=20
+) || exit 0
+
+cmd=${cmd_for[$choice]:-}
+[[ -n $cmd ]] && eval "exec $cmd"

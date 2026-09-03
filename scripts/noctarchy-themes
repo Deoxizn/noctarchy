@@ -6,6 +6,10 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 NOCTALIA_CFG="${XDG_CONFIG_HOME:-$HOME/.config}/noctalia/config.toml"
 
+if [[ $# -gt 0 ]]; then
+  # Direct dispatch from menu search
+  choice="$*"
+else
 choice=$(
   printf '%s\n' \
     'Theme list' \
@@ -13,6 +17,7 @@ choice=$(
     'Install theme' |
     "$SCRIPT_DIR/noctarchy-fuzzel" --dmenu --prompt='Themes: ' --width=26 --lines=3
 ) || exec "$SCRIPT_DIR/noctarchy-menu"
+fi
 
 case "$choice" in
   "Theme list")    exec "$SCRIPT_DIR/noctarchy-themes-list" ;;

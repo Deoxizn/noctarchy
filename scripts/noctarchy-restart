@@ -5,12 +5,17 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-choice=$(printf '%s\n' \
-    "Reload Niri" \
-    "Restart Noctalia" \
-    "Refresh theme" | "$SCRIPT_DIR/noctarchy-fuzzel" --dmenu --prompt='Restart: ' --width=24 --lines=3)
+if [[ $# -gt 0 ]]; then
+  # Direct dispatch from menu search
+  choice="$*"
+else
+  choice=$(printf '%s\n' \
+      "Reload Niri" \
+      "Restart Noctalia" \
+      "Refresh theme" | "$SCRIPT_DIR/noctarchy-fuzzel" --dmenu --prompt='Restart: ' --width=24 --lines=3)
 
-[[ -z "$choice" ]] && exit 0
+  [[ -z "$choice" ]] && exit 0
+fi
 
 case "$choice" in
     "Reload Niri")

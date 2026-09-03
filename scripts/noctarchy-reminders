@@ -5,6 +5,10 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
+if [[ $# -gt 0 ]]; then
+  # Direct dispatch from menu search
+  choice="$*"
+else
 choice=$(
   printf '%s\n' \
     'Set a reminder' \
@@ -12,6 +16,7 @@ choice=$(
     'Clear all' |
     "$SCRIPT_DIR/noctarchy-fuzzel" --dmenu --prompt='Reminders: ' --width=32 --lines=3
 ) || exec "$SCRIPT_DIR/noctarchy-menu"   # Esc = back to root menu
+fi
 
 case "$choice" in
   "Set a reminder") exec xdg-terminal-exec --app-id=TUI.float -e omarchy-reminder -i ;;

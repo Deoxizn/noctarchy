@@ -483,7 +483,13 @@ FF_LOGO_SRC="$REPO_DIR/branding/noctarchy.png"
   fi
 
 if [[ -f $FF_DIR/config.jsonc ]] && [[ -f $FF_STOCK ]]; then
-  if ! $DRY_RUN; then
+  # Only touch stock or already-branded configs — a user-customized config
+  # (differs from stock and carries none of our markers) is left alone.
+  if ! cmp -s "$FF_STOCK" "$FF_DIR/config.jsonc" && ! grep -q "branding/noctarchy.png\|noctarchy-version" "$FF_DIR/config.jsonc"; then
+    ok "  custom fastfetch config detected — left untouched"
+  elif $DRY_RUN; then
+    info "  [dry-run] would brand fastfetch (noctarchy.png logo, $FF_TERMINAL_TYPE protocol)"
+  else
     cp "$FF_STOCK" "$FF_DIR/config.jsonc"
     # Install noctarchy logo PNG for fastfetch
     FF_LOGO_DST="$HOME/.config/omarchy/branding/noctarchy.png"

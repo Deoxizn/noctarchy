@@ -8,10 +8,15 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 entries=('DNS >')
 [[ $(omarchy-network-status 2>/dev/null) == wifi* ]] && entries+=('Wi-Fi QR Code')
 
+if [[ $# -gt 0 ]]; then
+  # Direct dispatch from menu search
+  choice="$*"
+else
 choice=$(
   printf '%s\n' "${entries[@]}" |
     "$SCRIPT_DIR/noctarchy-fuzzel" --dmenu --prompt='Network: ' --width=26 --lines=${#entries[@]}
 ) || exec "$SCRIPT_DIR/noctarchy-system"
+fi
 choice=${choice%' >'}
 
 case "$choice" in

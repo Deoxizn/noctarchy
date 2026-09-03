@@ -11,10 +11,15 @@ entries=("Noctarchy" "Channel${current:+ ($current)} >")
 omarchy-theme-extras >/dev/null 2>&1 && entries+=('Extra themes')
 entries+=('Hardware >' 'Firmware' 'Repo sync')
 
+if [[ $# -gt 0 ]]; then
+  # Direct dispatch from menu search
+  choice="$*"
+else
 choice=$(
   printf '%s\n' "${entries[@]}" |
     "$SCRIPT_DIR/noctarchy-fuzzel" --dmenu --prompt='Update: ' --width=30 --lines=${#entries[@]}
 ) || exec "$SCRIPT_DIR/noctarchy-menu"   # Esc = back to root menu
+fi
 choice=${choice%' >'}
 
 case "$choice" in

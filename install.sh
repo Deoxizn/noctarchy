@@ -568,7 +568,12 @@ if ! $DRY_RUN; then
 
   if [[ -f "$FF_STOCK" ]]; then
     mkdir -p "$FF_DIR"
-    cp "$FF_STOCK" "$FF_DIR/config.jsonc"
+    # Don't nuke a pre-existing custom config on fresh install either
+    if [[ -f "$FF_DIR/config.jsonc" ]] && ! cmp -s "$FF_STOCK" "$FF_DIR/config.jsonc" \
+      && ! grep -q "branding/noctarchy.png\|noctarchy-version" "$FF_DIR/config.jsonc"; then
+      ok "  custom fastfetch config detected — left untouched"
+    else
+      cp "$FF_STOCK" "$FF_DIR/config.jsonc"
     python3 - "$FF_DIR/config.jsonc" "$FF_TERMINAL_TYPE" << 'FFPY'
 import sys, re
 path = sys.argv[1]
@@ -622,6 +627,7 @@ with open(path, "w") as f:
     f.write(text)
 FFPY
     ok "  fastfetch branded (noctarchy.png logo, $FF_TERMINAL_TYPE protocol)"
+    fi
   fi
 else
   info "[dry-run] would install branding art"

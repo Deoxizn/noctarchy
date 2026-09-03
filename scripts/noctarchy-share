@@ -5,6 +5,10 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
+if [[ $# -gt 0 ]]; then
+  # Direct dispatch from menu search
+  choice="$*"
+else
 choice=$(
   printf '%s\n' \
     'Clipboard' \
@@ -13,6 +17,7 @@ choice=$(
     'Receive' |
     "$SCRIPT_DIR/noctarchy-fuzzel" --dmenu --prompt='Share: ' --width=28 --lines=4
 ) || exec "$SCRIPT_DIR/noctarchy-trigger"   # Esc = back to trigger menu
+fi
 choice=${choice%' >'}
 
 case "$choice" in

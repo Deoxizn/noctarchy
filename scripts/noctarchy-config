@@ -5,6 +5,10 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
+if [[ $# -gt 0 ]]; then
+  # Direct dispatch from menu search
+  choice="$*"
+else
 choice=$(
   printf '%s\n' \
     'Niri config' \
@@ -14,6 +18,7 @@ choice=$(
     'Scripts' |
     "$SCRIPT_DIR/noctarchy-fuzzel" --dmenu --prompt='Config: ' --width=24 --lines=5
 ) || exec "$SCRIPT_DIR/noctarchy-menu"
+fi
 
 case "$choice" in
   'Niri config')     xdg-terminal-exec -e "${EDITOR:-nvim}" "${XDG_CONFIG_HOME:-$HOME/.config}/niri/config.kdl" ;;
