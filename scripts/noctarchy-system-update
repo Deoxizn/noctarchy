@@ -1,6 +1,6 @@
 #!/bin/bash
 # noctarchy:menu=system-update
-# noctarchy:summary=System update submenu: passwords, clock sync, plymouth/tmux reset
+# noctarchy:summary=System update submenu: passwords, clock sync, plymouth/tmux reset, cleaners
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -12,18 +12,22 @@ else
 choice=$(
   printf '%s\n' \
     'Drive encryption password' \
-    'User password' \
-    'Sync system clock' \
     'Reset Plymouth config' \
-    'Reset tmux config' |
-    "$SCRIPT_DIR/noctarchy-fuzzel" --dmenu --prompt='Update: ' --width=32 --lines=5
+    'Reset tmux config' \
+    'Snapshot Manager' \
+    'Sync system clock' \
+    'System Cleaner' \
+    'User password' |
+    "$SCRIPT_DIR/noctarchy-fuzzel" --dmenu --prompt='Update: ' --width=32 --lines=7
 ) || exec "$SCRIPT_DIR/noctarchy-system"   # Esc = back to System menu
 fi
 
 case "$choice" in
   "Drive encryption password") exec xdg-terminal-exec --app-id=TUI.float -e omarchy-drive-password ;;
-  "User password")             exec xdg-terminal-exec --app-id=TUI.float -e passwd ;;
-  "Sync system clock")         exec xdg-terminal-exec --app-id=TUI.float -e omarchy-update-time ;;
   "Reset Plymouth config")     exec xdg-terminal-exec --app-id=TUI.float -e omarchy-refresh-plymouth ;;
   "Reset tmux config")         exec xdg-terminal-exec --app-id=TUI.float -e omarchy-refresh-tmux ;;
+  "Snapshot Manager")          exec "$SCRIPT_DIR/noctarchy-snapshots" ;;
+  "Sync system clock")         exec xdg-terminal-exec --app-id=TUI.float -e omarchy-update-time ;;
+  "System Cleaner")            exec "$SCRIPT_DIR/noctarchy-cleaner" ;;
+  "User password")             exec xdg-terminal-exec --app-id=TUI.float -e passwd ;;
 esac
