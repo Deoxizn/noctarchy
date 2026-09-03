@@ -8,4 +8,4 @@ Target = linux-*-headers
 [Action]
 Description = noctarchy: re-apply Plymouth boot splash after kernel update
 When = PostTransaction
-Exec = /usr/local/bin/noctarchy-splash
+Exec = /usr/local/bin/noctarchy-splash-hook
