@@ -317,6 +317,26 @@ else
   warn "  repo config.toml not found — skipping"
 fi
 
+# ──────────────────────────────────────────────
+# Noctalia v5 migration (one-shot, backup-first)
+# Existing configs predate v5 (red widget blocks); the migrator backs up
+# to config.toml.pre-v5.bak, translates keys, and reports behavior deltas.
+# ──────────────────────────────────────────────
+
+info "Noctalia v5 migration:"
+if [[ -f $NOCTALIA_DST ]] && grep -Eq '"separator"|"active-window"|^\[(general|launcher|lock|clipboard)\]|^\s*(left|right)\s*=' "$NOCTALIA_DST" 2>/dev/null; then
+  if $DRY_RUN; then
+    info "  [dry-run] would migrate $NOCTALIA_DST to v5 schema"
+  elif [[ -x "$REPO_DIR/scripts/noctarchy-noctalia-v5-migrate" ]]; then
+    "$REPO_DIR/scripts/noctarchy-noctalia-v5-migrate" "$NOCTALIA_DST" || warn "  migration failed — resolve manually (backup kept)"
+    changed=$((changed+1))
+  else
+    warn "  migrator not found in repo — skipping"
+  fi
+else
+  ok "  already v5 — nothing to do"
+fi
+
 echo ""
 
 # ──────────────────────────────────────────────

@@ -1,0 +1,245 @@
+#!/usr/bin/env python3
+"""Migrate a Noctalia v4 config.toml to the v5 schema (backup-first).
+
+Detects v4 markers (old widget IDs, [bar.widgets] left/right, [general],
+[lock], ...). Backs up to config.toml.pre-v5.bak (once), translates keys,
+comments out sections v5 removed, and reports every behavior delta.
+
+Behavior deltas vs the (silently ignored) v4 keys, all restoring configured
+intent — disable after if unwanted:
+  - idle auto-lock becomes ACTIVE ([idle.behavior.lock] 300s)
+  - wallpaper rotation becomes ACTIVE ([wallpaper.automation] 300s)
+  - bar renders configured geometry (thickness/opacity) instead of defaults
+
+Usage: noctarchy-noctalia-v5-migrate [config.toml]
+Exit 0: migrated or already v5. Exit 1: error. Prints what changed.
+"""
+import re
+import shutil
+import subprocess
+import sys
+
+PATH = sys.argv[1] if len(sys.argv) > 1 else None
+HOME_FALLBACK = None
+if PATH is None:
+    import os
+    PATH = os.path.expanduser("~/.config/noctalia/config.toml")
+
+V4_WIDGETS = (('"separator"', '"spacer"'), ('"active-window"', '"active_window"'))
+DEAD_SECTIONS = ("general", "launcher", "lock", "clipboard")
+GEO_MAP = (("height", "thickness"), ("opacity", "background_opacity"),
+           ("exclusive", "reserve_space"))
+
+
+def section_of(lines, idx):
+    """Innermost [section] header at/above line idx."""
+    for i in range(idx, -1, -1):
+        m = re.match(r"^\[([^\]]+)\]\s*(?:#.*)?$", lines[i])
+        if m:
+            return m.group(1).strip()
+    return ""
+
+
+def main():
+    try:
+        with open(PATH) as f:
+            text = f.read()
+    except OSError as e:
+        print(f"error: cannot read {PATH}: {e}")
+        return 1
+    lines = text.splitlines()
+    changed = []
+
+    def has_v4():
+        t = "\n".join(lines)
+        if '"separator"' in t or '"active-window"' in t:
+            return True
+        if re.search(r"^\[(general|launcher|lock|clipboard)\]\s*$", t, re.M):
+            return True
+        # NOTE: bare [bar.widgets] alone is legit v5 (second bar switch),
+        # so it is not a marker — but v4 left/right keys always are.
+        if re.search(r"^\s*(left|right)\s*=", t, re.M):
+            return True
+        return False
+
+    if not has_v4():
+        print("already v5 (no v4 markers found) — nothing to do")
+        return 0
+
+    bak = PATH + ".pre-v5.bak"
+    try:
+        shutil.copy2(PATH, bak)
+        print(f"backup: {bak}")
+    except OSError as e:
+        print(f"error: cannot back up: {e}")
+        return 1
+
+    # 1. Widget renames (fixes red placeholder blocks).
+    for i, ln in enumerate(lines):
+        for old, new in V4_WIDGETS:
+            if old in ln:
+                lines[i] = ln.replace(old, new)
+                ln = lines[i]
+                changed.append(f"widget id {old} -> {new}")
+
+    # 2. [bar.widgets] left/right -> [bar.default] start/center/end.
+    has_default = bool(re.search(r"^\[bar\.default\]\s*$", "\n".join(lines), re.M))
+    for i, ln in enumerate(lines):
+        if re.match(r"^\[bar\.widgets\]\s*$", ln):
+            if has_default:
+                lines[i] = "# " + ln + "  # v5-migrate: kept, [bar.default] already exists"
+                changed.append("[bar.widgets] kept (duplicate of [bar.default])")
+            else:
+                lines[i] = "[bar.default]"
+                changed.append("[bar.widgets] -> [bar.default]")
+        elif re.match(r"^\[bar\.widgets\.(\w+)\]\s*$", ln):
+            name = re.match(r"^\[bar\.widgets\.(\w+)\]\s*$", ln).group(1)
+            target = f"[widget.{name}]"
+            if re.search(r"^\[" + re.escape(f"widget.{name}") + r"\]\s*$",
+                         "\n".join(lines), re.M):
+                lines[i] = "# " + ln + "  # v5-migrate: kept, target exists"
+                changed.append(f"[{ln.strip()}] kept (duplicate)")
+            else:
+                lines[i] = f"[{target}]"
+                changed.append(f"[{ln.strip()}] -> [{target}]")
+        else:
+            sec = section_of(lines, i)
+            if sec in ("bar.widgets", "bar.default"):
+                m = re.match(r"^(\s*)(left|right)(\s*=)", ln)
+                if m:
+                    word = "start" if m.group(2) == "left" else "end"
+                    lines[i] = f"{m.group(1)}{word}{m.group(3)}" + ln[m.end():]
+                    changed.append(f"{m.group(2)} -> {word} ({sec})")
+
+    # 3. [bar]/[bar.default] geometry keys.
+    for i, ln in enumerate(lines):
+        sec = section_of(lines, i)
+        if sec in ("bar", "bar.default"):
+            for old, new in GEO_MAP:
+                m = re.match(r"^(\s*)" + old + r"(\s*=)", ln)
+                if m:
+                    lines[i] = f"{m.group(1)}{new}{m.group(2)}" + ln[m.end():]
+                    changed.append(f"{old} -> {new} ({sec})")
+
+    # 4. [notifications] -> [notification], top-right -> top_right.
+    for i, ln in enumerate(lines):
+        if re.match(r"^\[notifications\]\s*$", ln):
+            lines[i] = "[notification]"
+            changed.append("[notifications] -> [notification]")
+        elif section_of(lines, i) == "notification" and '"top-right"' in ln:
+            lines[i] = ln.replace('"top-right"', '"top_right"')
+            changed.append('top-right -> top_right')
+
+    # 5. Clock strftime -> v5 { } tokens (only when no { present).
+    for i, ln in enumerate(lines):
+        if section_of(lines, i) in ("widget.clock", "bar.widgets.clock",
+                                    "widget.date"):
+            m = re.match(r'^(\s*(?:tooltip_)?format\s*=\s*)"(.*)"\s*(#.*)?$', ln)
+            if m and "%" in m.group(2) and "{" not in m.group(2):
+                lines[i] = f'{m.group(1)}"{{:{m.group(2)}}}"' + \
+                    (f" {m.group(3)}" if m.group(3) else "")
+                changed.append(f"clock format -> {{ }} tokens")
+
+    # 6. [lock] idle intent -> [idle.behavior.lock] (activates auto-lock).
+    if re.search(r"^\[lock\]\s*$", "\n".join(lines), re.M):
+        timeout = "300.0"
+        m = re.search(r"^idle_timeout\s*=\s*(\d+)", "\n".join(lines), re.M)
+        if m:
+            timeout = f"{m.group(1)}.0"
+        # comment members FIRST (header replacement would re-scope them),
+        # then swap the header itself
+        for i, ln in enumerate(lines):
+            if section_of(lines, i) == "lock" and \
+                    not ln.lstrip().startswith("#") and \
+                    not re.match(r"^\[lock\]\s*$", ln):
+                lines[i] = "# " + ln + "  # v5-migrate: [lock] removed in v5"
+        for i, ln in enumerate(lines):
+            if re.match(r"^\[lock\]\s*$", ln):
+                lines[i] = ("[idle.behavior.lock]  # v5-migrate: from [lock] "
+                            f"idle_timeout (auto-lock now ACTIVE, {timeout}s)")
+                break
+        # insert enabled/timeout after the new header
+        for i, ln in enumerate(lines):
+            if ln.startswith("[idle.behavior.lock]"):
+                lines.insert(i + 1, "enabled = true")
+                lines.insert(i + 2, f"timeout = {timeout}")
+                break
+        changed.append(f"[lock] -> [idle.behavior.lock] (auto-lock ACTIVE {timeout}s)")
+
+    # 7. Wallpaper mode/interval -> fill_mode/automation (activates rotation).
+    if re.search(r"^mode\s*=\s*\"fill\"", "\n".join(lines), re.M):
+        for i, ln in enumerate(lines):
+            if section_of(lines, i) == "wallpaper" and \
+                    re.match(r'^\s*mode\s*=\s*"fill"', ln):
+                indent = re.match(r"^(\s*)", ln).group(1)
+                lines[i] = indent + 'fill_mode = "crop"  # v5-migrate: was mode'
+                changed.append('wallpaper mode -> fill_mode')
+    interval = None
+    for i, ln in enumerate(lines):
+        if section_of(lines, i) == "wallpaper" and \
+                re.match(r"^\s*interval\s*=\s*(\d+)", ln):
+            interval = re.match(r"^\s*interval\s*=\s*(\d+)", ln).group(1)
+    if interval and not re.search(r"^\[wallpaper\.automation\]\s*$",
+                                  "\n".join(lines), re.M):
+        for i, ln in enumerate(lines):
+            if re.match(r"^\[wallpaper\]\s*$", ln):
+                # find end of wallpaper scalar block (next section header)
+                j = i + 1
+                while j < len(lines) and not lines[j].startswith("["):
+                    j += 1
+                lines.insert(j, "")
+                lines.insert(j + 1, "[wallpaper.automation]  # v5-migrate: "
+                                    "rotation now ACTIVE")
+                lines.insert(j + 2, "enabled = true")
+                lines.insert(j + 3, f"interval_seconds = {interval}")
+                break
+        changed.append(f"wallpaper rotation ACTIVE every {interval}s")
+
+    # 8. Dead sections with no equivalent: comment out header AND members.
+    # Single top-down pass (backward header lookup breaks once headers are
+    # commented, orphaning members back into the previous live table).
+    cur = None
+    for i, ln in enumerate(lines):
+        if not ln.lstrip().startswith("#"):
+            m = re.match(r"^\[([^\]]+)\]", ln)
+            if m:
+                cur = m.group(1).strip()
+            if cur in ("general", "launcher", "clipboard"):
+                if re.match(rf"^\[{cur}\]\s*(?:#.*)?$", ln):
+                    lines[i] = (f"# [{cur}]  # v5-migrate: section removed in v5 "
+                                f"(values kept below as comments)")
+                elif ln.strip():
+                    lines[i] = "# " + ln
+                changed.append(f"[{cur}] commented out (removed in v5)")
+
+    # 9. Dead keys inside live sections (commented, values preserved).
+    for i, ln in enumerate(lines):
+        if ln.lstrip().startswith("#"):
+            continue
+        sec = section_of(lines, i)
+        if sec == "notification" and re.match(r"^\s*(enabled|timeout)\s*=", ln):
+            lines[i] = "# " + ln + "  # v5-migrate: no v5 equivalent"
+            changed.append("[notification] enabled/timeout commented out")
+        elif sec == "osd" and re.match(r"^\s*(volume|brightness|timeout)\s*=", ln):
+            lines[i] = "# " + ln + "  # v5-migrate: use [osd.kinds]"
+            changed.append("[osd] volume/brightness/timeout commented out")
+        elif sec == "wallpaper" and re.match(r"^\s*interval\s*=", ln):
+            lines[i] = "# " + ln + "  # v5-migrate: see [wallpaper.automation]"
+            changed.append("wallpaper interval commented out")
+
+    with open(PATH, "w") as f:
+        f.write("\n".join(lines) + "\n")
+
+    # 9. Validate with the real schema.
+    seen = sorted(set(changed))
+    print(f"migrated {PATH}: {len(seen)} change types")
+    for c in seen:
+        print(f"  - {c}")
+    r = subprocess.run(["noctalia", "config", "validate", PATH],
+                       capture_output=True, text=True)
+    print(r.stdout.strip().splitlines()[-1] if r.stdout.strip() else r.stderr.strip())
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
