@@ -18,14 +18,17 @@
 environment {
     QT_QPA_PLATFORM "wayland;xcb"               // Qt apps: prefer Wayland, fall back to X11
     QT_WAYLAND_DISABLE_WINDOWDECORATION "1"     // Qt apps: disable client-side decorations
-    DISPLAY null                                // Disable X11 DISPLAY (pure Wayland)
+    // NOTE: do NOT set DISPLAY null here — it unsets DISPLAY for every Niri
+    // spawn, breaking X11-only codepaths (Steam updater, Proton, xdotool...).
+    // xwayland-satellite already provides :0; Wayland-native apps still prefer
+    // Wayland via the *_WAYLAND_*/GDK/MOZ hints below. X11 is fallback, not default.
     ELECTRON_OZONE_PLATFORM_HINT "auto"         // Electron apps (VS Code, Discord): auto-detect Wayland
     _JAVA_AWT_WM_NONREPARENTING "1"            // Java AWT apps: work correctly on Wayland
     XDG_CURRENT_DESKTOP "niri"                  // Tells apps which desktop environment is running
     XDG_SESSION_TYPE "wayland"                  // Tells apps this is a Wayland session
     MOZ_ENABLE_WAYLAND "1"                      // Firefox: use native Wayland
     CLUTTER_BACKEND "wayland"                   // Clutter apps: use Wayland backend
-    SDL_VIDEODRIVER "wayland"                   // SDL apps (games): use Wayland backend
+    SDL_VIDEODRIVER "wayland,x11"               // SDL apps (games): prefer Wayland, fall back to X11
     GDK_BACKEND "wayland,x11"                   // GTK apps: prefer Wayland, fall back to X11
 }
 
