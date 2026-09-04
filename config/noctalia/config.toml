@@ -1,126 +1,94 @@
-# Noctarchy — Noctalia config
+# Noctarchy — Noctalia config (Noctalia v5 schema)
 # https://github.com/deoxizn/noctarchy
-
-# ──────────────────────────────────────────────
-# General
-# ──────────────────────────────────────────────
-
-[general]
-terminal = "alacritty"
-launcher = "fuzzel"
-file_manager = "nautilus"
-browser = "firefox"
+#
+# Note: v5 removed several v4 sections ([general] default apps, [launcher]
+# command, [lock], [clipboard]). Default apps live in omarchy/xdg-settings
+# (see noctarchy-defaults); the lock screen is internal (see noctarchy-lock).
 
 # ──────────────────────────────────────────────
 # Bar
+# Widget IDs are v5 names (spacer, active_window, ...). Per-widget settings
+# live in [widget.<name>] tables below.
 # ──────────────────────────────────────────────
 
-[bar]
+[bar.default]
 position = "top"
-height = 40
-opacity = 0.95
-exclusive = true
-
-[bar.widgets]
-left = ["workspaces", "separator", "active-window"]
+thickness = 40                        # Bar height in pixels
+background_opacity = 0.95             # 0.0 = transparent, 1.0 = opaque
+reserve_space = true                  # Reserve screen space (don't overlap windows)
+start  = ["workspaces", "spacer", "active_window"]
 center = ["clock"]
-right = ["network", "bluetooth", "battery", "volume", "brightness", "tray", "media"]
+end    = ["network", "bluetooth", "battery", "volume", "brightness", "tray", "media"]
 
-[bar.widgets.clock]
-format = "%H:%M"
-interval = 1
-tooltip_format = "%A, %d %B %Y"
+[widget.clock]
+format = "{:%H:%M}"                   # 24-hour time (see date-format-tokens in Noctalia docs)
+tooltip_format = "{:%A, %d %B %Y}"    # Full date on hover
 
-[bar.widgets.workspaces]
-persistent = [1, 2, 3, 4, 5]
+[widget.spacer]
+type = "spacer"
+length = 8                            # Gap in pixels between workspaces and window title
 
-[bar.widgets.battery]
-critical_threshold = 15
-warning_threshold = 30
-show_percentage = true
-
-[bar.widgets.network]
-show_wifi = true
-show_wired = true
-show_vpn = true
-
-[bar.widgets.media]
-show_album_art = true
-max_title_length = 40
-
-[bar.widgets.volume]
-show_percentage = true
-
-[bar.widgets.brightness]
-show_percentage = true
+[widget.active_window]
+show_empty_label = true               # Show placeholder when no window is focused
+display = "icon_and_text"             # App icon + title (alternatives: icon, text)
 
 # ──────────────────────────────────────────────
-# Launcher
+# Shell services (clipboard history lives here in v5)
 # ──────────────────────────────────────────────
 
-[launcher]
-command = "fuzzel"
-width = 600
-height = 400
+[shell]
+clipboard_enabled = true
+clipboard_history_max_entries = 100
 
 # ──────────────────────────────────────────────
 # Notifications
 # ──────────────────────────────────────────────
 
-[notifications]
+[notification]
+position = "top_right"                # Corner for toast popups
+max_visible = 5                       # Max stacked toasts
+enable_daemon = true                  # Run the notification daemon
+
+# ──────────────────────────────────────────────
+# Idle → lock screen after 5 minutes
+# ──────────────────────────────────────────────
+
+[idle.behavior.lock]
 enabled = true
-timeout = 5000
-max_visible = 5
-position = "top-right"
+timeout = 300.0                       # Seconds idle before locking
 
 # ──────────────────────────────────────────────
-# Lock screen
-# ──────────────────────────────────────────────
-
-[lock]
-command = "swaylock"
-idle_timeout = 300
-before_sleep = true
-
-# ──────────────────────────────────────────────
-# Wallpaper
+# Wallpaper (rotates every 5 minutes)
 # ──────────────────────────────────────────────
 
 [wallpaper]
 enabled = true
 directory = "~/Pictures/Wallpapers"
-mode = "fill"
-interval = 300
-transition = "fade"
+fill_mode = "crop"                    # Fill screen, cropping overflow
+transition = ["fade"]                 # Transition effect between wallpapers
+
+[wallpaper.automation]
+enabled = true
+interval_seconds = 300                # Rotate on this interval
+order = "random"
 
 # ──────────────────────────────────────────────
-# Dock
+# Dock (disabled — top bar only)
 # ──────────────────────────────────────────────
 
 [dock]
 enabled = false
 
 # ──────────────────────────────────────────────
-# OSD (volume/brightness overlays)
+# OSD (volume/brightness overlays; per-kind toggles default on)
 # ──────────────────────────────────────────────
 
 [osd]
 enabled = true
-volume = true
-brightness = true
-timeout = 2000
 
 # ──────────────────────────────────────────────
-# Clipboard
-# ──────────────────────────────────────────────
-
-[clipboard]
-enabled = true
-max_entries = 100
-encrypted = true
-
-# ──────────────────────────────────────────────
-# Theming
+# Theming (custom palette generated from the Omarchy theme on every
+# theme switch by hooks/theme-set.d/noctalia-sync.sh)
 # ──────────────────────────────────────────────
 
 [theme]
