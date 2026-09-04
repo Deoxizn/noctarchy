@@ -1,0 +1,23 @@
+#!/bin/bash
+# noctarchy:internal=hold-open
+# noctarchy:summary=Run a command, then hold the window open for review
+# Usage: noctarchy-hold <command> [args...]
+# Runs the command, preserves its exit code, and waits for Enter so output
+# stays visible in terminals spawned for one-shot commands (which close on
+# exit). Interactive shells don't need this — see noctarchy-terminal.
+set -euo pipefail
+
+if [[ $# -eq 0 ]]; then
+  echo "Usage: noctarchy-hold <command> [args...]" >&2
+  exit 1
+fi
+
+set +e
+"$@"
+rc=$?
+set -e
+
+echo
+read -rsp "Press Enter to close." -n1 key || true
+echo
+exit "$rc"

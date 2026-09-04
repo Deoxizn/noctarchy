@@ -11,8 +11,11 @@ if ! command -v xdg-terminal-exec &>/dev/null; then
 fi
 
 if [[ $# -gt 0 ]]; then
-    exec xdg-terminal-exec --app-id="$APP_ID" -- "$@"
+    # One-shot command: hold the window open via noctarchy-hold so output
+    # stays visible (spawned terminals close on exit). Per-script holds are
+    # unnecessary — and would double-prompt.
+    exec xdg-terminal-exec --app-id="$APP_ID" -- noctarchy-hold "$@"
 fi
 
-# No args: open interactive shell
+# No args: open interactive shell (no hold — your shell stays open itself)
 exec xdg-terminal-exec --app-id="$APP_ID"

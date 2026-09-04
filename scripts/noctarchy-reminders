@@ -19,7 +19,7 @@ choice=$(
 fi
 
 case "$choice" in
-  "Set a reminder") exec xdg-terminal-exec --app-id=TUI.float -e omarchy-reminder -i ;;
-  "Quick reminder") exec xdg-terminal-exec --app-id=TUI.float -e bash -c 'read -rp "Reminder (e.g. 30 \"Check the oven\"): " input; omarchy-reminder $input; echo "Done. Press Enter to close."; read' ;;
-  "Clear all")      exec xdg-terminal-exec --app-id=TUI.float -e omarchy-reminder clear ;;
+  "Set a reminder") exec xdg-terminal-exec --app-id=TUI.float -e noctarchy-hold omarchy-reminder -i ;;
+  "Quick reminder") exec xdg-terminal-exec --app-id=TUI.float -e noctarchy-hold bash -c 'read -rp "Reminder (e.g. 30 \"Check the oven\"): " input; omarchy-reminder $input' ;;
+  "Clear all")      exec xdg-terminal-exec --app-id=TUI.float -e noctarchy-hold omarchy-reminder clear ;;
 esac
