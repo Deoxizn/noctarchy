@@ -6,6 +6,7 @@
 
 ## 2026-09-03
 
+- Migrate repo Noctalia config to the v5 schema: v5 renamed widgets (`separator`→`spacer`, `active-window`→`active_window` — old IDs rendered as red blocks), restructured `[bar]`→`[bar.default]` and widget settings into `[widget.*]`, `[notifications]`→`[notification]`, `[lock]`→`[idle.behavior.lock]`, wallpaper mode/interval→`fill_mode`/automation, `[clipboard]`→`[shell]` keys; dropped v5-removed sections. Validates with 0 warnings ([`646dc04`](https://github.com/deoxizn/noctarchy/commit/646dc04))
 - Fix X11 apps failing in Niri spawns (`DISPLAY null` removed): the pure-Wayland env unset `DISPLAY` for everything Niri launched, so Steam's first-run updater segfaulted on `XOpenDisplay` despite a healthy Xwayland `:0` (propagated even through `uwsm-app`'s `systemd-run --scope`). `SDL_VIDEODRIVER` now allows `x11` fallback like the other toolkit hints. Verified live: spawns inherit `DISPLAY=:0` ([`33f5a39`](https://github.com/deoxizn/noctarchy/commit/33f5a39))
 
 - Add Niri-native screen recording: `noctarchy-screenrecord` toggles `gpu-screen-recorder` KMS capture on the focused monitor (4K-capped) or the portal picker (`--portal`), with stock audio/webcam flags and start/stop notifications instead of the shell indicator — verified live with a valid mp4. Wired to `Alt+Print` (matches stock) and the Capture menu, with a floating rule for the webcam overlay ([`7bd0727`](https://github.com/deoxizn/noctarchy/commit/7bd0727))
