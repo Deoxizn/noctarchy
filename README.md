@@ -1,5 +1,7 @@
 <div align="center">
 
+> **PSA:** Noctarchy is considered stable and is no longer in active development — unless issues come up.
+
 <img src="branding/noctarchy.png" alt="Noctarchy" width="450">
 
 [noctarchy.dirty.pizza](https://noctarchy.dirty.pizza)
